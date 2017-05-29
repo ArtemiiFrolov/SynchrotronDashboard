@@ -23,7 +23,7 @@ class User(models.Model):
     station=models.ManyToManyField(Station)
     organization=models.ManyToManyField(Organization)
     role=models.ForeignKey(Role)
-    special_rights=models.ManyToManyField(Rights)
+    special_rights=models.ManyToManyField(Rights)		
 
 class Equipment (models.Model):
     name=models.CharField(max_length=150)
@@ -31,17 +31,17 @@ class Equipment (models.Model):
 class Request(models.Model):
     #добавить файл с договором, файл с отчетом, статью
     name=models.CharField(max_length=200)
-    organization=models.ManyToManyField(Organization)
+    organizations=models.ManyToManyField(Organization, related_name='requests')
     serial=models.CharField(max_length=15)
     description=models.CharField(max_length=2000)
     time_needed=models.IntegerField(default=0)
     time_start=models.TimeField(default=datetime.now)
     time_end=models.TimeField(default=datetime.now)
-    station=models.ForeignKey(Station)
+    station=models.ForeignKey(Station, related_name='requests')
     metodic=models.ManyToManyField(Metodic)
     participant=models.ManyToManyField(User)
     equipment=models.ManyToManyField(Equipment)
-    status=models.CharField(max_length=100)
+    status=models.CharField(max_length=100)			
 
 class Comment(models.Model):
     request=models.ForeignKey(Request)

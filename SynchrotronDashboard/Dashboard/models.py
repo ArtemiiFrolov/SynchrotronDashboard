@@ -39,7 +39,10 @@ class User(models.Model):
     role=models.ForeignKey(Role,related_name='users')
     special_rights=models.ManyToManyField(Right, related_name='users')
     def __str__(self):
-        return self.name	
+        return self.name
+    @property
+    def ahref_name(self):
+        return '<a href="/users/' +str(self.id)+' ">'+self.name+'</a>'
 
 class Equipment (models.Model):
     name=models.CharField(max_length=150,default="")

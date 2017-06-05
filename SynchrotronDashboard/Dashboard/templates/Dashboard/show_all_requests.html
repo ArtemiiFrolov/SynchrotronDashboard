@@ -22,14 +22,14 @@
             {% endfor %}
         </ul>
     </td>
-    <td>{{ one_request.author.name }}</td>
+    <td>{{ one_request.author.ahref_name|safe }}</td>
     <td>{{one_request.ahref_name|safe}}</td>
     <td>{{ one_request.station.ahref_name|safe }}</td>
     <td>{{ one_request.stage_status.name }}</td>
     <td>
         <ul>
           {% for comment in one_request.comments.all %}
-             <li>({{ comment.date_written }}) {{ comment.time_written }} "{{ comment.text }}"-{{ comment.author }}</li>
+             <li>({{ comment.date_written }}) {{ comment.time_written }} "{{ comment.text }}"-{{ comment.author.ahref_name|safe }}</li>
           {% endfor %}
       </ul>
     </td>

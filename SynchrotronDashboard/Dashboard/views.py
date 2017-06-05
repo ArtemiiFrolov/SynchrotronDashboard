@@ -8,7 +8,7 @@ def index(request):
 
 def show_all_users(request):
 	context={'show_users':User.objects.all}
-	return render(request,'dashboard/show_user.html',context)
+	return render(request,'dashboard/show_all_users.html',context)
 
 def create_request(request):
 #добавить проверки!!!!!!
@@ -48,6 +48,14 @@ def show_request(request, request_serial):
         return render(request, 'dashboard/show_request.html', context)
     else:
         return HttpResponse("Такой заявки не существует")
+    
+def show_user(request, user_id):
+    if User.objects.filter(id=user_id).exists():
+        show_user=User.objects.get(id=user_id)
+        context={'show_user': show_user}
+        return render(request, 'dashboard/show_user.html', context)
+    else:
+        return HttpResponse("Такого пользователя не существует")
         
 def show_station(request, station_short):
     if Station.objects.filter(short_description=station_short).exists():

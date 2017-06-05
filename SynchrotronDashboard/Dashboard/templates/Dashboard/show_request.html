@@ -1,6 +1,6 @@
 <ul>
     <li><b>Название</b>:  {{ show_request.name }}</li>
-    <li><b>Автор</b>:  {{ show_request.author.name }}</li>
+    <li><b>Автор</b>:  {{ show_request.author.ahref_name|safe }}</li>
     <li><b>Организации</b>: 
         <ul> 
             {% for organization in show_request.organizations.all %}
@@ -24,7 +24,7 @@
     <li><b>Участники</b>: 
         <ul> 
             {% for participant in show_request.participant.all %}
-                <li>{{ participant.name }}</li>
+                <li>{{ participant.name.ahref_name|safe }}</li>
             {% endfor %}
     </ul></li>
     <li><b>Вспомогательное оборудование</b>: 
@@ -38,7 +38,7 @@
     <li><b>Комментарии</b>: 
                 <table border="1">                     
                     {% for comment in show_request.comments.all %}
-                        <tr><td>{{ comment.date_written }}</td><td>{{ comment.time_written }}</td><td>{{ comment.text }}</td><td>{{ comment.author }}</td></tr>
+                        <tr><td>{{ comment.date_written }}</td><td>{{ comment.time_written }}</td><td>{{ comment.text }}</td><td>{{ comment.author.ahref_name|safe }}</td></tr>
                     {% endfor %}
             </table>
     </li>

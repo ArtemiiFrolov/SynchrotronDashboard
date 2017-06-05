@@ -14,7 +14,7 @@
     <li><b>Дата окончания</b>:  {{ show_request.date_end }}</li>
     <li><b>Время начала</b>:  {{ show_request.time_start }}</li>
     <li><b>Время окончания</b>:  {{ show_request.time_end }}</li>
-    <li><b>Станция</b>:  {{ show_request.station.name }}</li>
+    <li><b>Станция</b>:  {{ show_request.station.ahref_name|safe }}</li>
     <li><b>Методики</b>: 
         <ul> 
             {% for metodic in show_request.metodic.all %}

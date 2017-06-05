@@ -14,7 +14,7 @@
  </tr>
  {% for one_request in all_request %}
     <tr>
-    <td><a href="/requests/{{ one_request.serial }}">{{ one_request.serial }}</a></td>
+    <td>{{one_request.ahref_serial|safe}} </td>
     <td>
         <ul> 
             {% for organization in one_request.organizations.all %}
@@ -23,8 +23,8 @@
         </ul>
     </td>
     <td>{{ one_request.author.name }}</td>
-    <td>{{ one_request.name }}</td>
-    <td>{{ one_request.station.name }}</td>
+    <td>{{one_request.ahref_name|safe}}</td>
+    <td>{{ one_request.station.ahref_name|safe }}</td>
     <td>{{ one_request.stage_status.name }}</td>
     <td>
         <ul>

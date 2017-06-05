@@ -1,0 +1,31 @@
+<ul>
+    <li><b>Название</b>:  {{ show_station.name }}</li>
+    <li><b>Работники</b>: 
+        <ul> 
+            {% for user in show_station.users.all %}
+                <li>{{ user.name }} - {{ user.role.name }} </li>
+            {% endfor %}
+        </ul></li>
+    <li><b>Заявки</b>: 
+                <table border="1">                     
+                    {% for new_request in show_station.requests.all %}
+                         <tr><td>{{ new_request.ahref_name|safe }}</td><td>{{new_request.ahref_serial|safe }}</td><td>{{ new_request.complete_status}}</td></tr>
+                    {% endfor %}
+            </table>
+    </li>
+    <li><b>Запланированные эксперименты</b>: 
+                <table border="1">                     
+                    {% for planning in show_station.planning_experiments.all %}
+                       <tr><td>{{ planning.request.ahref_serial|safe}}:{{ planning.request.ahref_name|safe }}</td><td>{{planning.date_start}}-{{planning.time_start}}</td><td>{{planning.date_end}}-{{planning.time_end}}</td><td>{{ planning.author.name}}</td></tr>
+
+                    {% endfor %}
+            </table>
+    </li>
+    <li><b>Журнал</b>: 
+                <table border="1">                     
+                    {% for experiment in show_station.experiments.all %}
+                     <tr><td>{{ experiment.request.ahref_serial|safe}}:{{ experiment.request..ahref_name|safe }}</td><td>{{experiment.date_start}}-{{experiment.time_start}}</td><td>{{experiment.date_end}}-{{experiment.time_end}}</td><td>{{ experiment.author.name}}</td><td>{{ experiment.comment}}</td></tr>
+                    {% endfor %}
+            </table>
+    </li>
+</ul>

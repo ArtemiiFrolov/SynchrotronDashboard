@@ -6,6 +6,10 @@ from datetime import date,datetime
 def index(request):
     return HttpResponse("Hello, world. You're at the polls index.")
 
+def show_all_users(request):
+	context={'show_users':User.objects.all}
+	return render(request,'dashboard/show_user.html',context)
+
 def create_request(request):
 #добавить проверки!!!!!!
     if request.method=="POST":
@@ -44,6 +48,14 @@ def show_request(request, request_serial):
         return render(request, 'dashboard/show_request.html', context)
     else:
         return HttpResponse("Такой заявки не существует")
+        
+def show_station(request, station_short):
+    if Station.objects.filter(short_description=station_short).exists():
+        show_station=Station.objects.get(short_description=station_short)
+        context={'show_station': show_station}
+        return render(request, 'dashboard/show_station.html', context)
+    else:
+        return HttpResponse("Такой станции не существует")
         
 def show_all_requests(request):
     context={'all_request': Request.objects.all}

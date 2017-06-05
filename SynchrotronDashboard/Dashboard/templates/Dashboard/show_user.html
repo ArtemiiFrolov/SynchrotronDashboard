@@ -1,0 +1,67 @@
+{% for show_user in show_users %}
+<ul>
+    <li><b>Имя</b>:  {{ show_user.name }}</li>
+    <li><b>Работает со станциями</b>:  
+		<ul> 
+            {% for station in show_user.station.all %}
+                <li>{{ station.ahref_name|safe }}</li>
+            {% endfor %}
+        </ul>
+	</li>	
+    <li><b>Работает с организациями</b>: 
+        <ul> 
+            {% for organization in show_user.organization.all %}
+                <li>{{ organization.name }}</li>
+            {% endfor %}
+        </ul></li>
+    <li><b>Роль</b>:  {{ show_user.role }}</li>
+    <li><b>Специальные права</b>:  
+        <ul> 
+            {% for right in show_user.special_rights.all %}
+                <li>{{ right.name }}</li>
+            {% endfor %}
+        </ul>
+    </li>
+    <li><b>Созданы заявки</b>: 
+        <table border="1">                     
+                    {% for new_request in show_user.requests_as_author.all %}
+                        <tr><td>{{ new_request.ahref_name|safe }}</td><td>{{new_request.ahref_serial|safe }}</td><td>{{ new_request.station.ahref_name|safe}}</td></tr>
+                    {% endfor %}
+        </table>
+    </li>
+    
+     <li><b>Участник заявок</b>: 
+        <table border="1">                     
+                    {% for new_request in show_user.requests_as_participant.all %}
+                        <tr><td>{{ new_request.ahref_name|safe }}</td><td>{{new_request.ahref_serial|safe }}</td><td>{{ new_request.station.ahref_name|safe}}</td><td>{{ new_request.author.name}}</td></tr>
+                    {% endfor %}
+        </table>
+    </li>
+    
+    <!-- Одобренные заявки?
+    Отвергнутые заявки? -->
+    
+    <li><b>Запланированные эксперименты</b>: 
+        <table border="1">                     
+                    {% for planning in show_user.planning_experiments.all %}
+                        <tr><td>{{ planning.request.ahref_serial|safe}}:{{ planning.request.ahref_name|safe }}</td><td>{{planning.date_start}}-{{planning.time_start}}</td><td>{{planning.date_end}}-{{planning.time_end}}</td><td>{{ planning.station.ahref_name|safe}}</td></tr>
+                    {% endfor %}
+        </table>
+    </li>
+    <!-- отдельный доступ не для всех? -->
+     <li><b>Журнал</b>: 
+        <table border="1">                     
+                    {% for experiment in show_user.experiments_as_author.all %}
+                        <tr><td>{{ experiment.request.ahref_serial|safe}}:{{ experiment.request..ahref_name|safe }}</td><td>{{experiment.date_start}}-{{experiment.time_start}}</td><td>{{experiment.date_end}}-{{experiment.time_end}}</td><td>{{ experiment.station.ahref_name|safe}}</td><td>{{ experiment.comment}}</td></tr>
+                    {% endfor %}
+        </table>
+    </li>
+     <li><b>Комментарии</b>: 
+                <table border="1">                     
+                    {% for comment in show_user.comments.all %}
+                        <tr><td>{{ comment.request.ahref_serial|safe }}:{{ comment.request.ahref_name|safe}}</td><td>{{ comment.date_written }}</td><td>{{ comment.time_written }}</td><td>{{ comment.text }}</td></tr>
+                    {% endfor %}
+            </table>
+    </li>
+</ul><br>
+{% endfor %}

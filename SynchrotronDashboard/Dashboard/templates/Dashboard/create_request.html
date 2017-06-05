@@ -1,0 +1,91 @@
+<h1> Создать запрос</h1>
+<form action="{% url 'create_request' %}" method="post">
+{% csrf_token %}
+     <label for="name">Название заявки: </label><br>
+     <input id="name" type="text" name="name"><br>
+     
+     <label for="description">Описание: </label><br>
+     <textarea id="description" name="description"></textarea><br>
+    
+    <label for="author">Автор (нужно добавить автоматическое "узнавание"): </label><br>
+     <select  name="author" id="author">
+				<option disabled>Автор</option>
+					{% for participant in participants %}
+						<option value="{{participant.name}}">{{participant.name}}</option>
+					{% endfor %}
+				</select>
+     <br>
+     <label for="time_needed">Необходимое время (часов): </label><br>
+     <input id="time_needed" type="text" name="time_needed"><br>
+     
+    
+    <label for="date_start">Дата начала: </label><br>
+    <input id="date_start" type="date" name="date_start"><br>
+     
+    <label for="date_end">Дата окончания: </label><br>
+    <input id="date_end" type="date" name="date_end"><br>
+     
+    <label for="time_start">Время начала: </label><br>
+    <input id="time_start" type="time" name="time_start"><br>
+    
+    <label for="time_end">Время окончания: </label><br>
+    <input id="time_end" type="time" name="time_end"><br>
+    
+    Сюда везде добавить несколько выборов (не галочками (слишком много будет тогда строк), а из предложенных), при этом количество возможных выборов неограниченно.
+    Если же такого нет, то добавить новый
+    <br>
+    <table border="1">
+    <tr>
+        <th>Организации</th>
+        <th>Станции</th>
+        <th>Методики</th>
+        <th>Участники</th>
+        <th>Вспомогательное оборудование</th>
+    </tr>
+    <tr>
+        <td>
+            <select  name="organization" id="organization">
+				<option disabled>Организация</option>
+					{% for organization in organizations %}
+						<option value="{{organization.name}}">{{organization.name}}</option>
+					{% endfor %}
+				</select>
+         </td>
+        <td>
+            <select  name="station" id="station">
+				<option disabled>Станция</option>
+					{% for station in stations %}
+						<option value="{{station.name}}">{{station.name}}</option>
+					{% endfor %}
+				</select>
+         </td>
+          <td>
+            <select  name="metodic" id="metodic">
+				<option disabled>Методика</option>
+					{% for metodic in metodics %}
+						<option value="{{metodic.name}}">{{metodic.name}}</option>
+					{% endfor %}
+				</select>
+         </td>
+         <td>
+            <select  name="participant" id="participant">
+				<option disabled>Участники</option>
+					{% for participant in participants %}
+						<option value="{{participant.name}}">{{participant.name}}</option>
+					{% endfor %}
+				</select>
+         </td>
+           <td>
+            <select  name="equip" id="equip">
+				<option disabled>Участники</option>
+					{% for equip in equipment %}
+						<option value="{{equip.name}}">{{equip.name}}</option>
+					{% endfor %}
+				</select>
+         </td>
+    </tr>
+    </table><br>
+     
+    <input type="submit" value="OK">
+</form>
+

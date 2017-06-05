@@ -136,6 +136,5 @@ class Comment(models.Model):
     date_written=models.DateField(default=datetime.today)
     time_written=models.TimeField(default=datetime.today)
     text=models.CharField(max_length=1000)
-    request=models.ForeignKey(Request)
     def __str__(self):
         return self.author.name+" "+ self.request.serial+self.time_written.strftime(" %H:%M:%S - ")   

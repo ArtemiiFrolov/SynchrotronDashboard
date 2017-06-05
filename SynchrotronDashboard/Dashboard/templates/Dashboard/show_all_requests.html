@@ -1,0 +1,38 @@
+<h1>Все заявки</h1>
+
+ <table border="1">
+ <tr>
+ <th>Номер</th>
+ <th>Организация</th>
+ <th>Заказчик</th>
+ <th>Название</th>
+ <th>Станция</th>
+ <th>Статус</th>
+  <!--  <th>Договор загружен</th>-->
+  <!--<th>Отчет загружен</th>-->
+ <th>Комментарии</th>
+ </tr>
+ {% for one_request in all_request %}
+    <tr>
+    <td><a href="/requests/{{ one_request.serial }}">{{ one_request.serial }}</a></td>
+    <td>
+        <ul> 
+            {% for organization in one_request.organizations.all %}
+                <li>{{ organization.name }}</li>
+            {% endfor %}
+        </ul>
+    </td>
+    <td>{{ one_request.author.name }}</td>
+    <td>{{ one_request.name }}</td>
+    <td>{{ one_request.station.name }}</td>
+    <td>{{ one_request.stage_status.name }}</td>
+    <td>
+        <ul>
+          {% for comment in one_request.comments.all %}
+             <li>({{ comment.date_written }}) {{ comment.time_written }} "{{ comment.text }}"-{{ comment.author }}</li>
+          {% endfor %}
+      </ul>
+    </td>
+    </tr>
+ {% endfor %}
+ </table>

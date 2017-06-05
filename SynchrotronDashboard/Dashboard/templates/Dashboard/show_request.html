@@ -1,0 +1,45 @@
+<ul>
+    <li><b>Название</b>:  {{ show_request.name }}</li>
+    <li><b>Автор</b>:  {{ show_request.author.name }}</li>
+    <li><b>Организации</b>: 
+        <ul> 
+            {% for organization in show_request.organizations.all %}
+                <li>{{ organization.name }}</li>
+            {% endfor %}
+        </ul></li>
+    <li><b>Номер</b>:  {{ show_request.serial }}</li>
+    <li><b>Описание</b>:  {{ show_request.description }}</li>
+    <li><b>Необходимое время</b>:  {{ show_request.time_needed }} часов</li>
+    <li><b>Дата начала</b>:  {{ show_request.date_start }}</li>
+    <li><b>Дата окончания</b>:  {{ show_request.date_end }}</li>
+    <li><b>Время начала</b>:  {{ show_request.time_start }}</li>
+    <li><b>Время окончания</b>:  {{ show_request.time_end }}</li>
+    <li><b>Станция</b>:  {{ show_request.station.name }}</li>
+    <li><b>Методики</b>: 
+        <ul> 
+            {% for metodic in show_request.metodic.all %}
+                <li>{{ metodic.name }}</li>
+            {% endfor %}
+        </ul></li>
+    <li><b>Участники</b>: 
+        <ul> 
+            {% for participant in show_request.participant.all %}
+                <li>{{ participant.name }}</li>
+            {% endfor %}
+    </ul></li>
+    <li><b>Вспомогательное оборудование</b>: 
+        <ul> 
+            {% for equipment in show_request.equipment.all %}
+                <li>{{ equipment.name }}</li>
+            {% endfor %}
+    </ul></li>
+    <li><b>Статус близости к принятию в работу (рабочий)</b>:  {{ show_request.complete_status.name }}</li>
+    <li><b>Статус близости к завершению (рабочий)</b>:  {{ show_request.stage_status.name }}</li>
+    <li><b>Комментарии</b>: 
+                <table border="1">                     
+                    {% for comment in show_request.comments.all %}
+                        <tr><td>{{ comment.date_written }}</td><td>{{ comment.time_written }}</td><td>{{ comment.text }}</td><td>{{ comment.author }}</td></tr>
+                    {% endfor %}
+            </table>
+    </li>
+</ul>

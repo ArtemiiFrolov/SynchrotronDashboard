@@ -16,3 +16,13 @@ tests/coverage_html/
 tests/.coverage
 build/
 tests/report/
+
+mysql.conf
+devenv/
+*.sqlite3
+.idea
+reports/
+media/
+
+# compiles messages
+*.mo

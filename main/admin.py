@@ -2,7 +2,19 @@ from django.contrib import admin
 
 from .models import *
 
-admin.site.register(Application)
+
+@admin.register(Application)
+class ApplicationAdmin(admin.ModelAdmin):
+    class ExperimentsInline(admin.TabularInline):
+        model = Experiment
+        extra = 0
+
+    list_display = ('name', 'author', 'station', 'start', 'end')
+    list_filter = ('author', 'station', 'start')
+    search_fields = ['name', 'station__name']
+    inlines = [ExperimentsInline, ]
+
+
 admin.site.register(Organization)
 admin.site.register(Station)
 admin.site.register(Approach)

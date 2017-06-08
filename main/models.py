@@ -21,10 +21,14 @@ class TimeStampedModel(models.Model):
 
 # TODO: Add calendar and documents
 class Organization(models.Model):
-    name = models.CharField(max_length=1000, blank=False, null=False)
+    name = models.CharField('Название', max_length=1000, blank=False, null=False)
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        verbose_name = 'Организация'
+        verbose_name_plural = 'Организации'
 
 
 class Station(models.Model):
@@ -37,14 +41,14 @@ class Station(models.Model):
 
 class Approach(models.Model):
     name = models.CharField(max_length=100)
-    description = models.CharField(max_length=1000, default="")
+    description = models.TextField(blank=False, null=False)
 
     def __str__(self):
         return self.name
 
 
 class Right(models.Model):
-    name = models.CharField(max_length=100, default="")
+    name = models.CharField(max_length=100, blank=False)
 
     def __str__(self):
         return self.name

@@ -1,9 +1,9 @@
 <ul>
-    <li><b>Имя</b>:  {{ show_user.name }}</li>
+    <li><b>Имя</b>:  {{ user.name }}</li>
     <li><b>Работает со станциями</b>:  
 		<ul> 
-            {% for station in show_user.station.all %}
-                <li>{{ station.ahref_name|safe }}</li>
+            {% for station in user.station.all %}
+                <li><a href="{% url 'station' station.short_description %}">{{ station.name }}</a></li>
             {% endfor %}
         </ul>
 	</li>	
@@ -13,7 +13,7 @@
                 <li>{{ organization.name }}</li>
             {% endfor %}
         </ul></li>
-    <li><b>Роль</b>:  {{ show_user.role }}</li>
+    <li><b>Роль</b>:  {{ user.role }}</li>
     <li><b>Специальные права</b>:  
         <ul> 
             {% for right in show_user.special_rights.all %}

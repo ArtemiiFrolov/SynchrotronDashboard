@@ -2,16 +2,21 @@
 {% block content %}
 <h1 class="ui dividing header">Мои заявки</h1>
 
-<div class="ui buttons">
-    <button class="ui active button">Мои заявки</button>
-    <button class="ui button">С моим участием</button>
-    {% if request.user.is_staff %}
-    <button class="ui button">На рассмотрении</button>
-    <button class="ui button">Формируются</button>
-    <button class="ui button">Выполненные</button>
-    <button class="ui button">Завершенные</button>
-    {% endif %}
-</div>
 
-{% include 'include/applications_list.html' %}
+<div class="ui basic segment">
+    <div class="ui left rail">
+        <h3 class="ui header">Фильтр</h3>
+        <div class="ui list">
+            <a>Мои заявки</a>
+            <a>С моим участием</a>
+            {% if request.user.is_staff %}
+            <a>На рассмотрении</a>
+            <a >Формируются</a>
+            <a>Выполненные</a>
+            <a>Завершенные</a>
+            {% endif %}
+        </div>
+    </div>
+    {% include 'include/applications_list.html' %}
+</div>
 {% endblock %}

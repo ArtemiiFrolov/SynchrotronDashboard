@@ -14,7 +14,7 @@ urlpatterns = [
     url(r'^applications/new$', views.application_edit, name='application_new'),
     url(r'^applications/$', views.applications_view, name='applications'),
 
-    url(r'^stations/(?P<station_short>.*)/$', views.station_view, name='station'),
+    url(r'^stations/(?P<pk>.*)/$', views.station_view, name='station'),
 
     url(r'^users/(?P<user_id>.*)/$', views.user_view, name='user'),
     url(r'^users/$', views.users_view, name='users'),

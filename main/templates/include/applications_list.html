@@ -24,20 +24,20 @@
                 </div>
             </td>
             <td>
-               {{ application.author }}
+                <a href="{% url 'user' application.author.pk %}">{{ application.author.name }}</a>
             </td>
             <td>
                <a href="{% url 'application' application.serial %}">{{ application.name }}</a>
             </td>
             <td>
-               {{ application.station.name }}
+                <a href="{% url 'station' application.station.pk %}"> {{ application.station.name }}</a>
             </td>
             <td>
                <div class="ui comments">
                   {% for comment in application.comments.all %}
                      <div class="ui comment">
                         <div class="content">
-                            <a class="author">{{ comment.author.name }}</a>
+                            <a class="author" href="{% url 'user' comment.author.pk %}">{{ comment.author.name }}</a>
                             <div class="metadata">
                                 <span class="date">{{ comment.created }}</span>
                             </div>

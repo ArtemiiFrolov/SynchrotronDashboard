@@ -38,6 +38,7 @@
                     <div class="ui simple dropdown item">
                         {{ request.user.name }} <i class="dropdown icon"></i>
                         <div class="menu">
+                            <a class="item" href="{% url 'user' request.user.pk %}">Мой профиль</a>
                             <a class="item" href="{% url 'logout' %}">Выход</a>
                         </div>
                     </div>

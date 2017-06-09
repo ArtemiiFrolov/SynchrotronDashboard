@@ -112,8 +112,8 @@ def user_view(request, user_id):
     return render(request, 'user.html', {'user': user})
 
 
-def station_view(request, station_short):
-    station = get_object_or_404(Station, short_description=station_short)
+def station_view(request, pk):
+    station = get_object_or_404(Station, pk=pk)
     return render(request, 'station.html', {'station': station})
 
 

@@ -1,45 +1,115 @@
-<ul>
-    <li><b>Название</b>:  {{ show_request.name }}</li>
-    <li><b>Автор</b>:  {{ show_request.author.ahref_name|safe }}</li>
-    <li><b>Организации</b>: 
-        <ul> 
-            {% for organization in show_request.organizations.all %}
-                <li>{{ organization.name }}</li>
-            {% endfor %}
-        </ul></li>
-    <li><b>Номер</b>:  {{ show_request.serial }}</li>
-    <li><b>Описание</b>:  {{ show_request.description }}</li>
-    <li><b>Необходимое время</b>:  {{ show_request.time_needed }} часов</li>
-    <li><b>Дата начала</b>:  {{ show_request.date_start }}</li>
-    <li><b>Дата окончания</b>:  {{ show_request.date_end }}</li>
-    <li><b>Время начала</b>:  {{ show_request.time_start }}</li>
-    <li><b>Время окончания</b>:  {{ show_request.time_end }}</li>
-    <li><b>Станция</b>:  {{ show_request.station.ahref_name|safe }}</li>
-    <li><b>Методики</b>: 
-        <ul> 
-            {% for metodic in show_request.metodic.all %}
-                <li>{{ metodic.name }}</li>
-            {% endfor %}
-        </ul></li>
-    <li><b>Участники</b>: 
-        <ul> 
-            {% for participant in show_request.participant.all %}
-                <li>{{ participant.name.ahref_name|safe }}</li>
-            {% endfor %}
-    </ul></li>
-    <li><b>Вспомогательное оборудование</b>: 
-        <ul> 
-            {% for equipment in show_request.equipment.all %}
-                <li>{{ equipment.name }}</li>
-            {% endfor %}
-    </ul></li>
-    <li><b>Статус близости к принятию в работу (рабочий)</b>:  {{ show_request.complete_status.name }}</li>
-    <li><b>Статус близости к завершению (рабочий)</b>:  {{ show_request.stage_status.name }}</li>
-    <li><b>Комментарии</b>: 
-                <table border="1">                     
-                    {% for comment in show_request.comments.all %}
-                        <tr><td>{{ comment.date_written }}</td><td>{{ comment.time_written }}</td><td>{{ comment.text }}</td><td>{{ comment.author.ahref_name|safe }}</td></tr>
+{% extends 'layout.html' %}
+{% block content %}
+<a href="{% url 'application_edit' application.serial %}" class="ui button right floated ">Редактировать</a>
+<h1 class="ui header divided">{{ application.name }} (#{{ application.serial }})</h1>
+
+
+<a class="ui teal tag label">{{ application.complete_status.name }}</a>
+<a class="ui teal tag label">{{ application.stage_status.name }}</a>
+
+
+<div class="ui items">
+    <div class="item">
+        <div class="content">
+            <div class="header">Автор</div>
+            <div class="description">{{ application.author.name }}</div>
+        </div>
+    </div>
+     <div class="item">
+        <div class="content">
+            <div class="header">Станция</div>
+            <div class="description">{{ application.station.name }}</div>
+        </div>
+    </div>
+    <div class="item">
+        <div class="content">
+            <div class="header">Организации</div>
+            <div class="description">
+                 <div class="ui list">
+                    {% for organization in application.organizations.all %}
+                        <div class="ui item">{{ organization.name }}</div>
                     {% endfor %}
-            </table>
-    </li>
-</ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="item">
+        <div class="content">
+            <div class="header">Время</div>
+            <div class="description">
+                Времени требуется: {{ application.time_needed }} ч.<br>
+                {{ application.start }} - {{ application.end }}
+            </div>
+        </div>
+    </div>
+    <div class="item">
+        <div class="content">
+            <div class="header">Методики</div>
+            <div class="description">
+                 <div class="ui list">
+                    {% for approach in application.approaches.all %}
+                        <div class="ui item">{{ approach.name }}</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="item">
+        <div class="content">
+            <div class="header">Участники</div>
+            <div class="description">
+                 <div class="ui list">
+                    {% for participant in application.participants.all %}
+                        <div class="ui item">{{ participant.name }}</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="item">
+        <div class="content">
+            <div class="header">Вспомогательное оборудование</div>
+            <div class="description">
+                 <div class="ui list">
+                    {% for equipment in application.equipment.all %}
+                        <div class="ui item">{{ equipment.name }}</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if application.description %}
+<div class="ui segment">
+    <p>{{ application.description }}</p>
+</div>
+{% endif %}
+
+<h4 class="ui header divided">Комментарии</h4>
+<div class="ui comments">
+    {% if application.comments.all %}
+    {% for comment in application.comments.all %}
+     <div class="ui comment">
+        <div class="content">
+            <a class="author">{{ comment.author.name }}</a>
+            <div class="metadata">
+                <span class="date">{{ comment.created }}</span>
+            </div>
+            <div class="text">{{ comment.text }}</div>
+        </div>
+     </div>
+    {% endfor %}
+    {% else %}
+    <p>Пока комментариев нет</p>
+    {% endif %}
+    <form class="ui reply form">
+    <div class="field">
+        <label>Комментарий</label>
+        <textarea name="comment"></textarea>
+    </div>
+    <div class="ui blue labeled submit icon button">
+      <i class="icon edit"></i> Добавить
+    </div>
+</div>
+{% endblock %}

@@ -42,41 +42,59 @@ def login_view(request):
 
 
 @login_required
-@require_GET
-def application_form_view(request):
+def logout_view(request):
+    logout(request)
+    return redirect(login_view)
+
+
+@login_required
+@require_http_methods(['GET', 'POST'])
+def application_edit(request, serial=None):
+    if serial is not None:
+        app = get_object_or_404(Application, serial=serial)
+    else:
+        app = None
+
     if request.method == "POST":
-        new_app = Application()
+        if not app:
+            app = Application()
         # Split request creation in two parts
-        new_app.station = Station.objects.get(name=request.POST['station'])
-        new_app.name = request.POST['name']
-        new_app.author = User.objects.get(name=request.POST['author'])
+        app.station = Station.objects.get(name=request.POST['station'])
+        app.name = request.POST['name']
+        app.author = User.objects.get(name=request.POST['author'])
 
         # TODO: add multiple organizations
-        new_app.serial = str(datetime.today().year)+"-"+str(Application.objects.filter(station=new_app.station).count() + 1) + "-" + new_app.station.short_description
-        new_app.description = request.POST['description']
-        new_app.time_needed = request.POST['time_needed']
-        new_app.date_start = request.POST['date_start']
-        new_app.date_end = request.POST['date_end']
-        new_app.time_start = request.POST['time_start']
-        new_app.time_end = request.POST['time_end']
-        new_app.complete_status = CompleteStatus.objects.get(name="На рассмотрении")
-        new_app.stage_status = StageStatus.objects.get(name="Не принят в работу")
+        app.serial = str(datetime.datetime.today().year)+"-"+str(Application.objects.filter(station=app.station).count() + 1) + "-" + new_app.station.short_description
+        app.description = request.POST['description']
+        app.time_needed = request.POST['time_needed']
+        app.date_start = request.POST['date_start']
+        app.date_end = request.POST['date_end']
+        app.time_start = request.POST['time_start']
+        app.time_end = request.POST['time_end']
+        app.complete_status = CompleteStatus.objects.get_or_create(name="На рассмотрении")
+        app.stage_status = StageStatus.objects.get_or_create(name="Не принят в работу")
 
         # how to add multiple?
-        new_app.save()
-        new_app.organizations.add(Organization.objects.get(name=request.POST['organization']))
-        new_app.approaches.add(Approach.objects.get(name=request.POST['metodic']))
-        new_app.participants.add(User.objects.get(name=request.POST['participant']))
-        new_app.equipment.add(Equipment.objects.get(name=request.POST['equip']))
+        app.save()
+        app.organizations.add(Organization.objects.get(name=request.POST['organizations']))
+        app.approaches.add(Approach.objects.get(name=request.POST['approaches']))
+        app.participants.add(User.objects.get(name=request.POST['participants']))
+        app.equipment.add(Equipment.objects.get(name=request.POST['equipment']))
         context = {'applications': Application.objects.all}
         return render(request, 'applications.html', context)
     else:
-        context = {'organizations': Organization.objects.all, 'stations': Station.objects.all, 'metodics': Approach.objects.all, 'participants': User.objects.all, 'equipment': Equipment.objects.all}
+        context = {
+            'application': app,
+            'organizations': Organization.objects.all,
+            'stations': Station.objects.all,
+            'approaches': Approach.objects.all,
+            'participants': User.objects.all,
+            'equipment': Equipment.objects.all}
         return render(request, 'application_form.html', context)
 
 
-def application_view(request, request_serial):
-    app = get_object_or_404(Application, serial=request_serial)
+def application_view(request, serial):
+    app = get_object_or_404(Application, serial=serial)
     return render(request, 'application.html', {'application': app})
 
 

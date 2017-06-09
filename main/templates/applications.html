@@ -1,38 +1,17 @@
-<h1>Все заявки</h1>
+{% extends 'layout.html' %}
+{% block content %}
+<h1 class="ui dividing header">Мои заявки</h1>
 
- <table border="1">
- <tr>
- <th>Номер</th>
- <th>Организация</th>
- <th>Заказчик</th>
- <th>Название</th>
- <th>Станция</th>
- <th>Статус</th>
-  <!--  <th>Договор загружен</th>-->
-  <!--<th>Отчет загружен</th>-->
- <th>Комментарии</th>
- </tr>
- {% for one_request in all_request %}
-    <tr>
-    <td>{{one_request.ahref_serial|safe}} </td>
-    <td>
-        <ul> 
-            {% for organization in one_request.organizations.all %}
-                <li>{{ organization.name }}</li>
-            {% endfor %}
-        </ul>
-    </td>
-    <td>{{ one_request.author.ahref_name|safe }}</td>
-    <td>{{one_request.ahref_name|safe}}</td>
-    <td>{{ one_request.station.ahref_name|safe }}</td>
-    <td>{{ one_request.stage_status.name }}</td>
-    <td>
-        <ul>
-          {% for comment in one_request.comments.all %}
-             <li>({{ comment.date_written }}) {{ comment.time_written }} "{{ comment.text }}"-{{ comment.author.ahref_name|safe }}</li>
-          {% endfor %}
-      </ul>
-    </td>
-    </tr>
- {% endfor %}
- </table>
+<div class="ui buttons">
+    <button class="ui active button">Мои заявки</button>
+    <button class="ui button">С моим участием</button>
+    {% if request.user.is_staff %}
+    <button class="ui button">На рассмотрении</button>
+    <button class="ui button">Формируются</button>
+    <button class="ui button">Выполненные</button>
+    <button class="ui button">Завершенные</button>
+    {% endif %}
+</div>
+
+{% include 'include/applications_list.html' %}
+{% endblock %}

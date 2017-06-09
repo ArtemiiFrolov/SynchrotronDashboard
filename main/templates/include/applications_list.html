@@ -1,0 +1,56 @@
+{% if applications %}
+<table class="ui celled striped table">
+    <thead>
+        <tr>
+            <th class="single line">Номер</th>
+            <th>Организация</th>
+            <th>Заказчик</th>
+            <th>Название</th>
+            <th>Станция</th>
+            <th>Комментарии</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for application in applications %}
+        <tr>
+            <td>
+                <h3 class="ui center aligned header">{{ application.serial }}</h3>
+            </td>
+            <td>
+                <div class="ui list">
+                {% for organization in application.organizations.all %}
+                    <div class="item">{{ organization.name }}</div>
+                {% endfor %}
+                </div>
+            </td>
+            <td>
+               {{ application.author }}
+            </td>
+            <td>
+               <a href="{% url 'application' application.serial %}">{{ application.name }}</a>
+            </td>
+            <td>
+               {{ application.station.name }}
+            </td>
+            <td>
+               <div class="ui comments">
+                  {% for comment in application.comments.all %}
+                     <div class="ui comment">
+                        <div class="content">
+                            <a class="author">{{ comment.author.name }}</a>
+                            <div class="metadata">
+                                <span class="date">{{ comment.created }}</span>
+                            </div>
+                            <div class="text">{{ comment.text }}</div>
+                        </div>
+                     </div>
+                  {% endfor %}
+               </div>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<div class="ui message">Заявок нет</div>
+{% endif %}

@@ -1,91 +1,99 @@
-<h1> Создать запрос</h1>
-<form action="{% url 'application_form' %}" method="post">
-{% csrf_token %}
-     <label for="name">Название заявки: </label><br>
-     <input id="name" type="text" name="name"><br>
-     
-     <label for="description">Описание: </label><br>
-     <textarea id="description" name="description"></textarea><br>
-    
-    <label for="author">Автор (нужно добавить автоматическое "узнавание"): </label><br>
-     <select  name="author" id="author">
-				<option disabled>Автор</option>
-					{% for participant in participants %}
-						<option value="{{participant.name}}">{{participant.name}}</option>
-					{% endfor %}
-				</select>
-     <br>
-     <label for="time_needed">Необходимое время (часов): </label><br>
-     <input id="time_needed" type="text" name="time_needed"><br>
-     
-    
-    <label for="date_start">Дата начала: </label><br>
-    <input id="date_start" type="date" name="date_start"><br>
-     
-    <label for="date_end">Дата окончания: </label><br>
-    <input id="date_end" type="date" name="date_end"><br>
-     
-    <label for="time_start">Время начала: </label><br>
-    <input id="time_start" type="time" name="time_start"><br>
-    
-    <label for="time_end">Время окончания: </label><br>
-    <input id="time_end" type="time" name="time_end"><br>
-    
-    Сюда везде добавить несколько выборов (не галочками (слишком много будет тогда строк), а из предложенных), при этом количество возможных выборов неограниченно.
-    Если же такого нет, то добавить новый
-    <br>
-    <table border="1">
-    <tr>
-        <th>Организации</th>
-        <th>Станции</th>
-        <th>Методики</th>
-        <th>Участники</th>
-        <th>Вспомогательное оборудование</th>
-    </tr>
-    <tr>
-        <td>
-            <select  name="organization" id="organization">
-				<option disabled>Организация</option>
-					{% for organization in organizations %}
-						<option value="{{organization.name}}">{{organization.name}}</option>
-					{% endfor %}
-				</select>
-         </td>
-        <td>
-            <select  name="station" id="station">
-				<option disabled>Станция</option>
-					{% for station in stations %}
-						<option value="{{station.name}}">{{station.name}}</option>
-					{% endfor %}
-				</select>
-         </td>
-          <td>
-            <select  name="metodic" id="metodic">
-				<option disabled>Методика</option>
-					{% for metodic in metodics %}
-						<option value="{{metodic.name}}">{{metodic.name}}</option>
-					{% endfor %}
-				</select>
-         </td>
-         <td>
-            <select  name="participant" id="participant">
-				<option disabled>Участники</option>
-					{% for participant in participants %}
-						<option value="{{participant.name}}">{{participant.name}}</option>
-					{% endfor %}
-				</select>
-         </td>
-           <td>
-            <select  name="equip" id="equip">
-				<option disabled>Участники</option>
-					{% for equip in equipment %}
-						<option value="{{equip.name}}">{{equip.name}}</option>
-					{% endfor %}
-				</select>
-         </td>
-    </tr>
-    </table><br>
-     
-    <input type="submit" value="OK">
-</form>
+{% extends 'layout.html' %}
+{% block content %}
+<div class="ui text container">
+    <form action="" method="post" class="ui form">
+        {% csrf_token %}
+        <h4 class="ui dividing header">{% if application %}Редактирование заявки{% else %}Новая заявка{% endif %}</h4>
+        <div class="field">
+            <label>Название</label>
+            <input type="text" name="name" {% if application %}value="{{ application.name }}"{% endif %}>
+        </div>
 
+        <div class="field">
+            <label for="description">Описание</label>
+            <textarea name="description">{% if application %}{{ application.description }}{% endif %}</textarea>
+        </div>
+
+        <div class="field">
+            <label for="author">Автор</label>
+            <select  name="author">
+                <option disabled>Автор</option>
+                {% for participant in participants %}
+                    <option value="{{participant.name}}">{{participant.name}}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="field">
+            <div class="three fields">
+                <div class="field">
+                    <label for="time_needed">Необходимое время (часов)</label>
+                    <input type="text" name="time_needed">
+                </div>
+                <div class="field">
+                    <label for="date_start">Дата начала</label>
+                    <input type="date" name="date_start">
+                    <input type="time" name="time_start">
+                </div>
+                <div class="field">
+                    <label for="date_end">Дата окончания</label>
+                    <input type="date" name="date_end">
+                    <input type="time" name="time_end">
+                </div>
+            </div>
+        </div>
+
+
+        <div class="field">
+            <label>Организации</label>
+            <select name="organizations" class="ui fluid dropdown" multiple="">
+                {% for organization in organizations %}
+                <option value="{{ organization.name }}">{{ organization.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="field">
+            <label>Методики</label>
+            <select name="approaches" class="ui fluid dropdown" multiple="">
+                {% for approach in approaches %}
+                    <option value="{{ approach.name }}">{{ approach.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="field">
+            <label>Станции</label>
+             <select name="stations" class="ui fluid dropdown" multiple="">
+                {% for station in stations %}
+                    <option value="{{ station.name }}">{{ station.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="field">
+            <label>Участники</label>
+             <select  name="participants" class="ui fluid dropdown" multiple="">
+                 {% for participant in participants %}
+                 <option value="{{ participant.name }}">{{ participant.name }}</option>
+                 {% endfor %}
+             </select>
+        </div>
+
+        <div class="field">
+            <label>Вспомогательное оборудование</label>
+             <select name="equipment" class="ui fluid dropdown" multiple="">
+                {% for equip in equipment %}
+                <option value="{{ equip.name }}">{{ equip.name }}</option>
+                {% endfor %}
+             </select>
+        </div>
+
+        <input type="submit" class="ui primary button" value="Сохранить">
+    </form>
+</div>
+
+<script type="text/javascript">
+    $('.dropdown').dropdown();
+</script>
+{% endblock %}

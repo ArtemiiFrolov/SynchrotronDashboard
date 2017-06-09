@@ -4,6 +4,8 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.core.exceptions import ObjectDoesNotExist
+
 
 class TimeStampedModel(models.Model):
     """
@@ -18,13 +20,30 @@ class TimeStampedModel(models.Model):
         abstract = True
 
 
-# TODO: Add calendar and documents
-class Organization(models.Model):
+class TagManager(models.Manager):
+    def get_or_create(self, **kwargs):
+        try:
+            return self.get(**kwargs)
+        except ObjectDoesNotExist:
+            obj = self.create(**kwargs)
+            obj.save()
+            return obj
+
+
+class TagModel(models.Model):
     name = models.CharField('Название', max_length=1000, blank=False, null=False)
+
+    class Meta:
+        abstract = True
+
+    objects = TagManager()
 
     def __str__(self):
         return self.name
 
+
+# TODO: Add calendar and documents
+class Organization(TagModel):
     class Meta:
         verbose_name = 'Организация'
         verbose_name_plural = 'Организации'
@@ -42,12 +61,8 @@ class Station(models.Model):
         verbose_name_plural = 'Станции'
 
 
-class Approach(models.Model):
-    name = models.CharField('Название', max_length=100, blank=False, null=False)
+class Approach(TagModel):
     description = models.TextField('Описание', blank=False, null=False)
-
-    def __str__(self):
-        return self.name
 
     class Meta:
         verbose_name = 'Методика'
@@ -77,34 +92,19 @@ class Role(models.Model):
         verbose_name_plural = 'Роли'
 
 
-class Equipment(models.Model):
-    name = models.CharField('Название', max_length=150, blank=False, null=False)
-
-    def __str__(self):
-        return self.name
-
+class Equipment(TagModel):
     class Meta:
         verbose_name = 'Оборудование'
         verbose_name_plural = 'Оборудование'
 
 
-class CompleteStatus(models.Model):
-    name = models.CharField('Название', max_length=100, blank=False, null=False)
-
-    def __str__(self):
-        return self.name
-
+class CompleteStatus(TagModel):
     class Meta:
         verbose_name = 'Статус завершения'
         verbose_name_plural = 'Статусы завершения'
 
 
-class StageStatus(models.Model):
-    name = models.CharField('Название', max_length=100, blank=False, null=False)
-
-    def __str__(self):
-        return self.name
-
+class StageStatus(TagModel):
     class Meta:
         verbose_name = 'Статус принятия в работу'
         verbose_name_plural = 'Статусы принятия в работу'
@@ -167,14 +167,14 @@ class User(AbstractBaseUser):
 
     name = models.CharField('Имя', max_length=100, blank=False)
     station = models.ManyToManyField(Station, related_name='users', blank=True, verbose_name='Станции')
-    organization = models.ManyToManyField( Organization, related_name='users', blank=True, verbose_name='Организации')
+    organization = models.ManyToManyField(Organization, related_name='users', blank=True, verbose_name='Организации')
     role = models.ForeignKey(Role, related_name='users', blank=True, null=True, verbose_name='Роль')
-    special_rights = models.ManyToManyField( Right, related_name='users', verbose_name='Особые права')  # TODO: make it possible leave special_right blank
+    special_rights = models.ManyToManyField(Right, related_name='users', blank=True, verbose_name='Особые права')  # TODO: make it possible leave special_right blank
 
-    is_active = models.BooleanField("Is active", default=True)
-    is_admin = models.BooleanField("Is admin", default=False)
-    is_staff = models.BooleanField("Is staff", default=False)
-    date_joined = models.DateTimeField("Date joined", auto_now_add=True)
+    is_active = models.BooleanField("Активен", default=True)
+    is_admin = models.BooleanField("Администратор", default=False)
+    is_staff = models.BooleanField("Статус персонала", default=False)
+    date_joined = models.DateTimeField("Дата регистрации", auto_now_add=True)
 
     objects = UserManager()
 
@@ -187,10 +187,10 @@ class User(AbstractBaseUser):
 
     def get_short_name(self):
         # The user is identified by their email address
-        return self.email
+        return self.name
 
     def __str__(self):  # __unicode__ on Python 2
-        return self.email
+        return self.name
 
     def has_perm(self, perm, obj=None):
         # "Does the user have a specific permission?"
@@ -238,7 +238,7 @@ class ExperimentPlan(models.Model):
     start = models.DateTimeField('Старт', auto_now_add=True)
     end = models.DateTimeField('Окончание', auto_now_add=True)
     status = models.ForeignKey(JournalStatus, related_name='planning_experiments', verbose_name='Статус')
-    station = models.ForeignKey(Station, related_name='planning_experiments', verbose_name='Статус')
+    station = models.ForeignKey(Station, related_name='planning_experiments', verbose_name='Станция')
 
     def __str__(self):
         return '%s %s-%s' % (self.station.name,

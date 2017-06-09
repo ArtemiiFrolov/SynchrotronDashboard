@@ -1,9 +1,8 @@
-
 <!DOCTYPE html>
 <html>
 <head>
-    <!-- Site Properties -->
-    <title>Login Example - Semantic</title>
+    {% load static %}
+    <title>Вход</title>
     {% include 'include/head.html' %}
 
     <style type="text/css">
@@ -20,53 +19,35 @@
           max-width: 450px;
         }
     </style>
-  <script>
-  $(document)
-    .ready(function() {
-      $('.ui.form')
-        .form({
-          fields: {
-            email: {
-              identifier  : 'email',
-              rules: [
-                {
-                  type   : 'empty',
-                  prompt : 'Please enter your e-mail'
+    <script>
+    $(document).ready(function() {
+        $('.ui.form').form({
+            fields: {
+                email: {
+                    identifier : 'email',
+                    rules: [
+                        { type : 'empty', prompt : 'Пожалуйста, введите e-mail' },
+                        { type : 'email', prompt : 'E-mail указан неправильно' }
+                    ]
                 },
-                {
-                  type   : 'email',
-                  prompt : 'Please enter a valid e-mail'
+                password: {
+                    identifier : 'password',
+                    rules: [
+                        { type : 'empty', prompt : 'Укажите пароль' },
+                        { type : 'length[5]', prompt : 'Пароль должен быть более 5 символов в длину' }
+                    ]
                 }
-              ]
-            },
-            password: {
-              identifier  : 'password',
-              rules: [
-                {
-                  type   : 'empty',
-                  prompt : 'Please enter your password'
-                },
-                {
-                  type   : 'length[6]',
-                  prompt : 'Your password must be at least 6 characters'
-                }
-              ]
             }
-          }
-        })
-      ;
-    })
-  ;
-  </script>
+        });
+    });
+    </script>
 </head>
 <body>
     <div class="ui middle aligned center aligned grid">
       <div class="column">
         <h2 class="ui teal image header">
-          <img src="assets/images/logo.png" class="image">
-          <div class="content">
-            Log-in to your account
-          </div>
+          <img src="{% static 'img/logo.gif' %}" class="image">
+          <div class="content">Вход в учетную запись</div>
         </h2>
         <form class="ui large form" method="post">
             {% csrf_token %}

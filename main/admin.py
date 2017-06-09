@@ -61,16 +61,8 @@ class StationAdmin(admin.ModelAdmin):
 
 @admin.register(Approach)
 class ApproachAdmin(admin.ModelAdmin):
-    class ApplicationInline(admin.TabularInline):
-        model = Application.approaches.through
-        extra = 0
-
-    class ExperimentInline(admin.TabularInline):
-        model = Experiment
-        extra = 0
-
     search_fields = ['name']
-    inlines = [ApplicationInline, ExperimentInline]
+    inlines = []
 
 
 @admin.register(User)
@@ -90,15 +82,15 @@ class UserAdmin(admin.ModelAdmin):
         fk_name = 'author'
         extra = 0
 
-    list_display = ('email', 'name', 'role')
-    list_filter = ['station']
+    list_display = ('name', 'email', 'role', 'date_joined')
+    list_filter = ['station', 'date_joined']
     search_fields = ['name', 'station__name']
     inlines = [ExperimentPlanInline, ExperimentsInline, ApplicationInline]
 
 
 @admin.register(ExperimentPlan)
 class ExperimentPlanAdmin(admin.ModelAdmin):
-    list_display = ( 'application', 'author', 'start', 'end', 'status', 'station')
+    list_display = ('application', 'author', 'start', 'end', 'status', 'station')
     list_filter = ('station', 'status', 'author', 'application')
     search_fields = ['station__name', 'author__name', 'status__name']
 
@@ -109,9 +101,11 @@ class ExperimentAdmin(admin.ModelAdmin):
     list_filter = ('station', 'author', 'operator')
     search_fields = ['station__name', 'author__name']
 
+
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
     list_display = ('name', 'start', 'end')
+
 
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):

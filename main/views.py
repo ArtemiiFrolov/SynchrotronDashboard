@@ -64,7 +64,7 @@ def application_edit(request, serial=None):
         app.author = User.objects.get(name=request.POST['author'])
 
         # TODO: add multiple organizations
-        app.serial = str(datetime.datetime.today().year)+"-"+str(Application.objects.filter(station=app.station).count() + 1) + "-" + new_app.station.short_description
+        app.serial = str(datetime.datetime.today().year)+"-"+str(Application.objects.filter(station=app.station).count() + 1) + "-" + app.station.short_description
         app.description = request.POST['description']
         app.time_needed = request.POST['time_needed']
         app.date_start = request.POST['date_start']

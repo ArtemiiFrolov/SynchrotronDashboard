@@ -13,7 +13,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Allowed hosts placeholder (for production).
 # Override this in specific environment settings.
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['192.168.100.69', 'localhost', '127.0.0.1']
 
 # Application definition
 INSTALLED_APPS = [

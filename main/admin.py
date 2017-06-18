@@ -111,6 +111,11 @@ class EventAdmin(admin.ModelAdmin):
 class CommentAdmin(admin.ModelAdmin):
     list_display = ('application', 'author', 'text')
 
+
+@admin.register(ApplicationCounter)
+class ApplicationCounterAdmin(admin.ModelAdmin):
+    list_display = ('year', 'number')
+
 admin.site.register(Right)
 admin.site.register(Role)
 admin.site.register(Equipment)
@@ -118,3 +123,5 @@ admin.site.register(CompleteStatus)
 admin.site.register(StageStatus)
 admin.site.register(JournalStatus)
 admin.site.register(EventsList)
+
+

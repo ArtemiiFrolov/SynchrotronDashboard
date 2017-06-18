@@ -292,3 +292,16 @@ class Comment(TimeStampedModel):
     class Meta:
         verbose_name = 'Комментарий'
         verbose_name_plural = 'Комментарии'
+
+
+class ApplicationCounter(models.Model):
+    year = models.IntegerField("Год", default=0)
+    number = models.IntegerField("Количество заявок в году", default=0)
+
+    class Meta:
+        verbose_name = 'Ежегодный счетчик'
+        verbose_name_plural = 'Ежегодный счетчик'
+    # TODO: add a new year new counter
+
+    def __str__(self):
+        return str(self.number)

@@ -51,6 +51,7 @@ def logout_view(request):
 @require_http_methods(['GET', 'POST'])
 def application_edit(request, serial=None):
     if serial is not None:
+        # TODO: make station field unedit
         app = get_object_or_404(Application, serial=serial)
     else:
         app = None
@@ -59,27 +60,42 @@ def application_edit(request, serial=None):
         if not app:
             app = Application()
         # Split request creation in two parts
-        app.station = Station.objects.get(name=request.POST['station'])
-        app.name = request.POST['name']
-        app.author = User.objects.get(name=request.POST['author'])
-
-        # TODO: add multiple organizations
-        app.serial = str(datetime.datetime.today().year)+"-"+str(Application.objects.filter(station=app.station).count() + 1) + "-" + app.station.short_description
-        app.description = request.POST['description']
-        app.time_needed = request.POST['time_needed']
-        app.date_start = request.POST['date_start']
-        app.date_end = request.POST['date_end']
-        app.time_start = request.POST['time_start']
-        app.time_end = request.POST['time_end']
-        app.complete_status = CompleteStatus.objects.get_or_create(name="На рассмотрении")
-        app.stage_status = StageStatus.objects.get_or_create(name="Не принят в работу")
-
-        # how to add multiple?
-        app.save()
-        app.organizations.add(Organization.objects.get(name=request.POST['organizations']))
-        app.approaches.add(Approach.objects.get(name=request.POST['approaches']))
-        app.participants.add(User.objects.get(name=request.POST['participants']))
-        app.equipment.add(Equipment.objects.get(name=request.POST['equipment']))
+        app_counter = ApplicationCounter.objects.get(year=datetime.date.today().year)
+        station_list = request.POST.getlist('station')
+        for station_item in station_list:
+            app.station = Station.objects.get(name=station_item)
+            app.name = request.POST['name']
+            app.author = User.objects.get(name=request.POST['author'])
+            app.serial = '%s-%s-%s' % (str(datetime.datetime.today().year),
+                                       str(app_counter.number),
+                                       app.station.short_description)
+            app.description = request.POST['description']
+            app.time_needed = request.POST['time_needed']
+            app.date_start = request.POST['date_start']
+            app.date_end = request.POST['date_end']
+            app.time_start = request.POST['time_start']
+            app.time_end = request.POST['time_end']
+            app.complete_status = CompleteStatus.objects.get_or_create(name="На рассмотрении")
+            app.stage_status = StageStatus.objects.get_or_create(name="Не принят в работу")
+            # how to add multiple?
+            app.save()
+            # TODO: need to check, is it ok, or it can be done better way
+            organizations_list = request.POST.getlist('organizations')
+            for organizations_item in organizations_list:
+                app.organizations.add(Organization.objects.get(name=organizations_item))
+            approaches_list = request.POST.getlist('approaches')
+            for approaches_item in approaches_list:
+                app.approaches.add(Approach.objects.get(name=approaches_item))
+            # TODO: change output method of participants - it will be too much of chosen objects
+            participants_list = request.POST.getlist('participants')
+            for participants_item in participants_list:
+                app.participants.add(User.objects.get(name=participants_item))
+            equipment_list = request.POST.getlist('equipment')
+            for equipment_item in equipment_list:
+                app.equipment.add(Equipment.objects.get(name=equipment_item))
+            app = Application()
+        app_counter.number = app_counter.number + 1
+        app_counter.save()
         context = {'applications': Application.objects.all}
         return render(request, 'applications.html', context)
     else:

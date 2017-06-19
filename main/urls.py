@@ -18,4 +18,6 @@ urlpatterns = [
 
     url(r'^users/(?P<user_id>.*)/$', views.user_view, name='user'),
     url(r'^users/$', views.users_view, name='users'),
+
+    url(r'^organizations/(?P<pk>.*)/$', views.organization_view, name='organization'),
 ]

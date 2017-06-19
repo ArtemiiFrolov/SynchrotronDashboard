@@ -60,6 +60,7 @@ def application_edit(request, serial=None):
         if not app:
             app = Application()
         # Split request creation in two parts
+        # TODO: добавить проверку
         app_counter = ApplicationCounter.objects.get(year=datetime.date.today().year)
         station_list = request.POST.getlist('station')
         for station_item in station_list:
@@ -133,4 +134,7 @@ def station_view(request, pk):
     return render(request, 'station.html', {'station': station})
 
 
+def organization_view(request, pk):
+    organization = get_object_or_404(Organization, pk=pk)
+    return render(request, 'organization.html', {'organization': organization})
 

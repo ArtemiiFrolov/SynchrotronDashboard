@@ -19,7 +19,7 @@
             <td>
                 <div class="ui list">
                 {% for organization in application.organizations.all %}
-                    <div class="item">{{ organization.name }}</div>
+                    <div class="item"> <a href="{% url 'organization' organization.pk %}">{{ organization.name }}</a></div>
                 {% endfor %}
                 </div>
             </td>

@@ -1,28 +1,163 @@
+{% extends 'layout.html' %}
+{% block content %}
+<h1 class="ui header divided">{{ station.name }}</h1>
+
+
+<div class="ui items">
+    <div class="item">
+        <div class="content">
+            <div class="header">Работники</div>
+            <div class="description">
+                 <div class="ui list">
+                    {% for user in station.users.all %}
+                        <div class="ui item">
+                            <a href="{% url 'user' user.pk %}">{{ user.name }}</a> - {{user.role.name}}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="item">
+        <div class="content">
+            <div class="header">Заявки</div>
+            <div class="description">
+        <table class="ui celled striped table">
+        <thead>
+            <tr>
+                <th class="single line">Номер</th>
+                <th>Организация</th>
+                <th>Заказчик</th>
+                <th>Название</th>
+                <th>Комментарии</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for application in station.applications.all %}
+            <tr>
+                <td>
+                    {{ application.serial }}
+                </td>
+                <td>
+                    <div class="ui list">
+                    {% for organization in application.organizations.all %}
+                        <div class="item"><a href="{% url 'organization' organization.pk %}">{{ organization.name }}</a></div>
+                    {% endfor %}
+                    </div>
+                </td>
+                <td>
+                    <a href="{% url 'user' application.author.pk %}">{{ application.author.name }}</a>
+                </td>
+                <td>
+                   <a href="{% url 'application' application.serial %}">{{ application.name }}</a>
+                </td>
+                <td>
+                   <div class="ui comments">
+                      {% for comment in application.comments.all %}
+                         <div class="ui comment">
+                            <div class="content">
+                                <a class="author" href="{% url 'user' comment.author.pk %}">{{ comment.author.name }}</a>
+                                <div class="metadata">
+                                    <span class="date">{{ comment.created }}</span>
+                                </div>
+                                <div class="text">{{ comment.text }}</div>
+                            </div>
+                         </div>
+                      {% endfor %}
+                   </div>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+            </div>
+        </div>
+    </div>
+
+     <div class="item">
+        <div class="content">
+            <div class="header">Запланированные эксперименты</div>
+            <div class="description">
+        <table class="ui celled striped table">
+        <thead>
+            <tr>
+                <th class="single line">Номер</th>
+                <th>Организация</th>
+                <th>Заказчик</th>
+                <th>Название</th>
+                <th>Комментарии</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for application in station.applications.all %}
+            <tr>
+                <td>
+                    {{ application.serial }}
+                </td>
+                <td>
+                    <div class="ui list">
+                    {% for organization in application.organizations.all %}
+                        <div class="item"><a href="{% url 'organization' organization.pk %}">{{ organization.name }}</a></div>
+                    {% endfor %}
+                    </div>
+                </td>
+                <td>
+                    <a href="{% url 'user' application.author.pk %}">{{ application.author.name }}</a>
+                </td>
+                <td>
+                   <a href="{% url 'application' application.serial %}">{{ application.name }}</a>
+                </td>
+                <td>
+                   <div class="ui comments">
+                      {% for comment in application.comments.all %}
+                         <div class="ui comment">
+                            <div class="content">
+                                <a class="author" href="{% url 'user' comment.author.pk %}">{{ comment.author.name }}</a>
+                                <div class="metadata">
+                                    <span class="date">{{ comment.created }}</span>
+                                </div>
+                                <div class="text">{{ comment.text }}</div>
+                            </div>
+                         </div>
+                      {% endfor %}
+                   </div>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
 <ul>
     <li><b>Название</b>:  {{ show_station.name }}</li>
-    <li><b>Работники</b>: 
-        <ul> 
+    <li><b>Работники</b>:
+        <ul>
             {% for user in show_station.users.all %}
                 <li>{{ user.ahref_name|safe }} - {{ user.role.name }} </li>
             {% endfor %}
         </ul></li>
-    <li><b>Заявки</b>: 
-                <table border="1">                     
+    <li><b>Заявки</b>:
+                <table border="1">
                     {% for new_request in show_station.requests.all %}
                          <tr><td>{{ new_request.ahref_name|safe }}</td><td>{{new_request.ahref_serial|safe }}</td><td>{{ new_request.complete_status}}</td></tr>
                     {% endfor %}
             </table>
     </li>
-    <li><b>Запланированные эксперименты</b>: 
-                <table border="1">                     
+    <li><b>Запланированные эксперименты</b>:
+                <table border="1">
                     {% for planning in show_station.planning_experiments.all %}
                        <tr><td>{{ planning.request.ahref_serial|safe}}:{{ planning.request.ahref_name|safe }}</td><td>{{planning.date_start}}-{{planning.time_start}}</td><td>{{planning.date_end}}-{{planning.time_end}}</td><td>{{ planning.author.ahref_name|safe}}</td></tr>
 
                     {% endfor %}
             </table>
     </li>
-    <li><b>Журнал</b>: 
-                <table border="1">                     
+    <li><b>Журнал</b>:
+                <table border="1">
                     {% for experiment in show_station.experiments.all %}
                      <tr><td>{{ experiment.request.ahref_serial|safe}}:{{ experiment.request..ahref_name|safe }}</td><td>{{experiment.date_start}}-{{experiment.time_start}}</td><td>{{experiment.date_end}}-{{experiment.time_end}}</td><td>{{ experiment.author.ahref_name|safe}}</td><td>{{ experiment.comment}}</td></tr>
                     {% endfor %}

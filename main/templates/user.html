@@ -1,68 +1,202 @@
 {% extends 'layout.html' %}
 {% block content %}
-<ul>
-    <li><b>Имя</b>:  {{ user.name }}</li>
-    <li><b>Работает со станциями</b>:  
-		<ul> 
-            {% for station in user.station.all %}
-                <li><a href="{% url 'station' station.short_description %}">{{ station.name }}</a></li>
-            {% endfor %}
-        </ul>
-	</li>	
-    <li><b>Работает с организациями</b>: 
-        <ul> 
-            {% for organization in show_user.organization.all %}
-                <li>{{ organization.name }}</li>
-            {% endfor %}
-        </ul></li>
-    <li><b>Роль</b>:  {{ user.role }}</li>
-    <li><b>Специальные права</b>:  
-        <ul> 
-            {% for right in show_user.special_rights.all %}
-                <li>{{ right.name }}</li>
-            {% endfor %}
-        </ul>
-    </li>
-    <li><b>Созданы заявки</b>: 
-        <table border="1">                     
-                    {% for new_request in show_user.requests_as_author.all %}
-                        <tr><td>{{ new_request.ahref_name|safe }}</td><td>{{new_request.ahref_serial|safe }}</td><td>{{ new_request.station.ahref_name|safe}}</td></tr>
+<h1 class="ui header divided">{{ user.name }}</h1>
+
+
+<a class="ui teal tag label">{{ user.role }}</a>
+<a class="ui teal tag label">{{ user.date_joined }}</a>
+
+
+<div class="ui items">
+    <div class="item">
+        <div class="content">
+            <div class="header">Работает со станциями</div>
+            <div class="description">
+                 <div class="ui list">
+                    {% for station in user.station.all %}
+                        <div class="ui item">
+                            <a href="{% url 'station' station.pk %}">{{ station.name }}</a>
+                        </div>
                     {% endfor %}
-        </table>
-    </li>
-    
-     <li><b>Участник заявок</b>: 
-        <table border="1">                     
-                    {% for new_request in show_user.requests_as_participant.all %}
-                        <tr><td>{{ new_request.ahref_name|safe }}</td><td>{{new_request.ahref_serial|safe }}</td><td>{{ new_request.station.ahref_name|safe}}</td><td>{{ new_request.author.ahref_name|safe}}</td></tr>
+                </div>
+            </div>
+        </div>
+    </div>
+     <div class="item">
+        <div class="content">
+            <div class="header">Работает со организациями</div>
+            <div class="description">
+                 <div class="ui list">
+                    {% for organization in user.organization.all %}
+                        <div class="ui item">{{ organization.name }}</div>
                     {% endfor %}
-        </table>
-    </li>
-    
-    <!-- Одобренные заявки?
-    Отвергнутые заявки? -->
-    
-    <li><b>Запланированные эксперименты</b>: 
-        <table border="1">                     
-                    {% for planning in show_user.planning_experiments.all %}
-                        <tr><td>{{ planning.request.ahref_serial|safe}}:{{ planning.request.ahref_name|safe }}</td><td>{{planning.date_start}}-{{planning.time_start}}</td><td>{{planning.date_end}}-{{planning.time_end}}</td><td>{{ planning.station.ahref_name|safe}}</td></tr>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="item">
+        <div class="content">
+            <div class="header">Специальные права</div>
+            <div class="description">
+                 <div class="ui list">
+                    {% for right in user.special_rights.all %}
+                        <div class="ui item">{{ right.name }}</div>
                     {% endfor %}
-        </table>
-    </li>
-    <!-- отдельный доступ не для всех? -->
-     <li><b>Журнал</b>: 
-        <table border="1">                     
-                    {% for experiment in show_user.experiments_as_author.all %}
-                        <tr><td>{{ experiment.request.ahref_serial|safe}}:{{ experiment.request..ahref_name|safe }}</td><td>{{experiment.date_start}}-{{experiment.time_start}}</td><td>{{experiment.date_end}}-{{experiment.time_end}}</td><td>{{ experiment.station.ahref_name|safe}}</td><td>{{ experiment.comment}}</td></tr>
+                </div>
+            </div>
+        </div>
+    </div>
+     <div class="item">
+        <div class="content">
+            <div class="header">Созданы заявки</div>
+            <div class="description">
+                <table class="ui celled striped table">
+                    <thead>
+                        <tr>
+                            <th class="single line">Номер</th>
+                            <th>Организация</th>
+                            <th>Название</th>
+                            <th>Станция</th>
+                            <th>Комментарии</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for application in user.applications_as_author.all %}
+                        <tr>
+                            <td>
+                                {{ application.serial }}
+                            </td>
+                            <td>
+                                <div class="ui list">
+                                {% for organization in application.organizations.all %}
+                                    <div class="item"><a href="{% url 'organization' organization.pk %}">{{ organization.name }}</a></div>
+                                {% endfor %}
+                                </div>
+                            </td>
+                            <td>
+                               <a href="{% url 'application' application.serial %}">{{ application.name }}</a>
+                            </td>
+                            <td>
+                                <a href="{% url 'station' application.station.pk %}"> {{ application.station.name }}</a>
+                            </td>
+                            <td>
+                               <div class="ui comments">
+                                  {% for comment in application.comments.all %}
+                                     <div class="ui comment">
+                                        <div class="content">
+                                            <a class="author" href="{% url 'user' comment.author.pk %}">{{ comment.author.name }}</a>
+                                            <div class="metadata">
+                                                <span class="date">{{ comment.created }}</span>
+                                            </div>
+                                            <div class="text">{{ comment.text }}</div>
+                                        </div>
+                                     </div>
+                                  {% endfor %}
+                               </div>
+                            </td>
+                        </tr>
                     {% endfor %}
-        </table>
-    </li>
-     <li><b>Комментарии</b>: 
-                <table border="1">                     
-                    {% for comment in show_user.comments.all %}
-                        <tr><td>{{ comment.request.ahref_serial|safe }}:{{ comment.request.ahref_name|safe}}</td><td>{{ comment.date_written }}</td><td>{{ comment.time_written }}</td><td>{{ comment.text }}</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="item">
+        <div class="content">
+            <div class="header">Участник заявок</div>
+            <div class="description">
+                 <table class="ui celled striped table">
+                    <thead>
+                        <tr>
+                            <th class="single line">Номер</th>
+                            <th>Организация</th>
+                            <th>Заказчик</th>
+                            <th>Название</th>
+                            <th>Станция</th>
+                            <th>Комментарии</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for application in user.applications_as_participant.all %}
+                        <tr>
+                            <td>
+                                {{ application.serial }}
+                            </td>
+                            <td>
+                                <div class="ui list">
+                                {% for organization in application.organizations.all %}
+                                    <div class="item"><a href="{% url 'organization' organization.pk %}">{{ organization.name }}</a></div>
+                                {% endfor %}
+                                </div>
+                            </td>
+                            <td>
+                                <a href="{% url 'user' application.author.pk %}">{{ application.author.name }}</a>
+                            </td>
+                            <td>
+                               <a href="{% url 'application' application.serial %}">{{ application.name }}</a>
+                            </td>
+                            <td>
+                                <a href="{% url 'station' application.station.pk %}"> {{ application.station.name }}</a>
+                            </td>
+                            <td>
+                               <div class="ui comments">
+                                  {% for comment in application.comments.all %}
+                                     <div class="ui comment">
+                                        <div class="content">
+                                            <a class="author" href="{% url 'user' comment.author.pk %}">{{ comment.author.name }}</a>
+                                            <div class="metadata">
+                                                <span class="date">{{ comment.created }}</span>
+                                            </div>
+                                            <div class="text">{{ comment.text }}</div>
+                                        </div>
+                                     </div>
+                                  {% endfor %}
+                               </div>
+                            </td>
+                        </tr>
                     {% endfor %}
-            </table>
-    </li>
-</ul>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+     <div class="item">
+        <div class="content">
+            <div class="header">Запланированные эксперименты</div>
+            <div class="description">
+                 <div class="ui list">
+                    {% for planning in user.planning_experiments.all %}
+                        <div class="ui item">{{ planning.name }}: {{planning.start}}-{{planning.end}}</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="item">
+        <div class="content">
+            <div class="header">Журнал</div>
+            <div class="description">
+                 <div class="ui list">
+                    {% for experiment  in user.experiments_as_author.all %}
+                        <div class="ui item">{{ experiment.name }}: {{experiment.start}}-{{experiment.end}}</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+     <div class="item">
+        <div class="content">
+            <div class="header">Комментарии</div>
+            <div class="description">
+                 <div class="ui list">
+                    {% for comment  in user.comments.all %}
+                        <div class="ui item">{{ comment.text }}: {{comment.application.name}}-{{comment.created}}</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
+
+

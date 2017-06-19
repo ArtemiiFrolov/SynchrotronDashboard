@@ -1,0 +1,82 @@
+{% extends 'layout.html' %}
+{% block content %}
+<h1 class="ui header divided">{{ organization.name }}</h1>
+
+<div class="ui items">
+    <div class="item">
+        <div class="content">
+            <div class="header">Сотрудники организации</div>
+            <div class="description">
+                 <div class="ui list">
+                    {% for user in organization.users.all %}
+                        <div class="ui item">
+                            <a href="{% url 'user' user.pk %}">{{ user.name }}</a>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+     <div class="item">
+        <div class="content">
+            <div class="header">Заявки организации</div>
+            <div class="description">
+                <table class="ui celled striped table">
+                    <thead>
+                        <tr>
+                            <th class="single line">Номер</th>
+                            <th>Организация</th>
+                            <th>Заказчик</th>
+                            <th>Название</th>
+                            <th>Станция</th>
+                            <th>Комментарии</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for application in organization.applications.all %}
+                        <tr>
+                            <td>
+                                <h3 class="ui center aligned header">{{ application.serial }}</h3>
+                            </td>
+                            <td>
+                                <div class="ui list">
+                                {% for organization in application.organizations.all %}
+                                    <div class="item"><a href="{% url 'organization' organization.pk %}">{{ organization.name }}</a></div>
+                                {% endfor %}
+                                </div>
+                            </td>
+                            <td>
+                                <a href="{% url 'user' application.author.pk %}">{{ application.author.name }}</a>
+                            </td>
+                            <td>
+                               <a href="{% url 'application' application.serial %}">{{ application.name }}</a>
+                            </td>
+                            <td>
+                                <a href="{% url 'station' application.station.pk %}"> {{ application.station.name }}</a>
+                            </td>
+                            <td>
+                               <div class="ui comments">
+                                  {% for comment in application.comments.all %}
+                                     <div class="ui comment">
+                                        <div class="content">
+                                            <a class="author" href="{% url 'user' comment.author.pk %}">{{ comment.author.name }}</a>
+                                            <div class="metadata">
+                                                <span class="date">{{ comment.created }}</span>
+                                            </div>
+                                            <div class="text">{{ comment.text }}</div>
+                                        </div>
+                                     </div>
+                                  {% endfor %}
+                               </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+

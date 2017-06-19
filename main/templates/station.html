@@ -81,46 +81,30 @@
         <table class="ui celled striped table">
         <thead>
             <tr>
-                <th class="single line">Номер</th>
-                <th>Организация</th>
-                <th>Заказчик</th>
-                <th>Название</th>
-                <th>Комментарии</th>
+                <th class="single line">Автор</th>
+                <th>Заявка</th>
+                <th>Начало</th>
+                <th>Конец</th>
+                <th>Статус</th>
             </tr>
         </thead>
         <tbody>
-        {% for application in station.applications.all %}
+        {% for planning_experiment in station.planning_experiments.all %}
             <tr>
                 <td>
-                    {{ application.serial }}
+                    <a href="{% url 'user' planning_experiment.author.pk %}">{{ planning_experiment.author.name }}</a>
                 </td>
                 <td>
-                    <div class="ui list">
-                    {% for organization in application.organizations.all %}
-                        <div class="item"><a href="{% url 'organization' organization.pk %}">{{ organization.name }}</a></div>
-                    {% endfor %}
-                    </div>
+                    <a href="{% url 'application' planning_experiment.application.serial %}">{{ planning_experiment.application.name }}</a>
                 </td>
                 <td>
-                    <a href="{% url 'user' application.author.pk %}">{{ application.author.name }}</a>
+                   {{planning_experiment.start}}
                 </td>
                 <td>
-                   <a href="{% url 'application' application.serial %}">{{ application.name }}</a>
+                   {{planning_experiment.end}}
                 </td>
                 <td>
-                   <div class="ui comments">
-                      {% for comment in application.comments.all %}
-                         <div class="ui comment">
-                            <div class="content">
-                                <a class="author" href="{% url 'user' comment.author.pk %}">{{ comment.author.name }}</a>
-                                <div class="metadata">
-                                    <span class="date">{{ comment.created }}</span>
-                                </div>
-                                <div class="text">{{ comment.text }}</div>
-                            </div>
-                         </div>
-                      {% endfor %}
-                   </div>
+                    {{planning_experiment.status}}
                 </td>
             </tr>
         {% endfor %}

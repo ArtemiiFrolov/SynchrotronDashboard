@@ -1,4 +1,11 @@
+# -*- coding: utf-8 -*-
+
+import django
+
+django.setup()
+
 from main.models import *
+
 
 organization1 = Organization.objects.create(name='ЛМА')
 organization2 = Organization.objects.create(name='Курчатовский НИИ')

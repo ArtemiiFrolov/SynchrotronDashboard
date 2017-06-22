@@ -41,6 +41,9 @@ class TagModel(models.Model):
     def __str__(self):
         return self.name
 
+    def __unicode__(self):
+        return self.__str__()
+
 
 # TODO: Add calendar and documents
 class Organization(TagModel):
@@ -55,6 +58,9 @@ class Station(models.Model):
 
     def __str__(self):
         return self.name
+
+    def __unicode__(self):
+        return self.__str__()
 
     class Meta:
         verbose_name = 'Станция'
@@ -75,6 +81,9 @@ class Right(models.Model):
     def __str__(self):
         return self.name
 
+    def __unicode__(self):
+        return self.__str__()
+
     class Meta:
         verbose_name = 'Право'
         verbose_name_plural = 'Права'
@@ -86,6 +95,9 @@ class Role(models.Model):
 
     def __str__(self):
         return self.name
+
+    def __unicode__(self):
+        return self.__str__()
 
     class Meta:
         verbose_name = 'Роль'
@@ -116,6 +128,9 @@ class JournalStatus(models.Model):
     def __str__(self):
         return self.name
 
+    def __unicode__(self):
+        return self.__str__()
+
     class Meta:
         verbose_name = 'Статус планируемого эксперимента'
         verbose_name_plural = 'Статусы планируемого эксперимента'
@@ -126,6 +141,9 @@ class EventsList(models.Model):
 
     def __str__(self):
         return self.name
+
+    def __unicode__(self):
+        return self.__str__()
 
     class Meta:
         verbose_name = 'Словарь событий'
@@ -192,6 +210,9 @@ class User(AbstractBaseUser):
     def __str__(self):  # __unicode__ on Python 2
         return self.name
 
+    def __unicode__(self):
+        return self.__str__()
+
     def has_perm(self, perm, obj=None):
         # "Does the user have a specific permission?"
         # Simplest possible answer: Yes, always
@@ -226,6 +247,9 @@ class Application(models.Model):
 
     def __str__(self):
         return self.serial
+
+    def __unicode__(self):
+        return self.__str__()
 
     class Meta:
         verbose_name = 'Заявка'
@@ -263,6 +287,9 @@ class Experiment(models.Model):
     def __str__(self):
         return '%s %s-%s' % (self.station.name, str(self.start), str(self.end))
 
+    def __unicode__(self):
+        return self.__str__()
+
     class Meta:
         verbose_name = 'Завершенный эксперимент'
         verbose_name_plural = 'Завершенные эксперименты'
@@ -289,6 +316,9 @@ class Comment(TimeStampedModel):
     def __str__(self):
         return '%s %s %s' % (self.author.name, self.application.serial, str(self.created))
 
+    def __unicode__(self):
+        return self.__str__()
+
     class Meta:
         verbose_name = 'Комментарий'
         verbose_name_plural = 'Комментарии'
@@ -305,3 +335,6 @@ class ApplicationCounter(models.Model):
 
     def __str__(self):
         return str(self.number)
+
+    def __unicode__(self):
+        return self.__str__()

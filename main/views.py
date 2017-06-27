@@ -50,6 +50,20 @@ def logout_view(request):
 
 
 @login_required
+def applications_table(request):
+    applications = Application.objects.all()
+    if request.GET.get('my', None):
+        applications = applications.filter(author__pk=request.user.pk)
+    return render(request, 'include/applications_list.html', {'applications': applications})
+
+
+def application_row(request, pk):
+    app = Application.objects.get(pk=pk)
+    app.stage_status = StageStatus.objects.get_or_create(name='Заявка принята')
+    app.save()
+    return render(request, 'include/application_row.html', {'application': get_object_or_404(Application, pk=pk)})
+
+@login_required
 @require_http_methods(['GET', 'POST'])
 def application_edit(request, serial=None):
     if serial is not None:
@@ -59,8 +73,11 @@ def application_edit(request, serial=None):
         app = None
 
     if request.method == "POST":
+        context = {}
+        errors = {}
         if not app:
             app = Application()
+        context['application'] = app
         # Split request creation in two parts
         # TODO: добавить проверку
         app_counter = ApplicationCounter.objects.get(year=datetime.date.today().year)
@@ -77,10 +94,17 @@ def application_edit(request, serial=None):
             start = '%s %s' % (request.POST['date_start'], request.POST['time_start'])
             app.start = datetime.datetime.strptime(start, "%Y-%m-%d %H:%M")
             end = '%s %s' % (request.POST['date_end'], request.POST['time_end'])
-            app.end = datetime.datetime.strptime(end, "%Y-%m-%d %H:%M")
+            if end:
+                app.end = datetime.datetime.strptime(end, "%Y-%m-%d %H:%M")
+            else:
+                errors['end'] = 'Где же это значение?'
             app.complete_status = CompleteStatus.objects.get_or_create(name="На рассмотрении")
             app.stage_status = StageStatus.objects.get_or_create(name="На рассмотрении")
-            app.save()
+            if not errors:
+                app.save()
+            else:
+                context['errors'] = errors
+                render(request, 'application_form.html', context)
             # TODO: need to check, is it ok, or it can be done better way
             organizations_list = request.POST.getlist('organizations')
             for organizations_item in organizations_list:
@@ -98,7 +122,7 @@ def application_edit(request, serial=None):
             app = Application()
         app_counter.number = app_counter.number + 1
         app_counter.save()
-        context = {'applications': Application.objects.all}
+
         return render(request, 'applications.html', context)
     else:
         context = {
@@ -110,6 +134,11 @@ def application_edit(request, serial=None):
             'equipment': Equipment.objects.all}
         return render(request, 'application_form.html', context)
 
+#
+# def application_approve(request, serial):
+#     if ...:
+#
+#     return redirect(application_view, serial=serial)
 
 def application_view(request, serial):
     app = get_object_or_404(Application, serial=serial)

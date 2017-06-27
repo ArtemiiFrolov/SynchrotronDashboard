@@ -13,6 +13,8 @@ urlpatterns = [
     url(r'^applications/(?P<serial>.*)/edit$', views.application_edit, name='application_edit'),
     url(r'^applications/new$', views.application_edit, name='application_new'),
     url(r'^applications/$', views.applications_view, name='applications'),
+    url(r'^applications_table$', views.applications_table, name='applications_table'),
+    url(r'^application_row/(?P<pk>.*)/$', views.application_row, name='application_row'),
 
     url(r'^stations/(?P<pk>.*)/$', views.station_view, name='station'),
 

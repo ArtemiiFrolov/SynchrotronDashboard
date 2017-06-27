@@ -5,6 +5,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ValidationError, NON_FIELD_ERRORS, FieldError
+from django.db.models.signals import post_save, post_delete, pre_save
 
 
 class TimeStampedModel(models.Model):
@@ -245,6 +247,15 @@ class Application(models.Model):
     complete_status = models.ForeignKey(CompleteStatus, related_name='applications', verbose_name='Статус завершения')
     stage_status = models.ForeignKey(StageStatus, related_name='applications', verbose_name='Статус принятия в работу')
 
+    @staticmethod
+    def pre_save(sender, instance, **kwargs):
+        errors = {}
+        if not instance.end:
+            errors['end'] = 'Не указана дата окончания'
+
+        if errors:
+            raise ValidationError(errors)
+
     def __str__(self):
         return self.serial
 
@@ -254,6 +265,9 @@ class Application(models.Model):
     class Meta:
         verbose_name = 'Заявка'
         verbose_name_plural = 'Заявки'
+
+
+pre_save.connect(Application.pre_save, Application, dispatch_uid="main.models.Application")
 
 
 class ExperimentPlan(models.Model):

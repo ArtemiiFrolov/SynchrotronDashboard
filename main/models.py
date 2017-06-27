@@ -236,8 +236,8 @@ class Application(models.Model):
     serial = models.CharField('Номер', max_length=15, blank=False, null=False)
     description = models.TextField('Описание', )
     time_needed = models.IntegerField('Необходимое время', default=0)
-    start = models.DateTimeField('Старт', auto_now_add=True)
-    end = models.DateTimeField('Окончание', auto_now_add=True)
+    start = models.DateTimeField('Старт', auto_now_add=False)
+    end = models.DateTimeField('Окончание', auto_now_add=False)
     station = models.ForeignKey(Station, related_name='applications', verbose_name='Станция')
     approaches = models.ManyToManyField(Approach, related_name='applications', verbose_name='Методика')
     participants = models.ManyToManyField(User, related_name='applications_as_participant', verbose_name='Участники')
@@ -259,8 +259,8 @@ class Application(models.Model):
 class ExperimentPlan(models.Model):
     author = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='planning_experiments', verbose_name='Автор')
     application = models.ForeignKey(Application, related_name='planning_experiments', verbose_name='Заявка')
-    start = models.DateTimeField('Старт', auto_now_add=True)
-    end = models.DateTimeField('Окончание', auto_now_add=True)
+    start = models.DateTimeField('Старт', auto_now_add=False)
+    end = models.DateTimeField('Окончание', auto_now_add=False)
     status = models.ForeignKey(JournalStatus, related_name='planning_experiments', verbose_name='Статус')
     station = models.ForeignKey(Station, related_name='planning_experiments', verbose_name='Станция')
 
@@ -277,8 +277,8 @@ class ExperimentPlan(models.Model):
 class Experiment(models.Model):
     application = models.ForeignKey(Application, related_name='experiments', verbose_name='Заявка')
     author = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='experiments_as_author', verbose_name='Автор')  # TODO: automatically fill from request
-    start = models.DateTimeField('Старт', auto_now_add=True)
-    end = models.DateTimeField('Окончание', auto_now_add=True)
+    start = models.DateTimeField('Старт',auto_now_add=False)
+    end = models.DateTimeField('Окончание', auto_now_add=False)
     operator = models.ForeignKey(User, related_name='experiments_as_operator', verbose_name='Оператор')
     methods = models.ForeignKey(Approach, related_name='experiments', verbose_name='Методика')
     comment = models.TextField('Комментарий', blank=False, null=False)
@@ -297,8 +297,8 @@ class Experiment(models.Model):
 
 class Event(models.Model):
     name = models.ForeignKey(EventsList, related_name='events', verbose_name='Название')
-    start = models.DateTimeField('Старт', auto_now_add=True)
-    end = models.DateTimeField('Окончание', auto_now_add=True)
+    start = models.DateTimeField('Старт', auto_now_add=False)
+    end = models.DateTimeField('Окончание', auto_now_add=False)
 
     def __str__(self):
         return '%s-%s' % (str(self.start), str(self.end))

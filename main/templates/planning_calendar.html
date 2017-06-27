@@ -1,0 +1,47 @@
+{% extends 'layout.html' %}
+{% block content %}
+<h1 class="ui dividing header">Планирование экспериментов</h1>
+
+
+<div class="ui  text container">
+     <form action="" method="get" class="ui form">
+         <div class="field">
+                <label>Станции</label>
+                 <select name="station" class="ui fluid dropdown">
+                    {% for station in stations %}
+                        <option value="{{ station.name }}">{{ station.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+          <input type="submit" class="button" value="Выбрать">
+     </form>
+</div>
+<h3 class="ui header">{{text}}</h3>
+ <form action="" method="post" class="ui form">
+{% csrf_token %}
+    <div class="field">
+            <label for="application">Заявка</label>
+            <select  name="serial">
+                <option disabled>Заявка</option>
+                {% for application in applications %}
+                    <option {%if selected_app == application %}selected{%endif%} value="{{application.serial}}">{{application.name}}</option>
+                {% endfor %}
+            </select>
+    </div>
+    <div class="field">
+        <label for="date_start">Дата начала</label>
+        <input type="date" name="date_start">
+        <input type="time" name="time_start">
+    </div>
+    <div class="field">
+        <label for="date_end">Дата окончания</label>
+        <input type="date" name="date_end">
+        <input type="time" name="time_end">
+    </div>
+     <input type="submit" class="ui primary button" value="Запланировать">
+    </form>
+<script type="text/javascript">
+    $('.dropdown').dropdown();
+</script>
+{% endblock %}
+

@@ -12,9 +12,22 @@
                 </a>
                 <a href="{% url 'applications' %}" class="item">Заявки</a>
                 <a href="{% url 'application_new' %}" class="item">Создать заявку</a>
-                <a href="#" class="item">Эксперименты</a>
-                <a href="#" class="item">Календари</a>
-                <a href="#" class="item">Справочники</a>
+                <div class="ui simple dropdown item">
+                   Планирование эксперимента <i class="dropdown icon"></i>
+                    <div class="menu">
+                        <a class="item" href="{% url 'planning_experiments' %}">По заявкам</a>
+                        <a class="item" href="{% url 'planning_calendar' %}">По календарю</a>
+                        <a class="item" href="{% url 'planned_experiments' %}">Список запланированных заявок</a>
+                    </div>
+                </div>
+                <div class="ui simple dropdown item">
+                   Журнал экспериментов <i class="dropdown icon"></i>
+                    <div class="menu">
+                        <a class="item" href="{% url 'journal' %}">Просмотр журнала</a>
+                        <a class="item" href="{% url 'journal_new' %}">Создать запись</a>
+                    </div>
+                </div>
+                <a href="#" class="item">Журнал</a>
                 <div class="ui simple dropdown item">
                     Dropdown <i class="dropdown icon"></i>
                     <div class="menu">

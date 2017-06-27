@@ -20,4 +20,11 @@ urlpatterns = [
     url(r'^users/$', views.users_view, name='users'),
 
     url(r'^organizations/(?P<pk>.*)/$', views.organization_view, name='organization'),
+
+    url(r'^planning_experiments/$', views.planning_experiments, name='planning_experiments'),
+    url(r'^planned_experiments/$', views.planned_experiments, name='planned_experiments'),
+    url(r'^planning_calendar/$', views.planning_calendar, name='planning_calendar'),
+
+    url(r'^journal/$', views.journal, name='journal'),
+    url(r'^journal/new$', views.journal_new, name='journal_new'),
 ]

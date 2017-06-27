@@ -1,0 +1,79 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="ui text container">
+    <form action="" method="post" class="ui form">
+        {% csrf_token %}
+        <div class="field">
+            <label for="author">Заявка</label>
+            <select  name="serial">
+                <option disabled>Заявка</option>
+                {% for application in applications %}
+                    <option  {%if flag and planned_ex.application == application %}selected{%endif%}
+                            value="{{application.serial}}">{{application.name}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="field">
+            <div class="two fields">
+                <div class="field">
+                    <label for="date_start">Дата начала</label>
+                    <input type="date"{%if flag  %}value="{{start_date}}"{%endif%} name="date_start">
+                    <input type="time"{%if flag  %}value="{{start_time}}"{%endif%} name="time_start">
+                </div>
+                <div class="field">
+                    <label for="date_end">Дата окончания</label>
+                    <input type="date" {%if flag  %}value="{{end_date}}"{%endif%} name="date_end">
+                    <input type="time" {%if flag  %}value="{{end_time}}"{%endif%} name="time_end">
+                </div>
+            </div>
+        </div>
+        <div class="field">
+            <label for="author">Оператор</label>
+            <select  name="operator">
+                <option disabled>Оператор</option>
+                {% for user in users %}
+                    <option {%if flag and planned_ex.author == user %}selected{%endif%}
+                            value="{{user.name}}">{{user.name}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="field">
+            <label for="author">Методика</label>
+            <select  name="approach">
+                <option disabled>Методика</option>
+                {% for method in methods %}
+                    <option value="{{method.name}}">{{method.name}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="field">
+            <label for="description">Комментарий</label>
+            <textarea name="comment"></textarea>
+        </div>
+        <div class="field">
+            <label for="author">Станция</label>
+            <select  name="station">
+                <option disabled>Станция</option>
+                {% for station in stations %}
+                    <option {%if flag and planned_ex.station == station %}selected{%endif%}
+                            value="{{station.name}}">{{station.name}}</option>
+                {% endfor %}
+            </select>
+        </div>
+         <div class="field">
+            <label for="author">Запланированный эксперимент</label>
+            <select  name="ex_plan">
+                {% for planned_experiment in planned_experiments %}
+                    <option {%if flag and planned_ex == planned_experiment %}selected{%endif%}
+                            value="{{planned_experiment.pk}}">{{planned_experiment.start}}-{{planned_experiment.station}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <input type="submit" class="ui primary button" value="Сохранить">
+    </form>
+</div>
+
+<script type="text/javascript">
+    $('.dropdown').dropdown();
+</script>
+{% endblock %}

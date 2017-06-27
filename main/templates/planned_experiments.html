@@ -1,0 +1,83 @@
+{% extends 'layout.html' %}
+{% block content %}
+<h1 class="ui dividing header">Запланированные эксперименты</h1>
+
+
+<div class="ui  text container">
+     <form action="" method="get" class="ui form">
+         <div class="field">
+                <label>Станции</label>
+                 <select name="station" class="ui fluid dropdown">
+                    {% for station in stations %}
+                        <option value="{{ station.name }}">{{ station.name }}</option>
+                    {% endfor %}
+                        <option value="All">Все станции</option>
+                </select>
+            </div>
+          <input type="submit" class="button" value="Выбрать">
+     </form>
+</div>
+<h3 class="ui header">{{text}}</h3>
+    <table class="ui celled striped table">
+        <thead>
+            <tr>
+                <th class="single line">Номер</th>
+                <th>Заказчик</th>
+                <th>Название</th>
+                <th>Станция</th>
+                <th>Старт</th>
+                <th>Окончание</th>
+                <th>Статус</th>
+                <th colspan="2">Управление</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for planned_experiment in planned_experiments %}
+            <tr>
+                <td>
+                    <a href="{% url 'application' planned_experiment.application.serial %}"> {{ planned_experiment.application.serial }}</a>
+                </td>
+                <td>
+                    <a href="{% url 'user' planned_experiment.author.pk %}">{{ planned_experiment.author.name }}</a>
+                </td>
+                <td>
+                   <a href="{% url 'application' planned_experiment.application.serial %}">{{ planned_experiment.application.name }}</a>
+                </td>
+                 <td>
+                    <a href="{% url 'station' planned_experiment.station.pk %}"> {{ planned_experiment.station.name }}</a>
+                </td>
+                <td>
+                    {{planned_experiment.start}}
+                </td>
+                <td>
+                     {{planned_experiment.end}}
+                </td>
+
+                <td>
+                     {{planned_experiment.status}}
+                </td>
+                 <td>
+                    <form action="/journal/new" method="get">
+                        <input type="hidden" name="planned" value="{{planned_experiment.pk}}">
+                        <input type="submit" value="Выполнить" />
+                    </form>
+                </td>
+                <td>
+                    <form action="#">
+                        <input type="hidden" name="application" value="{{application}}">
+                        <input type="submit" value="Удалить" />
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+
+
+
+<script type="text/javascript">
+    $('.dropdown').dropdown();
+</script>
+{% endblock %}
+

@@ -35,6 +35,7 @@ class TagModel(models.Model):
 
     class Meta:
         abstract = True
+        ordering = ['name']
 
     objects = TagManager()
 
@@ -45,22 +46,14 @@ class TagModel(models.Model):
         return self.__str__()
 
 
-# TODO: Add calendar and documents
 class Organization(TagModel):
     class Meta:
         verbose_name = 'Организация'
         verbose_name_plural = 'Организации'
 
 
-class Station(models.Model):
-    name = models.CharField('Название', max_length=100, blank=False, null=False)
+class Station(TagModel):
     short_description = models.CharField('Краткое описание', max_length=100, blank=True, null=False)
-
-    def __str__(self):
-        return self.name
-
-    def __unicode__(self):
-        return self.__str__()
 
     class Meta:
         verbose_name = 'Станция'
@@ -75,29 +68,14 @@ class Approach(TagModel):
         verbose_name_plural = 'Методики'
 
 
-class Right(models.Model):
-    name = models.CharField('Название', max_length=100, blank=False)
-
-    def __str__(self):
-        return self.name
-
-    def __unicode__(self):
-        return self.__str__()
-
+class Right(TagModel):
     class Meta:
         verbose_name = 'Право'
         verbose_name_plural = 'Права'
 
 
-class Role(models.Model):
-    name = models.CharField('Название', max_length=100, blank=False, null=False)
+class Role(TagModel):
     rights = models.ManyToManyField(Right, related_name='roles', verbose_name='Права')
-
-    def __str__(self):
-        return self.name
-
-    def __unicode__(self):
-        return self.__str__()
 
     class Meta:
         verbose_name = 'Роль'
@@ -122,29 +100,13 @@ class StageStatus(TagModel):
         verbose_name_plural = 'Статусы принятия в работу'
 
 
-class JournalStatus(models.Model):
-    name = models.CharField('Название', max_length=100, blank=False, null=False)
-
-    def __str__(self):
-        return self.name
-
-    def __unicode__(self):
-        return self.__str__()
-
+class JournalStatus(TagModel):
     class Meta:
         verbose_name = 'Статус планируемого эксперимента'
         verbose_name_plural = 'Статусы планируемого эксперимента'
 
 
-class EventsList(models.Model):
-    name = models.CharField('Название', max_length=100, blank=False, null=False)
-
-    def __str__(self):
-        return self.name
-
-    def __unicode__(self):
-        return self.__str__()
-
+class EventsList(TagModel):
     class Meta:
         verbose_name = 'Словарь событий'
         verbose_name_plural = 'Словарь событий'

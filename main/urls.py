@@ -1,6 +1,11 @@
-from django.conf.urls import url
+from django.conf.urls import url, include
+from rest_framework import routers
 
 from . import views
+from main.api import viewsets
+
+api_router = routers.DefaultRouter()
+api_router.register(r'stations', viewsets.StationViewSet, base_name='station')
 
 urlpatterns = [
     url(r'^$', views.index, name='index'),
@@ -20,4 +25,8 @@ urlpatterns = [
     url(r'^users/$', views.users_view, name='users'),
 
     url(r'^organizations/(?P<pk>.*)/$', views.organization_view, name='organization'),
+
+    url(r'^api/', include(api_router.urls, namespace='api')),
 ]
+
+

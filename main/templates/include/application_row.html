@@ -1,0 +1,51 @@
+
+    <td>
+       {{ application.serial }}
+    </td>
+    <td>
+        <div class="ui list">
+        {% for organization in application.organizations.all %}
+            <div class="item"> <a href="{% url 'organization' organization.pk %}">{{ organization.name }}</a></div>
+        {% endfor %}
+        </div>
+    </td>
+    <td>
+        <a href="{% url 'user' application.author.pk %}">{{ application.author.name }}</a>
+    </td>
+    <td>
+       <a href="{% url 'application' application.serial %}">{{ application.name }}</a>
+    </td>
+    <td>
+        <a href="{% url 'station' application.station.pk %}"> {{ application.station.name }}</a>
+    </td>
+    <td>
+         {{ application.stage_status.name }}
+    </td>
+    <td>
+       <div class="ui comments">
+          {% for comment in application.comments.all %}
+             <div class="ui comment">
+                <div class="content">
+                    <a class="author" href="{% url 'user' comment.author.pk %}">{{ comment.author.name }}</a>
+                    <div class="metadata">
+                        <span class="date">{{ comment.created }}</span>
+                    </div>
+                    <div class="text">{{ comment.text }}</div>
+                </div>
+             </div>
+          {% endfor %}
+       </div>
+    </td>
+    <td>
+        <a href="javascript:;" onclick="approve({{application.id}});">✔</a>
+    </td>
+    <td>
+        <form action="{% url 'application_edit' application.serial %}">
+            <input type="submit" value="↻" />
+        </form>
+    </td>
+    <td>
+        <form action="">
+            <input type="submit" value="✘" />
+        </form>
+    </td>

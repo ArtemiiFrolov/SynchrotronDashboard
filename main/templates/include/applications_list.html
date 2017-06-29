@@ -7,47 +7,14 @@
             <th>Заказчик</th>
             <th>Название</th>
             <th>Станция</th>
+            <th>Статус</th>
             <th>Комментарии</th>
+            <th colspan="3">Управление</th>
         </tr>
     </thead>
     <tbody>
     {% for application in applications %}
-        <tr>
-            <td>
-                <h3 class="ui center aligned header">{{ application.serial }}</h3>
-            </td>
-            <td>
-                <div class="ui list">
-                {% for organization in application.organizations.all %}
-                    <div class="item"> <a href="{% url 'organization' organization.pk %}">{{ organization.name }}</a></div>
-                {% endfor %}
-                </div>
-            </td>
-            <td>
-                <a href="{% url 'user' application.author.pk %}">{{ application.author.name }}</a>
-            </td>
-            <td>
-               <a href="{% url 'application' application.serial %}">{{ application.name }}</a>
-            </td>
-            <td>
-                <a href="{% url 'station' application.station.pk %}"> {{ application.station.name }}</a>
-            </td>
-            <td>
-               <div class="ui comments">
-                  {% for comment in application.comments.all %}
-                     <div class="ui comment">
-                        <div class="content">
-                            <a class="author" href="{% url 'user' comment.author.pk %}">{{ comment.author.name }}</a>
-                            <div class="metadata">
-                                <span class="date">{{ comment.created }}</span>
-                            </div>
-                            <div class="text">{{ comment.text }}</div>
-                        </div>
-                     </div>
-                  {% endfor %}
-               </div>
-            </td>
-        </tr>
+        <tr id="application-row-{{application.id}}">{% include 'include/application_row.html' %}</tr>
     {% endfor %}
     </tbody>
 </table>

@@ -7,16 +7,33 @@
     <div class="ui left rail">
         <h3 class="ui header">Фильтр</h3>
         <div class="ui list">
-            <a>Мои заявки</a>
-            <a>С моим участием</a>
+            <a class="ui item" onclick="my_applications();">Мои заявки</a class="ui item">
+            <a class="ui item">С моим участием</a>
             {% if request.user.is_staff %}
-            <a>На рассмотрении</a>
-            <a >Формируются</a>
-            <a>Выполненные</a>
-            <a>Завершенные</a>
+            <a class="ui item">На рассмотрении</a>
+            <a class="ui item">Формируются</a>
+            <a class="ui item">Выполненные</a>
+            <a class="ui item">Завершенные</a>
             {% endif %}
         </div>
     </div>
-    {% include 'include/applications_list.html' %}
+    <div id="applications">
+    </div>
 </div>
+<script type="text/javascript">
+function my_applications() {
+ $('#applications').empty();
+ $('#applications').load('/applications_table?my=1');
+};
+
+function approve(id) {
+    $('#application-row-' + id).empty();
+    $('#application-row-' + id).load('/application_row/'+id);
+};
+
+
+    $( document ).ready(function() {
+        $('#applications').load('/applications_table');
+    });
+</script>
 {% endblock %}

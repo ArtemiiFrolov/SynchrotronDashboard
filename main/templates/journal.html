@@ -1,0 +1,76 @@
+{% extends 'layout.html' %}
+{% block content %}
+<h1 class="ui dividing header">Журнал экспериментов</h1>
+
+
+<div class="ui  text container">
+     <form action="" method="get" class="ui form">
+         <div class="field">
+                <label>Станции</label>
+                 <select name="station" class="ui fluid dropdown">
+                    {% for station in stations %}
+                        <option value="{{ station.name }}">{{ station.name }}</option>
+                    {% endfor %}
+                        <option value="All">Все станции</option>
+                </select>
+            </div>
+          <input type="submit" class="button" value="Выбрать">
+     </form>
+</div>
+<h3 class="ui header">{{text}}</h3>
+    <table class="ui celled striped table">
+        <thead>
+            <tr>
+                <th class="single line">Дата</th>
+                <th>Заказчик</th>
+                <th>Название</th>
+                <th>Исполнитель</th>
+                <th>Методика</th>
+                <th>Комментарий</th>
+                <th>Станция</th>
+                <th>Управление</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for experiment in experiments %}
+            <tr>
+                <td>
+                     {{ experiment.start }} - {{ experiment.end }}
+                </td>
+                <td>
+                    <a href="{% url 'user' experiment.application.author.pk %}">{{ experiment.application.author.name }}</a>
+                </td>
+                <td>
+                   <a href="{% url 'application' experiment.application.serial %}">{{ experiment.application.name }}</a>
+                </td>
+                <td>
+                    <a href="{% url 'user' experiment.operator.pk %}">{{ experiment.operator.name }}</a>
+                </td>
+                <td>
+                     {{experiment.methods}}
+                </td>
+                <td>
+                     {{experiment.comment}}
+                </td>
+                <td>
+                     <a href="{% url 'application' experiment.station.pk %}">{{ experiment.station.name }}</a>
+                </td>
+                <td>
+                    <form action="#">
+                        <input type="hidden" name="application" value="{{application}}">
+                        <input type="submit" value="Удалить" />
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+
+
+
+<script type="text/javascript">
+    $('.dropdown').dropdown();
+</script>
+{% endblock %}
+

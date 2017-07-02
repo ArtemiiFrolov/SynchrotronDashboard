@@ -26,7 +26,7 @@
             <div class="three fields">
                 <div class="field">
                     <label for="time_needed">Необходимое время (часов)</label>
-                    <input type="text" name="time_needed">
+                    <input type="text" name="time_needed" value="{{ application.time_needed }}">
                 </div>
                 <div class="field">
                     <label for="date_start">Дата начала</label>
@@ -100,7 +100,6 @@
         var action = $(this).data('api-action');
         var multiple = $(this).attr('multiple');
         var allowAdd = multiple != undefined;
-        console.log(allowAdd);
 
         $(this).dropdown({
             allowAdditions: allowAdd,

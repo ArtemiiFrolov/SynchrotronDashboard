@@ -85,7 +85,7 @@
         <div class="field">
             <label>Вспомогательное оборудование</label>
              <select name="equipment" class="ui fluid search dropdown" multiple="" data-api-action="search equipment">
-                {% for equip in equipment %}
+                {% for equip in application.equipment %}
                 <option value="{{ equip.id }}" selected>{{ equip.name }}</option>
                 {% endfor %}
              </select>

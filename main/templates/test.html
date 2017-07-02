@@ -1,6 +1,65 @@
 {% extends 'layout.html' %}
 
 {% block content %}
+<h1>Multiselection</h1>
+<form class="ui form">
+    <div class="field">
+        <label>Some field</label>
+        <input type="text" name="just_input">
+    </div>
+    <div class="field">
+        <label>Multi selection field (Stations)</label>
+         <select multiple="" name="multi" class="multi ui fluid search dropdown ">
+            <!--<option value="1" selected>RSA</option>-->
+        </select>
+    </div>
+    <div class="field">
+        <label>Single selection field (StageStatuses)</label>
+         <select name="single" class="single ui fluid search dropdown"></select>
+    </div>
+    <button class="ui primary button" type="submit">Submit (log to console)</button>
+</form>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('.multi').dropdown({
+            //regExp: { escape : /./g, },
+            saveRemoteData: false,
+            allowAdditions: true,
+            useLabels: true,
+            fields: {
+                name: 'name',
+                value: 'id',
+            },
+            apiSettings: {
+                action: 'search stations',
+            },
+        });
+
+         $('.single').dropdown({
+            saveRemoteData: false,
+            allowAdditions: true,
+            hideAdditions: false,
+            useLabels: false,
+            fields: {
+                name: 'name',
+                value: 'id',
+            },
+            apiSettings: {
+                action: 'search stage statuses',
+                //url: '/api/stage_statuses/?search={query}',
+            },
+        });
+    });
+
+    $('form').submit(function(e) {
+        e.preventDefault();
+        var data = JSON.stringify( $(this).serializeArray() );
+        console.log( data );
+    });
+</script>
+
+
 <h2>Headings</h2>
   <h1>h1. Bootstrap heading</h1>
   <h2>h2. Bootstrap heading</h2>

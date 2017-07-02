@@ -17,11 +17,8 @@
 
         <div class="field">
             <label for="author">Автор</label>
-            <select  name="author">
-                <option disabled>Автор</option>
-                {% for participant in participants %}
-                    <option value="{{participant.name}}">{{participant.name}}</option>
-                {% endfor %}
+            <select name="author" class="ui search dropdown" data-api-action="search users">
+                {% if application %}<option value="{{ application.author.id }}" selected>{{ application.author.name }}</option>{% endif %}
             </select>
         </div>
 
@@ -33,13 +30,17 @@
                 </div>
                 <div class="field">
                     <label for="date_start">Дата начала</label>
-                    <input type="date" name="date_start">
-                    <input type="time" name="time_start">
+                    <div class="ui input left icon datetime">
+                        <i class="calendar icon"></i>
+                        <input type="text" name="start" placeholder="Дата и время начала" value="{{ application.start|date:'c' }}"/>
+                    </div>
                 </div>
                 <div class="field">
-                    <label for="date_end">Дата окончания</label>
-                    <input type="date" name="date_end">
-                    <input type="time" name="time_end">
+                    <label for="date_start">Дата конца</label>
+                    <div class="ui input left icon datetime">
+                        <i class="calendar icon"></i>
+                        <input type="text" name="end" value="{{ application.end|date:'c' }}" placeholder="Дата и время конца">
+                    </div>
                 </div>
             </div>
         </div>
@@ -47,45 +48,45 @@
 
         <div class="field">
             <label>Организации</label>
-            <select name="organizations" class="ui fluid dropdown" multiple="">
-                {% for organization in organizations %}
-                <option value="{{ organization.name }}">{{ organization.name }}</option>
+            <select name="organizations" class="ui fluid search dropdown" multiple="" data-api-action="search organizations">
+                {% for organization in application.organizations.all %}
+                    <option value="{{ organization.id }}" selected>{{ organization.name }}</option>
                 {% endfor %}
             </select>
         </div>
 
         <div class="field">
             <label>Методики</label>
-            <select name="approaches" class="ui fluid dropdown" multiple="">
-                {% for approach in approaches %}
-                    <option value="{{ approach.name }}">{{ approach.name }}</option>
+            <select name="approaches" class="ui fluid search dropdown" multiple="" data-api-action="search approaches">
+                {% for approach in application.approaches.all %}
+                    <option value="{{ approach.id }}" selected>{{ approach.name }}</option>
                 {% endfor %}
             </select>
         </div>
 
         <div class="field">
             <label>Станции</label>
-             <select name="station" class="ui fluid dropdown" multiple="">
-                {% for station in stations %}
-                    <option value="{{ station.name }}">{{ station.name }}</option>
-                {% endfor %}
+             <select name="station" class="ui fluid search dropdown" data-api-action="search stations">
+                {% if application.station %}
+                 <option value="{{ application.station.id }}" selected>{{ application.station.name }}</option>
+                {% endif %}
             </select>
         </div>
 
         <div class="field">
             <label>Участники</label>
-             <select  name="participants" class="ui fluid dropdown" multiple="">
-                 {% for participant in participants %}
-                 <option value="{{ participant.name }}">{{ participant.name }}</option>
+             <select  name="participants" class="ui fluid search dropdown" multiple="" data-api-action="search users">
+                 {% for participant in application.participants.all %}
+                 <option value="{{ participant.id }}" selected>{{ participant.name }}</option>
                  {% endfor %}
              </select>
         </div>
 
         <div class="field">
             <label>Вспомогательное оборудование</label>
-             <select name="equipment" class="ui fluid dropdown" multiple="">
+             <select name="equipment" class="ui fluid search dropdown" multiple="" data-api-action="search equipment">
                 {% for equip in equipment %}
-                <option value="{{ equip.name }}">{{ equip.name }}</option>
+                <option value="{{ equip.id }}" selected>{{ equip.name }}</option>
                 {% endfor %}
              </select>
         </div>
@@ -95,6 +96,25 @@
 </div>
 
 <script type="text/javascript">
-    $('.dropdown').dropdown();
+    $('.ui.dropdown').each(function(index) {
+        var action = $(this).data('api-action');
+        var multiple = $(this).attr('multiple');
+        var allowAdd = multiple != undefined;
+        console.log(allowAdd);
+
+        $(this).dropdown({
+            allowAdditions: allowAdd,
+            useLabels: allowAdd,
+            hideAdditions: false,
+            fields: {
+                name: 'name',
+                value: 'id',
+            },
+            apiSettings : {
+                action: action,
+            }
+        });
+    });
+    $('.datetime').calendar({ type: 'datetime', });
 </script>
 {% endblock %}

@@ -1,47 +1,76 @@
 {% extends 'layout.html' %}
 {% block content %}
-<h1 class="ui dividing header">Планирование экспериментов</h1>
+<div class="ui text container">
+    <div class="ui floating labeled icon dropdown button right floated">
+      <i class="filter icon"></i>
+      <span class="text">Фильтр по станциям</span>
+      <div class="menu">
+        <div class="header">Станции</div>
+        <div class="ui left icon input">
+            <i class="search icon"></i>
+            <input type="text" name="search" placeholder="Поиск...">
+        </div>
+        {% for station in stations %}
+        <div class="item icon">
+            <i class="ui icon cogs"></i>
+            {{ station.name }}
+        </div>
+        {% endfor %}
+      </div>
+    </div>
 
 
-<div class="ui  text container">
+    <h1 class="ui dividing header">Планирование экспериментов</h1>
+
+
+
      <form action="" method="get" class="ui form">
-         <div class="field">
-                <label>Станции</label>
-                 <select name="station" class="ui fluid dropdown">
-                    {% for station in stations %}
-                        <option value="{{ station.name }}">{{ station.name }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-          <input type="submit" class="button" value="Выбрать">
+             <div class="field">
+                    <label>Станции</label>
+                     <select name="station" class="ui fluid dropdown">
+                        {% for station in stations %}
+                            <option value="{{ station.name }}">{{ station.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+             <input type="submit" class="ui button" value="Выбрать">
+
      </form>
-</div>
-<h3 class="ui header">{{text}}</h3>
- <form action="" method="post" class="ui form">
-{% csrf_token %}
-    <div class="field">
+
+    <h3 class="ui header">{{text}}</h3>
+     <form action="" method="post" class="ui form">
+    {% csrf_token %}
+        <div class="field">
             <label for="application">Заявка</label>
-            <select  name="serial">
+            <select name="serial" class="ui dropdown">
                 <option disabled>Заявка</option>
                 {% for application in applications %}
                     <option {%if selected_app == application %}selected{%endif%} value="{{application.serial}}">{{application.name}}</option>
                 {% endfor %}
             </select>
-    </div>
-    <div class="field">
-        <label for="date_start">Дата начала</label>
-        <input type="date" name="date_start">
-        <input type="time" name="time_start">
-    </div>
-    <div class="field">
-        <label for="date_end">Дата окончания</label>
-        <input type="date" name="date_end">
-        <input type="time" name="time_end">
-    </div>
-     <input type="submit" class="ui primary button" value="Запланировать">
-    </form>
-<script type="text/javascript">
-    $('.dropdown').dropdown();
-</script>
+        </div>
+        <div class="field">
+            <label for="date_start">Дата начала</label>
+            <div class="ui input left icon datetime">
+                <i class="calendar icon"></i>
+                <input type="text" name="start">
+            </div>
+        </div>
+        <div class="field">
+            <label for="date_end">Дата окончания</label>
+            <div class="ui input left icon datetime">
+                <i class="calendar icon"></i>
+                <input type="text" name="end">
+            </div>
+        </div>
+        <input type="submit" class="ui primary button" value="Запланировать">
+     </form>
+
+    <script type="text/javascript">
+        $('.dropdown').dropdown();
+        $('.datetime').calendar({ type: 'datetime', });
+    </script>
+</div>
 {% endblock %}
 

@@ -10,8 +10,13 @@
                 <a href="#" class="header item">
                     <img class="logo" src="{% static 'img/logo.gif' %}"> ККСНИ
                 </a>
-                <a href="{% url 'applications' %}" class="item">Заявки</a>
-                <a href="{% url 'application_new' %}" class="item">Создать заявку</a>
+                <div class="ui simple dropdown item">
+                    <a href="{% url 'applications' %}">Заявки</a> <i class="dropdown icon"></i>
+                    <div class="menu">
+                        <a href="{% url 'applications' %}" class="item">Мои заявки</a>
+                        <a href="{% url 'application_new' %}" class="item">Создать заявку</a>
+                    </div>
+                </div>
                 <div class="ui simple dropdown item">
                    Планирование эксперимента <i class="dropdown icon"></i>
                     <div class="menu">
@@ -28,24 +33,6 @@
                     </div>
                 </div>
                 <a href="#" class="item">Журнал</a>
-                <div class="ui simple dropdown item">
-                    Dropdown <i class="dropdown icon"></i>
-                    <div class="menu">
-                        <a class="item" href="#">Link Item</a>
-                        <a class="item" href="#">Link Item</a>
-                        <div class="divider"></div>
-                        <div class="header">Header Item</div>
-                        <div class="item">
-                        <i class="dropdown icon"></i>
-                        Sub Menu
-                        <div class="menu">
-                            <a class="item" href="#">Link Item</a>
-                            <a class="item" href="#">Link Item</a>
-                        </div>
-                        </div>
-                        <a class="item" href="#">Link Item</a>
-                    </div>
-                </div>
                 <div class="right menu">
                     {% if request.user.is_authenticated %}
                     <div class="ui simple dropdown item">

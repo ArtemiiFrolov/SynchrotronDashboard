@@ -1,22 +1,28 @@
 {% extends 'layout.html' %}
 {% block content %}
 <h1 class="ui dividing header">Журнал экспериментов</h1>
+<div class="ui floating labeled icon dropdown button right floated">
+      <i class="filter icon"></i>
+      <span class="text">Фильтр по станциям</span>
+      <div class="menu">
+        <div class="header">Станции</div>
+        <div class="ui left icon input">
+            <i class="search icon"></i>
+            <input type="text" name="search" placeholder="Поиск...">
+        </div>
+          <div class="item icon">
+            <i class="ui icon cogs"></i>
+            <a href="?station=All" >Все станции</a>
+        </div>
+        {% for station in stations %}
+        <div class="item icon">
+            <i class="ui icon cogs"></i>
+            <a href="?station={{station.name}}" >{{ station.name }}</a>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
 
-
-<div class="ui  text container">
-     <form action="" method="get" class="ui form">
-         <div class="field">
-                <label>Станции</label>
-                 <select name="station" class="ui fluid dropdown">
-                    {% for station in stations %}
-                        <option value="{{ station.name }}">{{ station.name }}</option>
-                    {% endfor %}
-                        <option value="All">Все станции</option>
-                </select>
-            </div>
-          <input type="submit" class="button" value="Выбрать">
-     </form>
-</div>
 <h3 class="ui header">{{text}}</h3>
     <table class="ui celled striped table">
         <thead>

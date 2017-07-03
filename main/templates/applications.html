@@ -2,28 +2,49 @@
 {% block content %}
 <h1 class="ui dividing header">Мои заявки</h1>
 
-
 <div class="ui basic segment">
-    <div class="ui left rail">
+    {% if request.user.is_staff %}
+      <div class="ui left rail">
         <h3 class="ui header">Фильтр</h3>
         <div class="ui list">
-            <a class="ui item" onclick="my_applications();">Мои заявки</a class="ui item">
-            <a class="ui item">С моим участием</a>
-            {% if request.user.is_staff %}
-            <a class="ui item">На рассмотрении</a>
-            <a class="ui item">Формируются</a>
-            <a class="ui item">Выполненные</a>
-            <a class="ui item">Завершенные</a>
-            {% endif %}
+            <a href="{%url 'applications'%}?filter=all" class="ui item {% if filtered == 'all' %}selected{%endif%}">Все</a>
+            <a href="{%url 'applications'%}?filter=consideration" class="ui item {% if filtered == 'consideration'%}selected{%endif%}">На рассмотрении</a>
+            <a href="{%url 'applications'%}?filter=accepted" class="ui item {% if filtered == 'accepted'%}selected{%endif%}">Заявка принята</a>
+            <a href="{%url 'applications'%}?filter=returned" class="ui item {% if filtered == 'returned'%}selected{%endif%}">Возвращена с комментариями</a>
+            <a href="{%url 'applications'%}?filter=experiment" class="ui item {% if filtered == 'experiment'%}selected{%endif%}">Эксперимент завершен</a>
+            <a href="{%url 'applications'%}?filter=finished" class="ui item {% if filtered == 'finished'%}selected{%endif%}">Завершенные</a>
         </div>
+    </div>
+    {% endif %}
+    <div class="ui tabular menu">
+        <a class="item active" onclick="all_applications();">
+            Все заявки
+        </a>
+        <a class="item" onclick="my_applications();">
+            Мои заявки
+        </a>
+        <a class="item" onclick="part_applications();">
+            С моим участием
+        </a>
     </div>
     <div id="applications">
     </div>
 </div>
+
 <script type="text/javascript">
+function all_applications() {
+ $('#applications').empty();
+ $('#applications').load('/applications_table?all=1&filter={{filtered}}');
+};
+
 function my_applications() {
  $('#applications').empty();
- $('#applications').load('/applications_table?my=1');
+ $('#applications').load('/applications_table?my=1&filter={{filtered}}');
+};
+
+function part_applications() {
+ $('#applications').empty();
+ $('#applications').load('/applications_table?part=1&filter={{filtered}}');
 };
 
 function approve(id) {
@@ -32,8 +53,15 @@ function approve(id) {
 };
 
 
-    $( document ).ready(function() {
-        $('#applications').load('/applications_table');
-    });
+$( document ).ready(function() {
+    $('#applications').load('/applications_table?all=1&filter={{filtered}}');
+});
+
+$('.ui .item').on('click', function() {
+     $('.ui .item').removeClass('active');
+     $(this).addClass('active');
+  });
+
+$('.dropdown').dropdown();
 </script>
 {% endblock %}

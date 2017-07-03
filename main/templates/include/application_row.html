@@ -1,6 +1,6 @@
 
     <td>
-       {{ application.serial }}
+        <a href="{% url 'application' application.serial %}">{{ application.serial }}</a>
     </td>
     <td>
         <div class="ui list">
@@ -37,15 +37,11 @@
        </div>
     </td>
     <td>
-        <a href="javascript:;" onclick="approve({{application.id}});">✔</a>
+        <a href="javascript:;" onclick="approve({{application.id}});"><i class="checkmark icon"></i></a>
     </td>
     <td>
-        <form action="{% url 'application_edit' application.serial %}">
-            <input type="submit" value="↻" />
-        </form>
+        <a href="{% url 'application_edit' application.serial %}" ><i class="edit icon"></i></a>
     </td>
     <td>
-        <form action="">
-            <input type="submit" value="✘" />
-        </form>
+        <a href="" ><i class="remove icon"></i></a>
     </td>

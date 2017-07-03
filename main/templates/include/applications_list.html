@@ -13,7 +13,7 @@
         </tr>
     </thead>
     <tbody>
-    {% for application in applications %}
+    {% for application in applications reversed %}
         <tr id="application-row-{{application.id}}">{% include 'include/application_row.html' %}</tr>
     {% endfor %}
     </tbody>

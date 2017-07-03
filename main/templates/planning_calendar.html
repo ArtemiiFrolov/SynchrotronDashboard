@@ -13,7 +13,7 @@
         {% for station in stations %}
         <div class="item icon">
             <i class="ui icon cogs"></i>
-            {{ station.name }}
+            <a href="?station={{station.name}}" >{{ station.name }}</a>
         </div>
         {% endfor %}
       </div>
@@ -23,21 +23,6 @@
     <h1 class="ui dividing header">Планирование экспериментов</h1>
 
 
-
-     <form action="" method="get" class="ui form">
-             <div class="field">
-                    <label>Станции</label>
-                     <select name="station" class="ui fluid dropdown">
-                        {% for station in stations %}
-                            <option value="{{ station.name }}">{{ station.name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-
-             <input type="submit" class="ui button" value="Выбрать">
-
-     </form>
-
     <h3 class="ui header">{{text}}</h3>
      <form action="" method="post" class="ui form">
     {% csrf_token %}
@@ -45,7 +30,7 @@
             <label for="application">Заявка</label>
             <select name="serial" class="ui dropdown">
                 <option disabled>Заявка</option>
-                {% for application in applications %}
+                {% for application in applications reversed%}
                     <option {%if selected_app == application %}selected{%endif%} value="{{application.serial}}">{{application.name}}</option>
                 {% endfor %}
             </select>

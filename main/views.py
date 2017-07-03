@@ -52,8 +52,23 @@ def logout_view(request):
 @login_required
 def applications_table(request):
     applications = Application.objects.all()
+    filtered = 'all'
+    if request.GET.get('filter'):
+        filtered = request.GET.get('filter')
+    if filtered == 'consideration':
+        applications = applications.filter(stage_status__name="На рассмотрении")
+    if filtered == 'accepted':
+        applications = applications.filter(stage_status__name="Заявка принята")
+    if filtered == 'returned':
+        applications = applications.filter(stage_status__name="Возвращена с комментариями")
+    if filtered == 'experiment':
+        applications = applications.filter(stage_status__name="Эксперимент завершен")
+    if filtered == 'finished':
+        applications = applications.filter(stage_status__name="Завершенные")
     if request.GET.get('my', None):
         applications = applications.filter(author__pk=request.user.pk)
+    if request.GET.get('part', None):
+        applications = applications.filter(participants__pk=request.user.pk)
     return render(request, 'include/applications_list.html', {'applications': applications})
 
 
@@ -83,21 +98,16 @@ def application_edit(request, serial=None):
         app_counter = ApplicationCounter.objects.get(year=datetime.date.today().year)
         station_list = request.POST.getlist('station')
         for station_item in station_list:
-            app.station = Station.objects.get(name=station_item)
+            app.station = Station.objects.get(id=station_item)
             app.name = request.POST['name']
-            app.author = User.objects.get(name=request.POST['author'])
+            app.author = User.objects.get(id=request.POST['author'])
             app.serial = '%s-%s-%s' % (str(datetime.datetime.today().year),
                                        str(app_counter.number),
                                        app.station.short_description)
             app.description = request.POST['description']
             app.time_needed = request.POST['time_needed']
-            start = '%s %s' % (request.POST['date_start'], request.POST['time_start'])
-            app.start = datetime.datetime.strptime(start, "%Y-%m-%d %H:%M")
-            end = '%s %s' % (request.POST['date_end'], request.POST['time_end'])
-            if end:
-                app.end = datetime.datetime.strptime(end, "%Y-%m-%d %H:%M")
-            else:
-                errors['end'] = 'Где же это значение?'
+            app.start = datetime.datetime.strptime(request.POST['start'], "%d.%m.%Y %H:%M")
+            app.end = datetime.datetime.strptime(request.POST['end'], "%d.%m.%Y %H:%M")
             app.complete_status = CompleteStatus.objects.get_or_create(name="На рассмотрении")
             app.stage_status = StageStatus.objects.get_or_create(name="На рассмотрении")
             if not errors:
@@ -108,17 +118,18 @@ def application_edit(request, serial=None):
             # TODO: need to check, is it ok, or it can be done better way
             organizations_list = request.POST.getlist('organizations')
             for organizations_item in organizations_list:
-                app.organizations.add(Organization.objects.get(name=organizations_item))
+                if Organization.objects.get(id=organizations_item):
+                    app.organizations.add(Organization.objects.get(id=organizations_item))
             approaches_list = request.POST.getlist('approaches')
             for approaches_item in approaches_list:
-                app.approaches.add(Approach.objects.get(name=approaches_item))
+                app.approaches.add(Approach.objects.get(id=approaches_item))
             # TODO: change output method of participants - it will be too much of chosen objects
             participants_list = request.POST.getlist('participants')
             for participants_item in participants_list:
-                app.participants.add(User.objects.get(name=participants_item))
+                app.participants.add(User.objects.get(id=participants_item))
             equipment_list = request.POST.getlist('equipment')
             for equipment_item in equipment_list:
-                app.equipment.add(Equipment.objects.get(name=equipment_item))
+                app.equipment.add(Equipment.objects.get(id=equipment_item))
             app = Application()
         app_counter.number = app_counter.number + 1
         app_counter.save()
@@ -146,7 +157,11 @@ def application_view(request, serial):
 
 
 def applications_view(request):
-    return render(request, 'applications.html', {'applications': Application.objects.all})
+    applications = Application.objects.all()
+    filtered = 'all'
+    if request.GET.get('filter'):
+        filtered = request.GET.get('filter')
+    return render(request, 'applications.html', {'applications': applications, 'filtered': filtered})
 
 
 def users_view(request):
@@ -229,11 +244,9 @@ def planning_calendar(request):
         explan = ExperimentPlan()
         explan.author = User.objects.get(name=request.user.name)
         explan.application = Application.objects.get(serial=request.POST['serial'])
-        start = '%s %s' % (request.POST['date_start'], request.POST['time_start'])
-        explan.start = datetime.datetime.strptime(start, "%Y-%m-%d %H:%M")
-        end = '%s %s' % (request.POST['date_end'], request.POST['time_end'])
-        explan.end = datetime.datetime.strptime(end, "%Y-%m-%d %H:%M")
-        explan.status, created = JournalStatus.objects.get_or_create(name='Эксперимент не завершен')
+        explan.start = datetime.datetime.strptime(request.POST['start'], "%d.%m.%Y %H:%M")
+        explan.end = datetime.datetime.strptime(request.POST['end'], "%d.%m.%Y %H:%M")
+        explan.status = JournalStatus.objects.get_or_create(name='Эксперимент не завершен')
         explan.station = station
         explan.save()
     context = {'stations': Station.objects.all,

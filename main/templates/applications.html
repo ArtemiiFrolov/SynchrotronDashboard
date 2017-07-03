@@ -29,24 +29,31 @@
             </a>
         </div>
         <div id="applications">
+            {% include 'include/applications_list.html' %}
         </div>
     </div>
 </div>
 
 <script type="text/javascript">
+function load_table(path) {
+    $('#applications').empty();
+    $('#applications').load(path, function() {
+        $('#applications table').DataTable({
+            language: dataTablesLanguage,
+        });
+    });
+};
+
 function all_applications() {
- $('#applications').empty();
- $('#applications').load('/applications_table?all=1&filter={{filtered}}');
+    load_table('/applications_table?all=1&filter={{filtered}}');
 };
 
 function my_applications() {
- $('#applications').empty();
- $('#applications').load('/applications_table?my=1&filter={{filtered}}');
+    load_table('/applications_table?my=1&filter={{filtered}}');
 };
 
 function part_applications() {
- $('#applications').empty();
- $('#applications').load('/applications_table?part=1&filter={{filtered}}');
+    load_table('/applications_table?part=1&filter={{filtered}}');
 };
 
 function approve(id) {
@@ -56,9 +63,7 @@ function approve(id) {
 
 
 $( document ).ready(function() {
-    $('#applications').load('/applications_table?all=1&filter={{filtered}}', function() {
-        $('#applications table').DataTable();
-    });
+    load_table('/applications_table?all=1&filter={{filtered}}');
     $('.dropdown').dropdown();
 });
 

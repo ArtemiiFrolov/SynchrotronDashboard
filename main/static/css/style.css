@@ -2,4 +2,5 @@ body {}
 
 a.ui.item.selected {
     font-weight:bold;
+    font-size: 110%;
 }

@@ -118,15 +118,29 @@ def application_edit(request, serial=None):
             # TODO: need to check, is it ok, or it can be done better way
             organizations_list = request.POST.getlist('organizations')
             for organizations_item in organizations_list:
-                if Organization.objects.get(id=organizations_item):
+                try:
+                    Organization.objects.get(id=organizations_item)
+                except Exception:
+                    app.organizations.add(Organization.objects.get_or_create(name=organizations_item))
+                else:
                     app.organizations.add(Organization.objects.get(id=organizations_item))
             approaches_list = request.POST.getlist('approaches')
             for approaches_item in approaches_list:
-                app.approaches.add(Approach.objects.get(id=approaches_item))
+                try:
+                    Approach.objects.get(id=approaches_item)
+                except Exception:
+                    app.approaches.add(Approach.objects.get_or_create(name=approaches_item))
+                else:
+                    app.approaches.add(Approach.objects.get(id=approaches_item))
             # TODO: change output method of participants - it will be too much of chosen objects
             participants_list = request.POST.getlist('participants')
             for participants_item in participants_list:
-                app.participants.add(User.objects.get(id=participants_item))
+                try:
+                    User.objects.get(id=participants_item)
+                except Exception:
+                    app.participants.add(User.objects.get_or_create(name=participants_item))
+                else:
+                    app.participants.add(User.objects.get(id=participants_item))
             equipment_list = request.POST.getlist('equipment')
             for equipment_item in equipment_list:
                 app.equipment.add(Equipment.objects.get(id=equipment_item))
@@ -134,15 +148,11 @@ def application_edit(request, serial=None):
         app_counter.number = app_counter.number + 1
         app_counter.save()
 
-        return render(request, 'applications.html', context)
+        return redirect(applications_view)
     else:
         context = {
             'application': app,
-            'organizations': Organization.objects.all,
-            'stations': Station.objects.all,
-            'approaches': Approach.objects.all,
-            'participants': User.objects.all,
-            'equipment': Equipment.objects.all}
+            }
         return render(request, 'application_form.html', context)
 
 #

@@ -2,9 +2,9 @@
 {% block content %}
 <h1 class="ui dividing header">Мои заявки</h1>
 
-<div class="ui basic segment">
+<div class="ui grid">
     {% if request.user.is_staff %}
-      <div class="ui left rail">
+      <div class="ui two wide column">
         <h3 class="ui header">Фильтр</h3>
         <div class="ui list">
             <a href="{%url 'applications'%}?filter=all" class="ui item {% if filtered == 'all' %}selected{%endif%}">Все</a>
@@ -16,18 +16,20 @@
         </div>
     </div>
     {% endif %}
-    <div class="ui tabular menu">
-        <a class="item active" onclick="all_applications();">
-            Все заявки
-        </a>
-        <a class="item" onclick="my_applications();">
-            Мои заявки
-        </a>
-        <a class="item" onclick="part_applications();">
-            С моим участием
-        </a>
-    </div>
-    <div id="applications">
+    <div class="ui fourteen wide column">
+        <div class="ui tabular menu">
+            <a class="item active" onclick="all_applications();">
+                Все заявки
+            </a>
+            <a class="item" onclick="my_applications();">
+                Мои заявки
+            </a>
+            <a class="item" onclick="part_applications();">
+                С моим участием
+            </a>
+        </div>
+        <div id="applications">
+        </div>
     </div>
 </div>
 
@@ -54,14 +56,15 @@ function approve(id) {
 
 
 $( document ).ready(function() {
-    $('#applications').load('/applications_table?all=1&filter={{filtered}}');
+    $('#applications').load('/applications_table?all=1&filter={{filtered}}', function() {
+        $('#applications table').DataTable();
+    });
+    $('.dropdown').dropdown();
 });
 
 $('.ui .item').on('click', function() {
      $('.ui .item').removeClass('active');
      $(this).addClass('active');
   });
-
-$('.dropdown').dropdown();
 </script>
 {% endblock %}

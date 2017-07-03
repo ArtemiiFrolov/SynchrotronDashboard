@@ -66,7 +66,7 @@
 
         <div class="field">
             <label>Станции</label>
-             <select name="station" class="ui fluid search dropdown" multiple=""data-api-action="search stations">
+             <select name="station" class="ui fluid search dropdown" multiple="" data-api-action="search stations">
                 {% if application.station %}
                  <option value="{{ application.station.id }}" selected>{{ application.station.name }}</option>
                 {% endif %}

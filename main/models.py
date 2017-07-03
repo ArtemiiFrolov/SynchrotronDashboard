@@ -197,7 +197,7 @@ class Application(models.Model):
     name = models.CharField('Название', max_length=200, blank=False, null=False)
     author = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='applications_as_author', verbose_name='Автор')
     organizations = models.ManyToManyField(Organization, related_name='applications', verbose_name='Организации')
-    serial = models.CharField('Номер', max_length=15, blank=False, null=False)
+    serial = models.CharField('Номер', max_length=15, blank=False, null=False, unique=True)
     description = models.TextField('Описание', )
     time_needed = models.IntegerField('Необходимое время', default=0)
     start = models.DateTimeField('Старт', auto_now_add=False)

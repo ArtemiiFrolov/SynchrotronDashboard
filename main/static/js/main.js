@@ -83,3 +83,31 @@
     };
 
 }(jQuery));
+
+$( document ).ready(function() {
+     $('.search.dropdown').each(function(index) {
+        var action = $(this).data('api-action');
+        if(!action)
+            return;
+        var allowAdd = $(this).data('allow-add') != undefined;
+        var multiple = $(this).attr('multiple') != undefined;
+        var fieldName = $(this).data('api-field-name') || 'name';
+        var fieldValue = $(this).data('api-field-value') || 'id';
+        //console.log($(this), allowAdd, multiple, fieldName, fieldValue);
+
+        $(this).dropdown({
+            allowAdditions: allowAdd,
+            useLabels: true,
+            hideAdditions: false,
+            fields: {
+                name: fieldName,
+                value: fieldValue,
+            },
+            apiSettings : {
+                action: action,
+            }
+        });
+    });
+
+    $('.datetime').calendar({ type: 'datetime', });
+});

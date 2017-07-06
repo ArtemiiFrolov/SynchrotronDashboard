@@ -48,7 +48,7 @@
 
         <div class="field">
             <label>Организации</label>
-            <select name="organizations" class="ui fluid search dropdown" multiple="" data-api-action="search organizations">
+            <select name="organizations" class="ui fluid search dropdown" multiple="" data-api-action="search organizations" data-allow-add>
                 {% for organization in application.organizations.all %}
                     <option value="{{ organization.id }}" selected>{{ organization.name }}</option>
                 {% endfor %}
@@ -84,7 +84,7 @@
 
         <div class="field">
             <label>Вспомогательное оборудование</label>
-             <select name="equipment" class="ui fluid search dropdown" multiple="" data-api-action="search equipment">
+             <select name="equipment" class="ui fluid search dropdown" multiple="" data-api-action="search equipment" data-allow-add>
                 {% for equip in application.equipment.all %}
                 <option value="{{ equip.id }}" selected>{{ equip.name }}</option>
                 {% endfor %}
@@ -94,26 +94,4 @@
         <input type="submit" class="ui primary button" value="Сохранить">
     </form>
 </div>
-
-<script type="text/javascript">
-    $('.ui.dropdown').each(function(index) {
-        var action = $(this).data('api-action');
-        var multiple = $(this).attr('multiple');
-        var allowAdd = multiple != undefined;
-
-        $(this).dropdown({
-            allowAdditions: allowAdd,
-            useLabels: allowAdd,
-            hideAdditions: false,
-            fields: {
-                name: 'name',
-                value: 'id',
-            },
-            apiSettings : {
-                action: action,
-            }
-        });
-    });
-    $('.datetime').calendar({ type: 'datetime', });
-</script>
 {% endblock %}

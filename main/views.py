@@ -18,7 +18,7 @@ def context_processor(request):
 
 @login_required
 def index(request):
-    return render(request, 'index.html', {})
+    return redirect(applications_view)
 
 
 @require_GET
@@ -109,9 +109,10 @@ def application_edit(request, serial=None):
             app.station = Station.objects.get(id=station_item)
             app.name = request.POST['name']
             app.author = User.objects.get(id=request.POST['author'])
-            app.serial = '%s-%s-%s' % (str(datetime.datetime.today().year),
-                                       str(app_counter.number),
-                                       app.station.short_description)
+            if not app.serial:
+                app.serial = '%s-%s-%s' % (str(datetime.datetime.today().year),
+                                           str(app_counter.number),
+                                           app.station.short_description)
             app.description = request.POST['description']
             app.time_needed = request.POST['time_needed']
             app.start = datetime.datetime.strptime(request.POST['start'], "%d.%m.%Y %H:%M")

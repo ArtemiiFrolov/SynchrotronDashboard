@@ -38,7 +38,7 @@
             </tr>
         </thead>
         <tbody>
-        {% for experiment in experiments %}
+        {% for experiment in experiments reversed %}
             <tr>
                 <td>
                      {{ experiment.start }} - {{ experiment.end }}

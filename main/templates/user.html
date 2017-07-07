@@ -166,7 +166,7 @@
             <div class="description">
                  <div class="ui list">
                     {% for planning in user.planning_experiments.all %}
-                        <div class="ui item">{{ planning.name }}: {{planning.start}}-{{planning.end}}</div>
+                        <div class="ui item">{{ planning.station }}: {{planning.start}}-{{planning.end}}</div>
                     {% endfor %}
                 </div>
             </div>
@@ -178,7 +178,7 @@
             <div class="description">
                  <div class="ui list">
                     {% for experiment  in user.experiments_as_author.all %}
-                        <div class="ui item">{{ experiment.name }}: {{experiment.start}}-{{experiment.end}}</div>
+                        <div class="ui item">{{ experiment.station }}: {{experiment.start}}-{{experiment.end}}</div>
                     {% endfor %}
                 </div>
             </div>

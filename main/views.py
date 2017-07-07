@@ -78,6 +78,14 @@ def application_row(request, pk):
     app.save()
     return render(request, 'include/application_row.html', {'application': get_object_or_404(Application, pk=pk)})
 
+
+def application_row_disapprove(request, pk):
+    app = Application.objects.get(pk=pk)
+    app.stage_status = StageStatus.objects.get_or_create(name='Заявка отклонена')
+    app.save()
+    return render(request, 'include/application_row.html', {'application': get_object_or_404(Application, pk=pk)})
+
+
 @login_required
 @require_http_methods(['GET', 'POST'])
 def application_edit(request, serial=None):

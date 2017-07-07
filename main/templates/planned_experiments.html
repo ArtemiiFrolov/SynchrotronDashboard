@@ -33,7 +33,7 @@
                 <th>Старт</th>
                 <th>Окончание</th>
                 <th>Статус</th>
-                <th colspan="2">Управление</th>
+                <th >Управление</th>
             </tr>
         </thead>
         <tbody>
@@ -62,24 +62,14 @@
                      {{planned_experiment.status}}
                 </td>
                  <td>
-                    <form action="/journal/new" method="get">
-                        <input type="hidden" name="planned" value="{{planned_experiment.pk}}">
-                        <input type="submit" value="Выполнить" />
-                    </form>
+                      <a href="{% url 'journal_new'%}?planned={{planned_experiment.pk}}"><i class="checkmark icon"></i></a>
+
                 </td>
-                <td>
-                    <form action="#">
-                        <input type="hidden" name="application" value="{{application}}">
-                        <input type="submit" value="Удалить" />
-                    </form>
-                </td>
+
             </tr>
         {% endfor %}
         </tbody>
     </table>
-
-
-
 
 <script type="text/javascript">
     $('.dropdown').dropdown();

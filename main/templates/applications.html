@@ -61,6 +61,10 @@ function approve(id) {
     $('#application-row-' + id).load('/application_row/'+id);
 };
 
+function disapprove(id) {
+    $('#application-row-' + id).empty();
+    $('#application-row-' + id).load('/application_row_disapprove/'+id);
+};
 
 $( document ).ready(function() {
     load_table('/applications_table?all=1&filter={{filtered}}');

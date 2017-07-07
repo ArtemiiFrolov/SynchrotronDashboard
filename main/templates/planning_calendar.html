@@ -24,6 +24,32 @@
 
 
     <h3 class="ui header">{{text}}</h3>
+    <table class="ui celled striped table">
+        <thead>
+            <tr>
+                <th>Старт</th>
+                <th>Окончание</th>
+                <th>Название</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for planned_experiment in planned_experiments %}
+            <tr>
+                <td>
+                    {{planned_experiment.start}}
+                </td>
+                <td>
+                     {{planned_experiment.end}}
+                </td>
+                <td>
+                   <a href="{% url 'application' planned_experiment.application.serial %}">{{ planned_experiment.application.name }}</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <br>
+     <h3 class="ui header">Запланировать новый эксперимент</h3>
      <form action="" method="post" class="ui form">
     {% csrf_token %}
         <div class="field">

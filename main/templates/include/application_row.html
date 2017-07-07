@@ -39,5 +39,5 @@
     <td>
         <a href="javascript:;" onclick="approve({{application.id}});"><i class="checkmark icon"></i></a>
         <a href="{% url 'application_edit' application.serial %}" ><i class="edit icon"></i></a>
-        <a href="" ><i class="remove icon"></i></a>
+        <a href="javascript:;" onclick="disapprove({{application.id}});"><i class="remove icon"></i></a>
     </td>

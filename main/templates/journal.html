@@ -34,7 +34,7 @@
                 <th>Методика</th>
                 <th>Комментарий</th>
                 <th>Станция</th>
-                <th>Управление</th>
+
             </tr>
         </thead>
         <tbody>
@@ -61,12 +61,7 @@
                 <td>
                      <a href="{% url 'application' experiment.station.pk %}">{{ experiment.station.name }}</a>
                 </td>
-                <td>
-                    <form action="#">
-                        <input type="hidden" name="application" value="{{application}}">
-                        <input type="submit" value="Удалить" />
-                    </form>
-                </td>
+
             </tr>
         {% endfor %}
         </tbody>

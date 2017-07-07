@@ -325,8 +325,9 @@ def journal_new(request):
         experiment.save()
         explan = ExperimentPlan.objects.get(pk=request.POST['ex_plan'])
         if explan.application == experiment.application:
-            explan.status, created = JournalStatus.objects.get_or_create(name='Эксперимент завершен')
+            explan.status = JournalStatus.objects.get_or_create(name='Эксперимент завершен')
             explan.save()
+        return redirect(journal)
 
     context = {'stations': Station.objects.all,
                'applications': Application.objects.all().filter(stage_status__name='Заявка принята'),

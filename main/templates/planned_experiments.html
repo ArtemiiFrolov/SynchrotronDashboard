@@ -37,7 +37,7 @@
             </tr>
         </thead>
         <tbody>
-        {% for planned_experiment in planned_experiments %}
+        {% for planned_experiment in planned_experiments reversed %}
             <tr>
                 <td>
                     <a href="{% url 'application' planned_experiment.application.serial %}"> {{ planned_experiment.application.serial }}</a>

@@ -9,7 +9,7 @@
         {% endfor %}
         </div>
     </td>
-    <td>
+    <td data-order="{{ application.created|date:'U' }}">
         {{application.created}}
     </td>
     <td>

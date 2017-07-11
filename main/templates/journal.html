@@ -32,15 +32,14 @@
                 <th>Название</th>
                 <th>Исполнитель</th>
                 <th>Методика</th>
-                <th>Комментарий</th>
+                <th data-order="false">Комментарий</th>
                 <th>Станция</th>
-
             </tr>
         </thead>
         <tbody>
         {% for experiment in experiments reversed %}
             <tr>
-                <td>
+                <td data-order="{{ experiment.start|date:'U' }}">
                      {{ experiment.start }} - {{ experiment.end }}
                 </td>
                 <td>

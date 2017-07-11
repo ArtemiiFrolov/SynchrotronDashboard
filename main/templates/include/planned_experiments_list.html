@@ -9,7 +9,7 @@
                 <th>Старт</th>
                 <th>Окончание</th>
                 <th>Статус</th>
-                <th >Управление</th>
+                <th data-order="false">Управление</th>
             </tr>
         </thead>
         <tbody>
@@ -31,10 +31,10 @@
                     <a href="{% url 'station' planned_experiment.station.pk %}"> {{ planned_experiment.station.name }}</a>
                 </td>
                 <td>
-                    {{planned_experiment.start}}
+                     {{ planned_experiment.start|date:"U" }}
                 </td>
                 <td>
-                     {{planned_experiment.end}}
+                     {{ planned_experiment.end|date:"U" }}
                 </td>
 
                 <td>
@@ -42,9 +42,7 @@
                 </td>
                  <td>
                       <a href="{% url 'journal_new'%}?planned={{planned_experiment.pk}}"><i class="checkmark icon"></i></a>
-
                 </td>
-
             </tr>
         {% endfor %}
         </tbody>

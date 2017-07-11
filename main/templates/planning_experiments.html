@@ -34,7 +34,7 @@
                 <th>Название</th>
                 <th>Станция</th>
                 <th>Запланированные эксперименты</th>
-                <th>Управление</th>
+                <th data-order="false">Управление</th>
             </tr>
         </thead>
         <tbody>
@@ -43,7 +43,7 @@
                 <td>
                    {{ application.serial }}
                 </td>
-                <td>
+                <td data-order="{{ application.created|date:'U' }}">
                     {{ application.created }}
                 </td>
                 <td>

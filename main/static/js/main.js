@@ -82,6 +82,7 @@
       }
     };
 
+
 }(jQuery));
 
 $( document ).ready(function() {
@@ -110,4 +111,7 @@ $( document ).ready(function() {
     });
 
     $('.datetime').calendar({ type: 'datetime', });
+    $('.enable-datatable').DataTable({
+        language: dataTablesLanguage,
+    });
 });

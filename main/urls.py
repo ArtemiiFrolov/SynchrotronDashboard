@@ -49,6 +49,7 @@ urlpatterns = [
 
     url(r'^planning_experiments/$', views.planning_experiments, name='planning_experiments'),
     url(r'^planned_experiments/$', views.planned_experiments, name='planned_experiments'),
+    url(r'^planned_table$', views.planned_table, name='planned_table'),
     url(r'^planning_calendar/$', views.planning_calendar, name='planning_calendar'),
 
     url(r'^journal/$', views.journal, name='journal'),

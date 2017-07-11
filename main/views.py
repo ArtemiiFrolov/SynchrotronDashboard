@@ -61,8 +61,8 @@ def applications_table(request):
         applications = applications.filter(stage_status__name="Заявка принята")
     if filtered == 'returned':
         applications = applications.filter(stage_status__name="Возвращена с комментариями")
-    if filtered == 'experiment':
-        applications = applications.filter(stage_status__name="Эксперимент завершен")
+    if filtered == 'disapproved':
+        applications = applications.filter(stage_status__name="Заявка отклонена")
     if filtered == 'finished':
         applications = applications.filter(stage_status__name="Завершенные")
     if request.GET.get('my', None):
@@ -170,6 +170,7 @@ def application_edit(request, serial=None):
 #
 #     return redirect(application_view, serial=serial)
 
+
 def application_view(request, serial):
     app = get_object_or_404(Application, serial=serial)
     return render(request, 'application.html', {'application': app})
@@ -225,6 +226,19 @@ def planning_experiments(request):
     return render(request, 'planning_experiments.html', context)
 
 
+@login_required
+def planned_table(request):
+    planned_experiments_chosen = ExperimentPlan.objects.all()
+    filtered = 'all'
+    if request.GET.get('filter'):
+        filtered = request.GET.get('filter')
+    if filtered == 'finished':
+        planned_experiments_chosen = planned_experiments_chosen.filter(status__name="Эксперимент выполнен")
+    if filtered == 'unfinished':
+        planned_experiments_chosen = planned_experiments_chosen.filter(status__name="Эксперимент не выполнен")
+    return render(request, 'include/planned_experiments_list.html', {'planned_experiments': planned_experiments_chosen})
+
+
 def planned_experiments(request):
     if request.GET.get('station'):
         station = request.GET.get('station')
@@ -265,7 +279,7 @@ def planning_calendar(request):
         explan.application = Application.objects.get(serial=request.POST['serial'])
         explan.start = datetime.datetime.strptime(request.POST['start'], "%d.%m.%Y %H:%M")
         explan.end = datetime.datetime.strptime(request.POST['end'], "%d.%m.%Y %H:%M")
-        explan.status = JournalStatus.objects.get_or_create(name='Эксперимент не завершен')
+        explan.status = JournalStatus.objects.get_or_create(name='Эксперимент не выполнен')
         explan.station = station
         explan.save()
     context = {'stations': Station.objects.all,
@@ -326,7 +340,7 @@ def journal_new(request):
         experiment.save()
         explan = ExperimentPlan.objects.get(pk=request.POST['ex_plan'])
         if explan.application == experiment.application:
-            explan.status = JournalStatus.objects.get_or_create(name='Эксперимент завершен')
+            explan.status = JournalStatus.objects.get_or_create(name='Эксперимент выполнен')
             explan.save()
         return redirect(journal)
 

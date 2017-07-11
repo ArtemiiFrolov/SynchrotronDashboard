@@ -24,7 +24,7 @@
 
 
     <h3 class="ui header">{{text}}</h3>
-    <table class="ui celled striped table">
+    <table class="ui celled striped table" id="table">
         <thead>
             <tr>
                 <th>Старт</th>
@@ -81,6 +81,9 @@
     <script type="text/javascript">
         $('.dropdown').dropdown();
         $('.datetime').calendar({ type: 'datetime', });
+         $('#table').DataTable({
+            language: dataTablesLanguage,
+        });
     </script>
 </div>
 {% endblock %}

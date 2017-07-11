@@ -1,0 +1,51 @@
+ <table class="ui celled striped table" id="table">
+        <thead>
+            <tr>
+                <th class="single line">Номер</th>
+                <th>Дата создания</th>
+                <th>Заказчик</th>
+                <th>Название</th>
+                <th>Станция</th>
+                <th>Старт</th>
+                <th>Окончание</th>
+                <th>Статус</th>
+                <th >Управление</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for planned_experiment in planned_experiments reversed %}
+            <tr>
+                <td>
+                    <a href="{% url 'application' planned_experiment.application.serial %}"> {{ planned_experiment.application.serial }}</a>
+                </td>
+                <td>
+                    {{planned_experiment.created}}
+                </td>
+                <td>
+                    <a href="{% url 'user' planned_experiment.author.pk %}">{{ planned_experiment.author.name }}</a>
+                </td>
+                <td>
+                   <a href="{% url 'application' planned_experiment.application.serial %}">{{ planned_experiment.application.name }}</a>
+                </td>
+                 <td>
+                    <a href="{% url 'station' planned_experiment.station.pk %}"> {{ planned_experiment.station.name }}</a>
+                </td>
+                <td>
+                    {{planned_experiment.start}}
+                </td>
+                <td>
+                     {{planned_experiment.end}}
+                </td>
+
+                <td>
+                     {{planned_experiment.status}}
+                </td>
+                 <td>
+                      <a href="{% url 'journal_new'%}?planned={{planned_experiment.pk}}"><i class="checkmark icon"></i></a>
+
+                </td>
+
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>

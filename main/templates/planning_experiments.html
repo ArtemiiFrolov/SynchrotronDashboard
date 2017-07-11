@@ -1,7 +1,7 @@
 {% extends 'layout.html' %}
 {% block content %}
 <h1 class="ui dividing header">Планирование экспериментов</h1>
-<div class="ui floating labeled icon dropdown button right floated">
+<div class="ui floating labeled icon dropdown button floated right">
       <i class="filter icon"></i>
       <span class="text">Фильтр по станциям</span>
       <div class="menu">
@@ -28,12 +28,13 @@
         <thead>
             <tr>
                 <th class="single line">Номер</th>
+                <th>Дата создания</th>
                 <th>Организация</th>
                 <th>Заказчик</th>
                 <th>Название</th>
                 <th>Станция</th>
                 <th>Запланированные эксперименты</th>
-                <th colspan="3">Управление</th>
+                <th>Управление</th>
             </tr>
         </thead>
         <tbody>
@@ -41,6 +42,9 @@
             <tr>
                 <td>
                    {{ application.serial }}
+                </td>
+                <td>
+                    {{ application.created }}
                 </td>
                 <td>
                     <div class="ui list">
@@ -81,7 +85,9 @@
 
 <script type="text/javascript">
 $( document ).ready(function() {
- $('#table').DataTable();
+ $('#table').DataTable({
+            language: dataTablesLanguage,
+        });
  $('.dropdown').dropdown();
  });
 </script>

@@ -11,7 +11,7 @@
             <a href="{%url 'applications'%}?filter=consideration" class="ui item {% if filtered == 'consideration'%}selected{%endif%}">На рассмотрении</a>
             <a href="{%url 'applications'%}?filter=accepted" class="ui item {% if filtered == 'accepted'%}selected{%endif%}">Заявка принята</a>
             <a href="{%url 'applications'%}?filter=returned" class="ui item {% if filtered == 'returned'%}selected{%endif%}">Возвращена с комментариями</a>
-            <a href="{%url 'applications'%}?filter=experiment" class="ui item {% if filtered == 'experiment'%}selected{%endif%}">Эксперимент завершен</a>
+            <a href="{%url 'applications'%}?filter=disapproved" class="ui item {% if filtered == 'disapproved'%}selected{%endif%}">Заявка отклонена</a>
             <a href="{%url 'applications'%}?filter=finished" class="ui item {% if filtered == 'finished'%}selected{%endif%}">Завершенные</a>
         </div>
     </div>

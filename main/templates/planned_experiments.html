@@ -23,56 +23,55 @@
       </div>
     </div>
 <h3 class="ui header">{{text}}</h3>
-    <table class="ui celled striped table">
-        <thead>
-            <tr>
-                <th class="single line">Номер</th>
-                <th>Заказчик</th>
-                <th>Название</th>
-                <th>Станция</th>
-                <th>Старт</th>
-                <th>Окончание</th>
-                <th>Статус</th>
-                <th >Управление</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for planned_experiment in planned_experiments reversed %}
-            <tr>
-                <td>
-                    <a href="{% url 'application' planned_experiment.application.serial %}"> {{ planned_experiment.application.serial }}</a>
-                </td>
-                <td>
-                    <a href="{% url 'user' planned_experiment.author.pk %}">{{ planned_experiment.author.name }}</a>
-                </td>
-                <td>
-                   <a href="{% url 'application' planned_experiment.application.serial %}">{{ planned_experiment.application.name }}</a>
-                </td>
-                 <td>
-                    <a href="{% url 'station' planned_experiment.station.pk %}"> {{ planned_experiment.station.name }}</a>
-                </td>
-                <td>
-                    {{planned_experiment.start}}
-                </td>
-                <td>
-                     {{planned_experiment.end}}
-                </td>
+ <div class="ui tabular menu">
+            <a class="item active" onclick="all_planned();">
+                Все
+            </a>
+            <a class="item" onclick="finished_planned();">
+                Выполненные
+            </a>
+            <a class="item" onclick="unfinished_planned();">
+                Невыполненные
+            </a>
+        </div>
+       <div id="planned">
+            {% include 'include/planned_experiments_list.html' %}
+        </div>
 
-                <td>
-                     {{planned_experiment.status}}
-                </td>
-                 <td>
-                      <a href="{% url 'journal_new'%}?planned={{planned_experiment.pk}}"><i class="checkmark icon"></i></a>
-
-                </td>
-
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
 
 <script type="text/javascript">
-    $('.dropdown').dropdown();
+
+function load_table(path) {
+    $('#planned').empty();
+    $('#planned').load(path, function() {
+        $('#planned table').DataTable({
+            language: dataTablesLanguage,
+        });
+    });
+};
+
+$('.ui .item').on('click', function() {
+   $('.ui .item').removeClass('active');
+   $(this).addClass('active');
+  });
+
+$( document ).ready(function() {
+  $('.dropdown').dropdown();
+  $('#planned').load('/planned_table?filter=all');
+});
+
+function all_planned() {
+    load_table('/planned_table?filter=all');
+};
+
+function finished_planned() {
+    load_table('/planned_table?filter=finished');
+};
+
+function unfinished_planned() {
+    load_table('/planned_table?filter=unfinished');
+};
+
 </script>
 {% endblock %}
 

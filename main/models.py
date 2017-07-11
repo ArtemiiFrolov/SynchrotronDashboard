@@ -55,7 +55,7 @@ class Organization(TagModel):
 
 
 class Station(TagModel):
-    short_description = models.CharField('Краткое описание', max_length=100, blank=True, null=False)
+    short_description = models.CharField('Префикс', max_length=100, blank=True, null=False)
 
     class Meta:
         verbose_name = 'Станция'
@@ -192,7 +192,7 @@ class User(AbstractBaseUser):
         verbose_name_plural = 'Пользователи'
 
 
-class Application(models.Model):
+class Application(TimeStampedModel):
     # TODO: add files and articles
     name = models.CharField('Название', max_length=200, blank=False, null=False)
     author = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='applications_as_author', verbose_name='Автор')
@@ -232,7 +232,7 @@ class Application(models.Model):
 pre_save.connect(Application.pre_save, Application, dispatch_uid="main.models.Application")
 
 
-class ExperimentPlan(models.Model):
+class ExperimentPlan(TimeStampedModel):
     author = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='planning_experiments', verbose_name='Автор')
     application = models.ForeignKey(Application, related_name='planning_experiments', verbose_name='Заявка')
     start = models.DateTimeField('Старт', auto_now_add=False)
@@ -250,7 +250,7 @@ class ExperimentPlan(models.Model):
         verbose_name_plural = 'Планируемые эксперименты'
 
 
-class Experiment(models.Model):
+class Experiment(TimeStampedModel):
     application = models.ForeignKey(Application, related_name='experiments', verbose_name='Заявка')
     author = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='experiments_as_author', verbose_name='Автор')  # TODO: automatically fill from request
     start = models.DateTimeField('Старт',auto_now_add=False)

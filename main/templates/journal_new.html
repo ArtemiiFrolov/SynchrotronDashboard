@@ -17,13 +17,13 @@
             <div class="two fields">
                 <div class="field">
                     <label for="date_start">Дата начала</label>
-                    <input type="date"{%if flag  %}value="{{start_date}}"{%endif%} name="date_start">
-                    <input type="time"{%if flag  %}value="{{start_time}}"{%endif%} name="time_start">
+                    <input type="date"{%if flag  %}value="{{ planned_ex.start|date:'Y-m-d' }}"{%endif%} name="date_start">
+                    <input type="time"{%if flag  %}value="{{ planned_ex.start|date:'H:i' }}"{%endif%} name="time_start">
                 </div>
                 <div class="field">
                     <label for="date_end">Дата окончания</label>
-                    <input type="date" {%if flag  %}value="{{end_date}}"{%endif%} name="date_end">
-                    <input type="time" {%if flag  %}value="{{end_time}}"{%endif%} name="time_end">
+                    <input type="date" {%if flag  %}value="{{ planned_ex.end|date:'Y-m-d' }}"{%endif%} name="date_end">
+                    <input type="time" {%if flag  %}value="{{ planned_ex.end|date:'H:i' }}"{%endif%} name="time_end">
                 </div>
             </div>
         </div>

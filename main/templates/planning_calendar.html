@@ -35,10 +35,10 @@
         <tbody>
         {% for planned_experiment in planned_experiments %}
             <tr>
-                <td>
+                <td data-order="{{planned_experiment.start|date:'U'}}">
                     {{planned_experiment.start}}
                 </td>
-                <td>
+                <td data-order="{{planned_experiment.end|date:'U'}}">
                      {{planned_experiment.end}}
                 </td>
                 <td>

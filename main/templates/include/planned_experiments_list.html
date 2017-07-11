@@ -30,11 +30,11 @@
                  <td>
                     <a href="{% url 'station' planned_experiment.station.pk %}"> {{ planned_experiment.station.name }}</a>
                 </td>
-                <td>
-                     {{ planned_experiment.start|date:"U" }}
+                <td data-order="{{ planned_experiment.start|date:'U' }}">
+                     {{ planned_experiment.start }}
                 </td>
-                <td>
-                     {{ planned_experiment.end|date:"U" }}
+                <td data-order="{{ planned_experiment.end|date:'U' }}">
+                     {{ planned_experiment.end }}
                 </td>
 
                 <td>

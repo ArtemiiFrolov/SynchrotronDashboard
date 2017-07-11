@@ -8,6 +8,7 @@ from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.http import require_GET, require_http_methods
 from main.models import *
 import datetime
+from django.utils import timezone
 
 
 def context_processor(request):
@@ -103,14 +104,14 @@ def application_edit(request, serial=None):
         context['application'] = app
         # Split request creation in two parts
         # TODO: добавить проверку
-        app_counter = ApplicationCounter.objects.get(year=datetime.date.today().year)
+        app_counter = ApplicationCounter.objects.get(year=timezone.today().year)
         station_list = request.POST.getlist('station')
         for station_item in station_list:
             app.station = Station.objects.get(id=station_item)
             app.name = request.POST['name']
             app.author = User.objects.get(id=request.POST['author'])
             if not app.serial:
-                app.serial = '%s-%s-%s' % (str(datetime.datetime.today().year),
+                app.serial = '%s-%s-%s' % (str(timezone.today().year),
                                            str(app_counter.number),
                                            app.station.short_description)
             app.description = request.POST['description']

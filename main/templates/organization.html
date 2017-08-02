@@ -3,29 +3,25 @@
 <h1 class="ui header divided">{{ organization.name }}</h1>
 
 <div class="ui items">
-    <div class="item">
-        <div class="content">
-            <div class="header">Сотрудники организации</div>
-            <div class="description">
+    <div class="ui top attached tabular menu">
+        <a class="item active" data-tab="first">Сотрудники организации</a>
+        <a class="item" data-tab="second">Заявки</a>
+        <a class="item" data-tab="third">Запланированные эксперименты</a>
+        <a class="item" data-tab="fourth">Выполненные эксперименты</a>
+    </div>
+    <div class="ui bottom attached tab segment active" data-tab="first">
                  <div class="ui list">
                     {% for user in organization.users.all %}
-                        <div class="ui item">
-                            <a href="{% url 'user' user.pk %}">{{ user.name }}</a>
-                        </div>
+                        <div class="ui item"> <a href="{% url 'user' user.pk %}">{{ user.name }}</a></div>
                     {% endfor %}
-                </div>
-            </div>
-        </div>
+                 </div>
     </div>
-     <div class="item">
-        <div class="content">
-            <div class="header">Заявки организации</div>
-            <div class="description">
+     <div class="ui bottom attached tab segment " data-tab="second">
                 <table class="ui celled striped table">
                     <thead>
                         <tr>
                             <th class="single line">Номер</th>
-                            <th>Организация</th>
+                            <th>Дата создания</th>
                             <th>Заказчик</th>
                             <th>Название</th>
                             <th>Станция</th>
@@ -36,15 +32,11 @@
                     {% for application in organization.applications.all %}
                         <tr>
                             <td>
-                                <h3 class="ui center aligned header">{{ application.serial }}</h3>
+                                 <a href="{% url 'application' application.serial %}">{{ application.serial }}</a>
                             </td>
-                            <td>
-                                <div class="ui list">
-                                {% for organization in application.organizations.all %}
-                                    <div class="item"><a href="{% url 'organization' organization.pk %}">{{ organization.name }}</a></div>
-                                {% endfor %}
-                                </div>
-                            </td>
+                             <td data-order="{{ application.created|date:'U' }}">
+                                 {{application.created}}
+                             </td>
                             <td>
                                 <a href="{% url 'user' application.author.pk %}">{{ application.author.name }}</a>
                             </td>
@@ -73,10 +65,105 @@
                     {% endfor %}
                     </tbody>
                 </table>
-            </div>
-        </div>
     </div>
+     <div class="ui bottom attached tab segment" data-tab="third">
+         <table class="ui celled striped table">
+        <thead>
+            <tr>
+                <th>Дата создания</th>
+                <th>Заявка</th>
+                <th>Начало</th>
+                <th>Конец</th>
+                <th>Станция</th>
+                <th>Статус</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for application in organization.applications.all %}
+        {% for planning_experiment in application.planning_experiments.all %}
+            <tr>
+                 <td data-order="{{planning_experiment.created|date:'U' }}">
+                    {{planning_experiment.created}}
+                </td>
+                <td>
+                    <a href="{% url 'application' planning_experiment.application.serial %}">{{ planning_experiment.application.name }}</a>
+                </td>
+                <td data-order="{{planning_experiment.start|date:'U' }}">
+                   {{planning_experiment.start}}
+                </td>
+                <td data-order="{{planning_experiment.end|date:'U' }}">
+                   {{planning_experiment.end}}
+                </td>
+                <td>
+                   <a href="{% url 'station' planning_experiment.station.pk %}"> {{planning_experiment.station.name}}</a>
+                </td>
+                <td>
+                    {{planning_experiment.status}}
+                </td>
+            </tr>
+        {% endfor %}
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+
+   <div class="ui bottom attached tab segment" data-tab="fourth">
+
+         <table class="ui celled striped table">
+                <thead>
+                    <tr>
+                        <th class="single line">Дата начала</th>
+                         <th class="single line">Дата конца</th>
+                        <th>Название</th>
+                        <th>Исполнитель</th>
+                        <th>Станция</th>
+                        <th>Методика</th>
+                        <th data-order="false">Комментарий</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for application in organization.applications.all reversed %}
+                {% for experiment in application.experiments.all reversed %}
+                    <tr>
+                        <td data-order="{{ experiment.start|date:'U' }}">
+                             {{ experiment.start }}
+                        </td>
+                        <td data-order="{{ experiment.start|date:'U' }}">
+                             {{ experiment.end }}
+                        </td>
+                        <td>
+                           <a href="{% url 'application' experiment.application.serial %}">{{ experiment.application.name }}</a>
+                        </td>
+                        <td>
+                            <a href="{% url 'user' experiment.operator.pk %}">{{ experiment.operator.name }}</a>
+                        </td>
+                         <td>
+                            <a href="{% url 'station' experiment.station.pk %}"> {{experiment.station.name}}</a>
+                        </td>
+                        <td>
+                             {{experiment.methods}}
+                        </td>
+                        <td>
+                             {{experiment.comment}}
+                        </td>
+
+                    </tr>
+                {% endfor %}
+                {% endfor %}
+                </tbody>
+            </table>
+   </div>
 </div>
+
+
+<script type="text/javascript">
+$('.menu .item')
+  .tab()
+;
+$('table').DataTable({
+            language: dataTablesLanguage,
+        });
+</script>
 {% endblock %}
 
 

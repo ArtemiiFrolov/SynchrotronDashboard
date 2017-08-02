@@ -12,7 +12,7 @@
         </div>
           <div class="item icon">
             <i class="ui icon cogs"></i>
-            <a href="?station=All" >Все станции</a>
+            <a href="?station=Все" >Все станции</a>
         </div>
         {% for station in stations %}
         <div class="item icon">
@@ -22,7 +22,7 @@
         {% endfor %}
       </div>
     </div>
-<h3 class="ui header">{{text}}</h3>
+<h3 class="ui header">Станция: {{text}}</h3>
  <div class="ui tabular menu">
             <a class="item active" onclick="all_planned();">
                 Все
@@ -57,19 +57,19 @@ $('.ui .item').on('click', function() {
 
 $( document ).ready(function() {
   $('.dropdown').dropdown();
-  load_table('/planned_table?filter=all');
+  load_table('/planned_table?filter=all&station={{text}}');
 });
 
 function all_planned() {
-    load_table('/planned_table?filter=all');
+    load_table('/planned_table?filter=all&station={{text}}');
 };
 
 function finished_planned() {
-    load_table('/planned_table?filter=finished');
+    load_table('/planned_table?filter=finished&station={{text}}');
 };
 
 function unfinished_planned() {
-    load_table('/planned_table?filter=unfinished');
+    load_table('/planned_table?filter=unfinished&station={{text}}');
 };
 
 </script>

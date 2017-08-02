@@ -227,26 +227,33 @@ def planning_experiments(request):
     return render(request, 'planning_experiments.html', context)
 
 
-@login_required
 def planned_table(request):
+    station = "Все"
     planned_experiments_chosen = ExperimentPlan.objects.all()
+
     filtered = 'all'
     if request.GET.get('filter'):
         filtered = request.GET.get('filter')
     if filtered == 'finished':
-        planned_experiments_chosen = planned_experiments_chosen.filter(status__name="Эксперимент выполнен")
+        planned_experiments_chosen = planned_experiments_chosen.filter(status__name="Эксперимент завершен")
     if filtered == 'unfinished':
-        planned_experiments_chosen = planned_experiments_chosen.filter(status__name="Эксперимент не выполнен")
+        planned_experiments_chosen = planned_experiments_chosen.filter(status__name="Эксперимент не завершен")
+    if request.GET.get('station'):
+        station = request.GET.get('station')
+    if station != "Все":
+        station = Station.objects.get(name=station)
+        planned_experiments_chosen = planned_experiments_chosen.filter(station=station)
     return render(request, 'include/planned_experiments_list.html', {'planned_experiments': planned_experiments_chosen})
 
 
+@login_required
 def planned_experiments(request):
     if request.GET.get('station'):
         station = request.GET.get('station')
-        if station == "All":
+        if station == "Все":
             context = {'stations': Station.objects.all,
                        'planned_experiments': ExperimentPlan.objects.all(),
-                       'text': "Все станции"}
+                       'text': "Все"}
         else:
             station = Station.objects.get(name=station)
             context = {'stations': Station.objects.all,
@@ -256,7 +263,7 @@ def planned_experiments(request):
     else:
         context = {'stations': Station.objects.all,
                    'planned_experiments': ExperimentPlan.objects.all(),
-                   'text': "Все станции"}
+                   'text': "Все"}
     return render(request, 'planned_experiments.html', context)
 
 

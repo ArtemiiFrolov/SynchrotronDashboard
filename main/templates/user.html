@@ -155,8 +155,8 @@
                 <td data-order="{{planning_experiment.end|date:'U' }}">
                    {{planning_experiment.end}}
                 </td>
-                <td>
-                   {{planning_experiment.station}}
+                 <td>
+                   <a href="{% url 'station' planning_experiment.station.pk %}"> {{planning_experiment.station.name}}</a>
                 </td>
                 <td>
                     {{planning_experiment.status}}
@@ -176,6 +176,7 @@
                          <th class="single line">Дата конца</th>
                         <th>Название</th>
                         <th>Исполнитель</th>
+                        <th>Станция</th>
                         <th>Методика</th>
                         <th data-order="false">Комментарий</th>
                     </tr>
@@ -194,6 +195,9 @@
                         </td>
                         <td>
                             <a href="{% url 'user' experiment.operator.pk %}">{{ experiment.operator.name }}</a>
+                        </td>
+                        <td>
+                            <a href="{% url 'station' experiment.station.pk %}"> {{experiment.station.name}}</a>
                         </td>
                         <td>
                              {{experiment.methods}}
@@ -216,6 +220,7 @@
                          <th class="single line">Дата конца</th>
                         <th>Заказчик</th>
                         <th>Название</th>
+                         <th>Станция</th>
                         <th>Методика</th>
                         <th data-order="false">Комментарий</th>
                     </tr>
@@ -234,6 +239,9 @@
                         </td>
                         <td>
                            <a href="{% url 'application' experiment.application.serial %}">{{ experiment.application.name }}</a>
+                        </td>
+                         <td>
+                            <a href="{% url 'station' experiment.station.pk %}"> {{experiment.station.name}}</a>
                         </td>
                         <td>
                              {{experiment.methods}}

@@ -40,6 +40,7 @@ function load_table(path) {
     $('#applications').load(path, function() {
         $('#applications table').DataTable({
             language: dataTablesLanguage,
+            "order": [[ 2, "desc" ]]
         });
     });
 };

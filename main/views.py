@@ -104,14 +104,14 @@ def application_edit(request, serial=None):
         context['application'] = app
         # Split request creation in two parts
         # TODO: добавить проверку
-        app_counter = ApplicationCounter.objects.get(year=timezone.today().year)
+        app_counter = ApplicationCounter.objects.get(year=timezone.now().year)
         station_list = request.POST.getlist('station')
         for station_item in station_list:
             app.station = Station.objects.get(id=station_item)
             app.name = request.POST['name']
             app.author = User.objects.get(id=request.POST['author'])
             if not app.serial:
-                app.serial = '%s-%s-%s' % (str(timezone.today().year),
+                app.serial = '%s-%s-%s' % (str(timezone.now().year),
                                            str(app_counter.number),
                                            app.station.short_description)
             app.description = request.POST['description']

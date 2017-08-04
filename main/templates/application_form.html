@@ -90,8 +90,152 @@
                 {% endfor %}
              </select>
         </div>
-
+         <div class="ui error message"></div>
         <input type="submit" class="ui primary button" value="Сохранить">
     </form>
 </div>
+<script>
+$(document).ready(function() {
+var $form = $('.ui.form');
+$.fn.form.settings.rules.isPresent = function(value, dateCompare) {
+  if(moment(value, "DD-MM-YYYY H:mm").isBefore(moment(dateCompare,"x"))){
+        return false;
+    }else{
+        return true;
+    }
+  }
+$.fn.form.settings.rules.isEndToStart = function(value) {
+  if(moment(value, "DD-MM-YYYY H:mm").isBefore(moment($form.form('get value', 'start'), "DD-MM-YYYY H:mm"))){
+        return false;
+    }else{
+        return true;
+    }
+  }
+
+$.fn.form.settings.rules.isStartToEnd = function(value) {
+  if(moment(value, "DD-MM-YYYY H:mm").isAfter(moment($form.form('get value', 'end'), "DD-MM-YYYY H:mm"))){
+        return false;
+    }else{
+        return true;
+    }
+  }
+  $('.ui.form')
+  .form({
+    fields: {
+      name: {
+        identifier: 'name',
+        rules: [
+          {
+            type   : 'empty',
+            prompt : 'Пожалуйста, введите название заявки'
+          }
+        ]
+      },
+      description: {
+        identifier: 'description',
+        rules: [
+          {
+            type   : 'empty',
+            prompt : 'Пожалуйста, введите описание заявки'
+          }
+        ]
+      },
+      author: {
+        identifier: 'author',
+        rules: [
+          {
+            type   : 'empty',
+            prompt : 'Пожалуйста, выберите автора заявки'
+          }
+        ]
+      },
+      time_needed: {
+      identifier: 'time_needed',
+          rules: [{
+            type: 'integer[1..10000]',
+            prompt : 'Пожалуйста, введите необходимое количество часов'
+          }]
+    },
+     start: {
+      identifier: 'start',
+          rules: [{
+            type: 'empty',
+            prompt : 'Пожалуйста, введите дату начала'
+          },
+          {
+            type: 'isPresent['+moment()+']',
+            prompt : 'Пожалуйста, не вводите прошедшее время'
+          },
+          {
+            type: 'isStartToEnd[]',
+            prompt : 'Пожалуйста, не вводите дату позже даты конца'
+          }]
+    },
+     end: {
+      identifier: 'end',
+          rules: [{
+            type: 'empty',
+            prompt : 'Пожалуйста, введите дату окончания'
+          },
+          {
+            type: 'isPresent['+moment()+']',
+            prompt : 'Пожалуйста, не вводите прошедшее время'
+          },
+          {
+            type: 'isEndToStart[]',
+            prompt : 'Пожалуйста, не вводите дату раньше даты начала'
+          }]
+    },
+      organizations: {
+        identifier: 'organizations',
+        rules: [
+          {
+            type   : 'empty',
+            prompt : 'Пожалуйста, выберите одну или несколько организаций'
+          }
+        ]
+      },
+      approaches: {
+        identifier: 'approaches',
+        rules: [
+          {
+            type   : 'empty',
+            prompt : 'Пожалуйста, выберите одну или несколько методик'
+          }
+        ]
+      },
+      station: {
+        identifier: 'station',
+        rules: [
+          {
+            type   : 'empty',
+            prompt : 'Пожалуйста, выберите одну или несколько станций'
+          }
+        ]
+      },
+      participants: {
+        identifier: 'participants',
+        rules: [
+          {
+            type   : 'empty',
+            prompt : 'Пожалуйста, выберите одного или несколько участников'
+          }
+        ]
+      },
+      equipment: {
+        identifier: 'equipment',
+        rules: [
+          {
+            type   : 'empty',
+            prompt : 'Пожалуйста, выберите оборудование'
+          }
+        ]
+      }
+    },
+    inline: true,
+    on: 'blur'
+  })
+;
+});
+</script>
 {% endblock %}

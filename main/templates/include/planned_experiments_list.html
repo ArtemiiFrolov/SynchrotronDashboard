@@ -40,9 +40,11 @@
                 <td>
                      {{planned_experiment.status}}
                 </td>
-                 <td>
+                 <td >
+                     <div align="center">
                       <a href="{% url 'journal_new'%}?planned={{planned_experiment.pk}}"><i class="green checked calendar icon"></i></a>
-                </td>
+                     </div>
+                 </td>
             </tr>
         {% endfor %}
         </tbody>

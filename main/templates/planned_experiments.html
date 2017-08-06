@@ -1,6 +1,5 @@
 {% extends 'layout.html' %}
 {% block content %}
-<h1 class="ui dividing header">Запланированные эксперименты</h1>
 <div class="ui floating labeled icon dropdown button right floated">
       <i class="filter icon"></i>
       <span class="text">Фильтр по станциям</span>
@@ -22,6 +21,8 @@
         {% endfor %}
       </div>
     </div>
+<h1 class="ui dividing header">Запланированные эксперименты</h1>
+
 <h3 class="ui header">Станция: {{text}}</h3>
  <div class="ui tabular menu">
             <a class="item active" onclick="all_planned();">
@@ -46,6 +47,7 @@ function load_table(path) {
     $('#planned').load(path, function() {
         $('#planned table').DataTable({
             language: dataTablesLanguage,
+            "order": [[ 1, "desc" ]]
         });
     });
 };

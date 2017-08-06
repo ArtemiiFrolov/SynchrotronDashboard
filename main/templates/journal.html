@@ -1,6 +1,5 @@
 {% extends 'layout.html' %}
 {% block content %}
-<h1 class="ui dividing header">Журнал экспериментов</h1>
 <div class="ui floating labeled icon dropdown button right floated">
       <i class="filter icon"></i>
       <span class="text">Фильтр по станциям</span>
@@ -22,12 +21,14 @@
         {% endfor %}
       </div>
     </div>
+<h1 class="ui dividing header">Журнал экспериментов</h1>
 
 <h3 class="ui header">{{text}}</h3>
     <table class="ui celled striped table">
         <thead>
             <tr>
                 <th class="single line">Дата</th>
+                <th>Дата создания</th>
                 <th>Заказчик</th>
                 <th>Название</th>
                 <th>Исполнитель</th>
@@ -41,6 +42,9 @@
             <tr>
                 <td data-order="{{ experiment.start|date:'U' }}">
                      {{ experiment.start }} - {{ experiment.end }}
+                </td>
+                 <td data-order="{{ experiment.created|date:'U' }}">
+                     {{ experiment.created }}
                 </td>
                 <td>
                     <a href="{% url 'user' experiment.application.author.pk %}">{{ experiment.application.author.name }}</a>
@@ -70,7 +74,14 @@
 
 
 <script type="text/javascript">
-    $('.dropdown').dropdown();
+   $( document ).ready(function() {
+ $('.table').DataTable({
+            language: dataTablesLanguage,
+            "order": [[ 1, "desc" ]]
+        });
+ $('.dropdown').dropdown();
+
+ });
 </script>
 {% endblock %}
 

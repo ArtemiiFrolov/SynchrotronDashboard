@@ -23,8 +23,8 @@
 </div>
 <h1 class="ui dividing header">Планирование экспериментов</h1>
 
-
 <h3 class="ui header">{{text}}</h3>
+<div class="ui grid">
     <table class="ui celled striped table" id="table">
         <thead>
             <tr>
@@ -74,12 +74,15 @@
                     {% endif %}
                 </td>
                 <td>
+                    <div align="center">
                     <a href="{% url 'planning_calendar'%}?application={{application.serial}}"><i class="green calendar icon"></i></a>
+                    </div>
                 </td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
+</div>
 
 
 
@@ -88,6 +91,7 @@
 $( document ).ready(function() {
  $('#table').DataTable({
             language: dataTablesLanguage,
+            "order": [[ 1, "desc" ]]
         });
  $('.dropdown').dropdown();
  });

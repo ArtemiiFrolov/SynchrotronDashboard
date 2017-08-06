@@ -32,14 +32,14 @@
                     <label for="date_start">Дата начала</label>
                     <div class="ui input left icon datetime">
                         <i class="calendar icon"></i>
-                        <input type="text" name="start" placeholder="Дата и время начала" value="{{ application.start|date:'c' }}"/>
+                        <input type="text" name="start" placeholder="Дата и время начала" value="{{application.start|date:'d.m.Y H:i' }}"/>
                     </div>
                 </div>
                 <div class="field">
                     <label for="date_start">Дата конца</label>
                     <div class="ui input left icon datetime">
                         <i class="calendar icon"></i>
-                        <input type="text" name="end" value="{{ application.end|date:'c' }}" placeholder="Дата и время конца">
+                        <input type="text" name="end" value="{{ application.end|date:'d.m.Y H:i' }}" placeholder="Дата и время конца">
                     </div>
                 </div>
             </div>

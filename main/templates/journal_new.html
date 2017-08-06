@@ -17,13 +17,17 @@
             <div class="two fields">
                 <div class="field">
                     <label for="date_start">Дата начала</label>
-                    <input type="date"{%if flag  %}value="{{ planned_ex.start|date:'Y-m-d' }}"{%endif%} name="date_start">
-                    <input type="time"{%if flag  %}value="{{ planned_ex.start|date:'H:i' }}"{%endif%} name="time_start">
+                    <div class="ui input left icon datetime">
+                     <i class="calendar icon"></i>
+                    <input type="text" name="start" value="{{planned_ex.start|date:'d.m.Y H:i'}}">
+                    </div>
                 </div>
                 <div class="field">
                     <label for="date_end">Дата окончания</label>
-                    <input type="date" {%if flag  %}value="{{ planned_ex.end|date:'Y-m-d' }}"{%endif%} name="date_end">
-                    <input type="time" {%if flag  %}value="{{ planned_ex.end|date:'H:i' }}"{%endif%} name="time_end">
+                    <div class="ui input left icon datetime">
+                    <i class="calendar icon"></i>
+                    <input type="text" name="end" value="{{ planned_ex.end|date:'d.m.Y H:i' }}">
+                    </div>
                 </div>
             </div>
         </div>
@@ -74,6 +78,114 @@
 </div>
 
 <script type="text/javascript">
-    $('.dropdown').dropdown();
+$(document).ready(function() {
+$('.dropdown').dropdown();
+var $form = $('.ui.form');
+$.fn.form.settings.rules.isPresent = function(value, dateCompare) {
+  if(moment(value, "DD-MM-YYYY H:mm").isBefore(moment(dateCompare,"x"))){
+        return false;
+    }else{
+        return true;
+    }
+  }
+$.fn.form.settings.rules.isEndToStart = function(value) {
+  if(moment(value, "DD-MM-YYYY H:mm").isBefore(moment($form.form('get value', 'start'), "DD-MM-YYYY H:mm"))){
+        return false;
+    }else{
+        return true;
+    }
+  }
+
+$.fn.form.settings.rules.isStartToEnd = function(value) {
+  if(moment(value, "DD-MM-YYYY H:mm").isAfter(moment($form.form('get value', 'end'), "DD-MM-YYYY H:mm"))){
+        return false;
+    }else{
+        return true;
+    }
+  }
+  $('.ui.form')
+  .form({
+    fields: {
+      serial: {
+        identifier: 'serial',
+        rules: [
+          {
+            type   : 'empty',
+            prompt : 'Пожалуйста, введите название заявки'
+          }
+        ]
+      },
+     start: {
+      identifier: 'start',
+          rules: [{
+            type: 'empty',
+            prompt : 'Пожалуйста, введите дату начала'
+          },
+          {
+            type: 'isPresent['+moment()+']',
+            prompt : 'Пожалуйста, не вводите прошедшее время'
+          },
+          {
+            type: 'isStartToEnd[]',
+            prompt : 'Пожалуйста, не вводите дату позже даты конца'
+          }]
+    },
+     end: {
+      identifier: 'end',
+          rules: [{
+            type: 'empty',
+            prompt : 'Пожалуйста, введите дату окончания'
+          },
+          {
+            type: 'isPresent['+moment()+']',
+            prompt : 'Пожалуйста, не вводите прошедшее время'
+          },
+          {
+            type: 'isEndToStart[]',
+            prompt : 'Пожалуйста, не вводите дату раньше даты начала'
+          }]
+    },
+      operator: {
+        identifier: 'operator',
+        rules: [
+          {
+            type   : 'empty',
+            prompt : 'Пожалуйста, введите оператора'
+          }
+        ]
+      },
+      approache: {
+        identifier: 'approache',
+        rules: [
+          {
+            type   : 'empty',
+            prompt : 'Пожалуйста, выберите одну методику'
+          }
+        ]
+      },
+      comment: {
+        identifier: 'comment',
+        rules: [
+          {
+            type   : 'empty',
+            prompt : 'Пожалуйста, напишите комментарий'
+          }
+        ]
+      },
+      station: {
+        identifier: 'station',
+        rules: [
+          {
+            type   : 'empty',
+            prompt : 'Пожалуйста, выберите станцию'
+          }
+        ]
+      }
+    },
+    inline: true,
+    on: 'blur'
+  })
+;
+});
 </script>
 {% endblock %}

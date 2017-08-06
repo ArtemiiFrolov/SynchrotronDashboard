@@ -337,10 +337,8 @@ def journal_new(request):
         experiment = Experiment()
         experiment.author = User.objects.get(name=request.user.name)
         experiment.application = Application.objects.get(serial=request.POST['serial'])
-        start = '%s %s' % (request.POST['date_start'], request.POST['time_start'])
-        experiment.start = datetime.datetime.strptime(start, "%Y-%m-%d %H:%M")
-        end = '%s %s' % (request.POST['date_end'], request.POST['time_end'])
-        experiment.end = datetime.datetime.strptime(end, "%Y-%m-%d %H:%M")
+        experiment.start = datetime.datetime.strptime(request.POST['start'], "%d.%m.%Y %H:%M")
+        experiment.end = datetime.datetime.strptime(request.POST['end'], "%d.%m.%Y %H:%M")
         experiment.operator = User.objects.get(name=request.POST['operator'])
         experiment.methods = Approach.objects.get(name=request.POST['approach'])
         experiment.comment = request.POST['comment']

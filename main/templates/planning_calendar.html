@@ -75,15 +75,89 @@
                 <input type="text" name="end">
             </div>
         </div>
+         <div class="ui error message"></div>
         <input type="submit" class="ui primary button" value="Запланировать">
      </form>
 
     <script type="text/javascript">
+
+        $(document).ready(function() {
         $('.dropdown').dropdown();
         $('.datetime').calendar({ type: 'datetime', });
          $('#table').DataTable({
             language: dataTablesLanguage,
         });
+var $form = $('.ui.form');
+$.fn.form.settings.rules.isPresent = function(value, dateCompare) {
+  if(moment(value, "DD-MM-YYYY H:mm").isBefore(moment(dateCompare,"x"))){
+        return false;
+    }else{
+        return true;
+    }
+  }
+$.fn.form.settings.rules.isEndToStart = function(value) {
+  if(moment(value, "DD-MM-YYYY H:mm").isBefore(moment($form.form('get value', 'start'), "DD-MM-YYYY H:mm"))){
+        return false;
+    }else{
+        return true;
+    }
+  }
+
+$.fn.form.settings.rules.isStartToEnd = function(value) {
+  if(moment(value, "DD-MM-YYYY H:mm").isAfter(moment($form.form('get value', 'end'), "DD-MM-YYYY H:mm"))){
+        return false;
+    }else{
+        return true;
+    }
+  }
+  $('.ui.form')
+  .form({
+    fields: {
+      name: {
+        identifier: 'serial',
+        rules: [
+          {
+            type   : 'empty',
+            prompt : 'Пожалуйста, выберите заявку'
+          }
+        ]
+      },
+     start: {
+      identifier: 'start',
+          rules: [{
+            type: 'empty',
+            prompt : 'Пожалуйста, введите дату начала'
+          },
+          {
+            type: 'isPresent['+moment()+']',
+            prompt : 'Пожалуйста, не вводите прошедшее время'
+          },
+          {
+            type: 'isStartToEnd[]',
+            prompt : 'Пожалуйста, не вводите дату позже даты конца'
+          }]
+    },
+     end: {
+      identifier: 'end',
+          rules: [{
+            type: 'empty',
+            prompt : 'Пожалуйста, введите дату окончания'
+          },
+          {
+            type: 'isPresent['+moment()+']',
+            prompt : 'Пожалуйста, не вводите прошедшее время'
+          },
+          {
+            type: 'isEndToStart[]',
+            prompt : 'Пожалуйста, не вводите дату раньше даты начала'
+          }]
+    },
+    },
+    inline: true,
+    on: 'blur'
+  })
+;
+});
     </script>
 </div>
 {% endblock %}

@@ -39,6 +39,7 @@ urlpatterns = [
     url(r'^applications_table$', views.applications_table, name='applications_table'),
     url(r'^application_row/(?P<pk>.*)/$', views.application_row, name='application_row'),
     url(r'^application_row_disapprove/(?P<pk>.*)/$', views.application_row_disapprove, name='application_row_disapprove'),
+    url(r'^modal_show/(?P<pk>.*)/$', views.modal_show, name='modal_show'),
 
     url(r'^stations/(?P<pk>.*)/$', views.station_view, name='station'),
 

@@ -43,6 +43,8 @@
         <div align="center">
         <a href="javascript:;" onclick="approve({{application.id}});"><i class="green checkmark icon"></i></a>
         <a href="{% url 'application_edit' application.serial %}" ><i class="yellow write icon"></i></a>
+        <a href="javascript:;" onclick="showComment({{application.id}})"><i class="orange exchange icon"></i></a>
         <a href="javascript:;" onclick="disapprove({{application.id}});"><i class="red remove icon"></i></a>
+
         </div>
     </td>

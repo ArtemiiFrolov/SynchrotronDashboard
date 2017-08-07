@@ -87,6 +87,9 @@ def application_row_disapprove(request, pk):
     return render(request, 'include/application_row.html', {'application': get_object_or_404(Application, pk=pk)})
 
 
+def modal_show(request, pk):
+    return render(request, 'include/modal.html', {'application': get_object_or_404(Application, pk=pk)})
+
 @login_required
 @require_http_methods(['GET', 'POST'])
 def application_edit(request, serial=None):
@@ -235,9 +238,9 @@ def planned_table(request):
     if request.GET.get('filter'):
         filtered = request.GET.get('filter')
     if filtered == 'finished':
-        planned_experiments_chosen = planned_experiments_chosen.filter(status__name="Эксперимент завершен")
+        planned_experiments_chosen = planned_experiments_chosen.filter(status__name="Эксперимент выполнен")
     if filtered == 'unfinished':
-        planned_experiments_chosen = planned_experiments_chosen.filter(status__name="Эксперимент не завершен")
+        planned_experiments_chosen = planned_experiments_chosen.filter(status__name="Эксперимент не выполнен")
     if request.GET.get('station'):
         station = request.GET.get('station')
     if station != "Все":

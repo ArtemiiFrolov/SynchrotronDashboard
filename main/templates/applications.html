@@ -1,7 +1,9 @@
 {% extends 'layout.html' %}
 {% block content %}
 <h1 class="ui dividing header">Заявки</h1>
-
+<div id="modaldiv" class="ui modal">
+  {% include 'include/modal.html' %}
+</div>
 <div class="ui grid">
     {% if request.user.is_staff %}
       <div class="ui two wide column">
@@ -71,6 +73,12 @@ $( document ).ready(function() {
     load_table('/applications_table?all=1&filter={{filtered}}');
     $('.dropdown').dropdown();
 });
+
+function showComment(id) {
+    $('#modaldiv').empty();
+    $('#modaldiv').load('/modal_show/'+id);
+    $('#modaldiv').show();
+};
 
 $('.ui .item').on('click', function() {
      $('.ui .item').removeClass('active');

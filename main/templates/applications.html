@@ -77,7 +77,7 @@ $( document ).ready(function() {
 function showComment(id) {
     $('#modaldiv').empty();
     $('#modaldiv').load('/modal_show/'+id);
-    $('#modaldiv').show();
+    $('#modaldiv').modal('show');
 };
 
 $('.ui .item').on('click', function() {

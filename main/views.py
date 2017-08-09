@@ -90,6 +90,16 @@ def application_row_disapprove(request, pk):
 def modal_show(request, pk):
     return render(request, 'include/modal.html', {'application': get_object_or_404(Application, pk=pk)})
 
+
+def modal_approve(request, pk):
+    if request.method == "POST":
+        comment = Comment()
+        comment.application = get_object_or_404(Application, pk=pk)
+        comment.author = User.objects.get(name=request.user.name)
+        comment.text = request.POST['description']
+        comment.save()
+    return render(request, 'applications.html')
+
 @login_required
 @require_http_methods(['GET', 'POST'])
 def application_edit(request, serial=None):

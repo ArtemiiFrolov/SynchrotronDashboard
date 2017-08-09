@@ -91,14 +91,32 @@ def modal_show(request, pk):
     return render(request, 'include/modal.html', {'application': get_object_or_404(Application, pk=pk)})
 
 
-def modal_approve(request, pk):
+def comment_from_application(request, pk):
+    app = get_object_or_404(Application, pk=pk)
     if request.method == "POST":
+        if 'Return' in request.POST:
+            app.stage_status = StageStatus.objects.get_or_create(name='Возвращена с комментариями')
+            app.save()
         comment = Comment()
-        comment.application = get_object_or_404(Application, pk=pk)
+        comment.application = app
         comment.author = User.objects.get(name=request.user.name)
         comment.text = request.POST['description']
         comment.save()
-    return render(request, 'applications.html')
+    return redirect(application_view, serial=app.serial)
+
+
+def comment_from_modal(request, pk):
+    app = get_object_or_404(Application, pk=pk)
+    if request.method == "POST":
+        if 'Return' in request.POST:
+            app.stage_status = StageStatus.objects.get_or_create(name='Возвращена с комментариями')
+            app.save()
+        comment = Comment()
+        comment.application = app
+        comment.author = User.objects.get(name=request.user.name)
+        comment.text = request.POST['description']
+        comment.save()
+    return redirect(applications_view)
 
 
 @login_required

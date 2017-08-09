@@ -24,6 +24,7 @@
 
 
     <h3 class="ui header">{{text}}</h3>
+    <div id='calendar'></div>
     <table class="ui celled striped table" id="table">
         <thead>
             <tr>
@@ -81,7 +82,7 @@
 
     <script type="text/javascript">
 
-        $(document).ready(function() {
+$(document).ready(function() {
         $('.dropdown').dropdown();
         $('.datetime').calendar({ type: 'datetime', });
          $('#table').DataTable({
@@ -158,6 +159,21 @@ $.fn.form.settings.rules.isStartToEnd = function(value) {
     on: 'blur'
   })
 ;
+
+ $('#calendar').fullCalendar({
+            events: [
+                {% for planned_experiment in planned_experiments %}
+                {
+                    title: '{{ planned_experiment.application.serial}} {{planned_experiment.start|date:"G:i"}} - {{planned_experiment.end|date:"G:i"}}',
+                    start: '{{ planned_experiment.start|date:"Y-m-d" }}',
+                    end: '{{ planned_experiment.end|date:"Y-m-d" }}',
+
+                },
+                {% endfor %}
+            ],
+
+        });
+
 });
     </script>
 </div>

@@ -40,7 +40,8 @@ urlpatterns = [
     url(r'^application_row/(?P<pk>.*)/$', views.application_row, name='application_row'),
     url(r'^application_row_disapprove/(?P<pk>.*)/$', views.application_row_disapprove, name='application_row_disapprove'),
     url(r'^modal_show/(?P<pk>.*)/$', views.modal_show, name='modal_show'),
-    url(r'^modal_approve/(?P<pk>.*)/$', views.modal_approve, name='modal_approve'),
+    url(r'^comment_from_application/(?P<pk>.*)/$', views.comment_from_application, name='comment_from_application'),
+    url(r'^comment_from_modal/(?P<pk>.*)/$', views.comment_from_modal, name='comment_from_modal'),
 
     url(r'^stations/(?P<pk>.*)/$', views.station_view, name='station'),
 

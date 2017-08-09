@@ -3,7 +3,7 @@
   <div class="header">
     Отклонить заявку "{{application.name}}" с комментарием:
   </div>
-    <form action="{% url 'modal_approve' application.pk %}" method="post" class="ui form">
+    <form action="{% url 'comment_from_modal' application.pk%}" method="post" class="ui form">
         {% csrf_token %}
   <div class="content">
     <div class="description">
@@ -12,6 +12,6 @@
   </div>
         <br>
   <div class="actions">
-   <input type="submit" class="ui primary button" value="Сохранить">
+   <input type="submit" class="ui primary button" value="Сохранить" name="Return">
   </div>
   </form>

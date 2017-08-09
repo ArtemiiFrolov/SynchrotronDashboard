@@ -103,13 +103,14 @@
     {% else %}
     <p>Пока комментариев нет</p>
     {% endif %}
-    <form class="ui reply form">
+    <form action="{% url 'comment_from_application' application.pk %}" method="post" class="ui form">
+        {% csrf_token %}
     <div class="field">
         <label>Комментарий</label>
-        <textarea name="comment"></textarea>
+        <textarea name="description"></textarea>
     </div>
-    <div class="ui blue labeled submit icon button">
-      <i class="icon edit"></i> Добавить
-    </div>
+   <input type="submit" class="ui primary button" value="Добавить" name = "Comment">
+   <input type="submit" class="ui primary button" value="Вернуть с комментарием" name = "Return">
+    </form>
 </div>
 {% endblock %}

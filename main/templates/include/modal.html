@@ -4,6 +4,7 @@
     Отклонить заявку "{{application.name}}" с комментарием:
   </div>
     <form action="{% url 'modal_approve' application.pk %}" method="post" class="ui form">
+        {% csrf_token %}
   <div class="content">
     <div class="description">
       <p><textarea name="description"></textarea></p>

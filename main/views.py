@@ -100,6 +100,7 @@ def modal_approve(request, pk):
         comment.save()
     return render(request, 'applications.html')
 
+
 @login_required
 @require_http_methods(['GET', 'POST'])
 def application_edit(request, serial=None):

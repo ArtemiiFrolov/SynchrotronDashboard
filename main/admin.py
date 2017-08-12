@@ -10,10 +10,14 @@ class ApplicationAdmin(admin.ModelAdmin):
     class ExperimentsInline(admin.TabularInline):
         model = Experiment
         extra = 0
+        exclude = ('special_user_permissions',
+                   'special_group_permissions',)
 
     class ExperimentPlanInline(admin.TabularInline):
         model = ExperimentPlan
         extra = 0
+        exclude = ('special_user_permissions',
+                   'special_group_permissions',)
 
     list_display = ('name', 'author', 'station', 'start', 'end')
     list_filter = ('author', 'station', 'start', 'complete_status', 'stage_status')
@@ -30,6 +34,8 @@ class OrganizationAdmin(admin.ModelAdmin):
     class ApplicationInline(admin.TabularInline):
         model = Application.organizations.through
         extra = 0
+        exclude = ('special_user_permissions',
+                   'special_group_permissions',)
 
     search_fields = ['name']
     inlines = [UserInline, ApplicationInline]
@@ -44,14 +50,20 @@ class StationAdmin(admin.ModelAdmin):
     class ApplicationInline(admin.TabularInline):
         model = Application
         extra = 0
+        exclude = ('special_user_permissions',
+                   'special_group_permissions',)
 
     class ExperimentPlanInline(admin.TabularInline):
         model = ExperimentPlan
         extra = 0
+        exclude = ('special_user_permissions',
+                   'special_group_permissions',)
 
     class ExperimentsInline(admin.TabularInline):
         model = Experiment
         extra = 0
+        exclude = ('special_user_permissions',
+                   'special_group_permissions',)
 
     list_display = ('name', 'short_description')
     search_fields = ['name']
@@ -73,18 +85,24 @@ class UserAdmin(admin.ModelAdmin):
         model = Experiment
         fk_name = 'author'
         extra = 0
+        exclude = ('special_user_permissions',
+                   'special_group_permissions',)
 
     class ExperimentPlanInline(admin.TabularInline):
         model = ExperimentPlan
         fk_name = 'author'
         extra = 0
+        exclude = ('special_user_permissions',
+                   'special_group_permissions',)
 
     class ApplicationInline(admin.TabularInline):
         model = Application
         fk_name = 'author'
         extra = 0
+        exclude = ('special_user_permissions',
+                   'special_group_permissions',)
 
-    list_display = ('name', 'email', 'role', 'date_joined')
+    list_display = ('name', 'email', 'date_joined')
     list_filter = ['station', 'date_joined']
     search_fields = ['name', 'station__name']
     inlines = [ExperimentPlanInline, ExperimentsInline, ApplicationInline]
@@ -118,12 +136,12 @@ class CommentAdmin(admin.ModelAdmin):
 class ApplicationCounterAdmin(admin.ModelAdmin):
     list_display = ('year', 'number')
 
-admin.site.register(Right)
-admin.site.register(Role)
 admin.site.register(Equipment)
 admin.site.register(CompleteStatus)
 admin.site.register(StageStatus)
 admin.site.register(JournalStatus)
 admin.site.register(EventsList)
+admin.site.register(SpecialGroupPermission)
+admin.site.register(SpecialUserPermission)
 
 

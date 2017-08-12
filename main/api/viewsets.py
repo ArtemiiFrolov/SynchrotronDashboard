@@ -28,22 +28,6 @@ class ApproachViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = (filters.SearchFilter,)
 
 
-class RightViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = models.Right.objects.all()
-    serializer_class = serializers.RightSerializer
-    permission_classes = [permissions.IsAuthenticated, ]
-    search_fields = ['name', ]
-    filter_backends = (filters.SearchFilter,)
-
-
-class RoleViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = models.Role.objects.all()
-    serializer_class = serializers.RoleSerializer
-    permission_classes = [permissions.IsAuthenticated, ]
-    search_fields = ['name', ]
-    filter_backends = (filters.SearchFilter,)
-
-
 class EquipmentViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = models.Equipment.objects.all()
     serializer_class = serializers.EquipmentSerializer

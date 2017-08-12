@@ -3,7 +3,7 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin, Group, Permission
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.exceptions import ValidationError, NON_FIELD_ERRORS, FieldError
 from django.db.models.signals import post_save, post_delete, pre_save
@@ -70,20 +70,6 @@ class Approach(TagModel):
         verbose_name_plural = 'Методики'
 
 
-class Right(TagModel):
-    class Meta:
-        verbose_name = 'Право'
-        verbose_name_plural = 'Права'
-
-
-class Role(TagModel):
-    rights = models.ManyToManyField(Right, related_name='roles', verbose_name='Права')
-
-    class Meta:
-        verbose_name = 'Роль'
-        verbose_name_plural = 'Роли'
-
-
 class Equipment(TagModel):
     class Meta:
         verbose_name = 'Оборудование'
@@ -135,7 +121,7 @@ class UserManager(BaseUserManager):
         birth and password.
         """
         user = self.create_user(email, name=name, password=password)
-        user.is_admin = True
+        user.is_superuser = True
         user.is_staff = True
         user.save(using=self._db)
         return user
@@ -144,17 +130,14 @@ class UserManager(BaseUserManager):
         return User.objects.get(email=username)
 
 
-class User(AbstractBaseUser):
+class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(_('Email address'), max_length=255, unique=True)
 
     name = models.CharField('Имя', max_length=100, blank=False)
     station = models.ManyToManyField(Station, related_name='users', blank=True, verbose_name='Станции')
     organization = models.ManyToManyField(Organization, related_name='users', blank=True, verbose_name='Организации')
-    role = models.ForeignKey(Role, related_name='users', blank=True, null=True, verbose_name='Роль')
-    special_rights = models.ManyToManyField(Right, related_name='users', blank=True, verbose_name='Особые права')  # TODO: make it possible leave special_right blank
 
     is_active = models.BooleanField("Активен", default=True)
-    is_admin = models.BooleanField("Администратор", default=False)
     is_staff = models.BooleanField("Статус персонала", default=False)
     date_joined = models.DateTimeField("Дата регистрации", auto_now_add=True)
 
@@ -178,9 +161,16 @@ class User(AbstractBaseUser):
         return self.__str__()
 
     def has_perm(self, perm, obj=None):
-        # "Does the user have a specific permission?"
-        # Simplest possible answer: Yes, always
-        return True
+        has_basic_perm = PermissionsMixin.has_perm(self, perm, obj)
+        if not has_basic_perm:
+            if obj is not None and isinstance(obj, SpecialPermissionsMixin):
+                if obj.special_user_permissions.filter(user=self, permission=perm).exists():
+                    return True
+                # TODO:
+                #if obj.special_group_permissions.filter(group=self.groups...., permission__codename=perm).exists():
+                 #   return True
+
+        return has_basic_perm
 
     def has_module_perms(self, app_label):
         # "Does the user have permissions to view the app `app_label`?"
@@ -192,7 +182,45 @@ class User(AbstractBaseUser):
         verbose_name_plural = 'Пользователи'
 
 
-class Application(TimeStampedModel):
+class SpecialUserPermission(models.Model):
+    user = models.ForeignKey(User, blank=False, null=False, related_name='special_permissions', verbose_name='Пользователь')
+    permission = models.ForeignKey(Permission, blank=False, null=False, verbose_name='Право')
+
+    def __str__(self):  # __unicode__ on Python 2
+        return '%s (%s)' % (self.user, self.permission)
+
+    def __unicode__(self):
+        return self.__str__()
+
+    class Meta:
+        verbose_name = 'Особое право пользователя'
+        verbose_name_plural = 'Особые права пользователей'
+
+
+class SpecialGroupPermission(models.Model):
+    group = models.ForeignKey(Group, blank=False, null=False, related_name='special_permissions', verbose_name='Группа')
+    permission = models.ForeignKey(Permission, blank=False, null=False, verbose_name='Право')
+
+    def __str__(self):  # __unicode__ on Python 2
+        return '%s (%s)' % (self.group, self.permission)
+
+    def __unicode__(self):
+        return self.__str__()
+
+    class Meta:
+        verbose_name = 'Особое право группы'
+        verbose_name_plural = 'Особые права группы'
+
+
+class SpecialPermissionsMixin(models.Model):
+    special_user_permissions = models.ManyToManyField(SpecialUserPermission, blank=True, verbose_name='Особые права пользователей')
+    special_group_permissions = models.ManyToManyField(SpecialGroupPermission, blank=True, verbose_name='Особые права групп')
+
+    class Meta:
+        abstract = True
+
+
+class Application(TimeStampedModel, SpecialPermissionsMixin):
     # TODO: add files and articles
     name = models.CharField('Название', max_length=200, blank=False, null=False)
     author = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='applications_as_author', verbose_name='Автор')
@@ -227,6 +255,10 @@ class Application(TimeStampedModel):
     class Meta:
         verbose_name = 'Заявка'
         verbose_name_plural = 'Заявки'
+        permissions = (
+            ('view_application', 'Может смотреть заявку'),
+            ('view_all_applications', 'Может смотреть все заявки'),
+        )
 
 
 pre_save.connect(Application.pre_save, Application, dispatch_uid="main.models.Application")
@@ -250,7 +282,7 @@ class ExperimentPlan(TimeStampedModel):
         verbose_name_plural = 'Планируемые эксперименты'
 
 
-class Experiment(TimeStampedModel):
+class Experiment(TimeStampedModel, SpecialPermissionsMixin):
     application = models.ForeignKey(Application, related_name='experiments', verbose_name='Заявка')
     author = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='experiments_as_author', verbose_name='Автор')  # TODO: automatically fill from request
     start = models.DateTimeField('Старт',auto_now_add=False)

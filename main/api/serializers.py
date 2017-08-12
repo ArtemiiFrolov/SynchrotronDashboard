@@ -22,18 +22,6 @@ class ApproachSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class RightSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.Right
-        fields = '__all__'
-
-
-class RoleSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.Role
-        fields = '__all__'
-
-
 class EquipmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Equipment

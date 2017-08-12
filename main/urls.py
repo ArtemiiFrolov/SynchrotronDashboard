@@ -44,7 +44,7 @@ urlpatterns = [
     url(r'^stations/(?P<pk>.*)/$', views.station_view, name='station'),
 
     url(r'^users/(?P<user_id>.*)/$', views.user_view, name='user'),
-    url(r'^users/$', views.users_view, name='users'),
+    url(r'^all_users/$', views.all_users, name='all_users'),
 
     url(r'^organizations/(?P<pk>.*)/$', views.organization_view, name='organization'),
 

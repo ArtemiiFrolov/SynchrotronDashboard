@@ -32,7 +32,7 @@
                         <a class="item" href="{% url 'journal_new' %}">Создать запись</a>
                     </div>
                 </div>
-                <a href="#" class="item">Журнал</a>
+                <a href="{% url 'all_users' %}"class="item">Журнал</a>
                 <div class="right menu">
                     {% if request.user.is_authenticated %}
                     <div class="ui simple dropdown item">

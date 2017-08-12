@@ -1,0 +1,94 @@
+{% extends 'layout.html' %}
+{% block content %}
+<h1 class="ui header divided">Журнал</h1>
+
+
+
+<div class="ui items">
+    <div id="context1">
+     <div class="ui top attached tabular menu">
+        <a class="item active" data-tab="first">Пользоаватели</a>
+        <a class="item" data-tab="second">Станции</a>
+        <a class="item" data-tab="third">Организации</a>
+    </div>
+    <div class="ui bottom attached tab segment active" data-tab="first">
+                <table class="ui celled striped table">
+                    <thead>
+                        <tr>
+                            <th class="single line">Имя</th>
+                            <th>E-mail</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for user in users %}
+                        <tr>
+                            <td>
+                                <a href="{% url 'user' user.pk %}">{{ user.name }}</a>
+                            </td>
+                             <td>
+                                 {{user.email}}
+                             </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+    </div>
+     <div class="ui bottom attached tab segment" data-tab="second">
+                 <table class="ui celled striped table">
+                    <thead>
+                        <tr>
+                            <th class="single line">Название</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for station in stations %}
+                        <tr>
+                            <td>
+                               <a href="{% url 'station' experiment.station.pk %}"> {{station.name}}</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+    </div>
+     <div class="ui bottom attached tab segment" data-tab="third">
+         <table class="ui celled striped table">
+        <thead>
+            <tr>
+                <th>Название</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for organization in organizations %}
+            <tr>
+                 <td>
+                   <a href="{% url 'organization' organization.pk %}">{{ organization.name }}</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+
+</div>
+</div>
+<script type="text/javascript">
+$('#context1 .menu .item')
+  .tab({
+    context: $('#context1')
+  })
+;
+$('#context2 .menu .item')
+  .tab({
+    // special keyword works same as above
+    context: 'parent'
+  })
+;
+$('table').DataTable({
+            language: dataTablesLanguage,
+        });
+</script>
+
+{% endblock %}
+
+

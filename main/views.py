@@ -217,9 +217,9 @@ def applications_view(request):
     return render(request, 'applications.html', {'applications': applications, 'filtered': filtered})
 
 
-def users_view(request):
-    context = {'show_users': User.objects.all}
-    return render(request, 'users.html', context)
+def all_users(request):
+    context = {'users': User.objects.all, 'stations': Station.objects.all, 'organizations': Organization.objects.all}
+    return render(request, 'all_users.html', context)
 
 
 def user_view(request, user_id):

@@ -10,7 +10,9 @@
             <th>Станция</th>
             <th>Статус</th>
             <!--<th data-order="false">Комментарии</th>-->
+            {% if request.user.is_staff %}
             <th data-order="false">Управление</th>
+            {% endif %}
         </tr>
     </thead>
     <tbody>

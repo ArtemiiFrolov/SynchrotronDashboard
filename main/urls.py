@@ -56,5 +56,7 @@ urlpatterns = [
     url(r'^journal/$', views.journal, name='journal'),
     url(r'^journal/new$', views.journal_new, name='journal_new'),
 
+    url(r'^synchrotron_calendar/$', views.synchrotron_calendar, name='synchrotron_calendar'),
+
     url(r'^api/', include(api_router.urls, namespace='api')),
 ]

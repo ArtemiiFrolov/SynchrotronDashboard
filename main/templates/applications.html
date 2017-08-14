@@ -1,9 +1,10 @@
 {% extends 'layout.html' %}
 {% block content %}
-<h1 class="ui dividing header">Заявки</h1>
 <div id="modaldiv" class="ui modal">
   {% include 'include/modal.html' %}
 </div>
+<h1 class="ui dividing header">Заявки</h1>
+
 <div class="ui grid">
     {% if request.user.is_staff %}
       <div class="ui two wide column">
@@ -75,7 +76,7 @@ $( document ).ready(function() {
 });
 
 function showComment(id) {
-    $('#modaldiv').empty();
+   // $('#modaldiv').empty();
     $('#modaldiv').load('/modal_show/'+id);
     $('#modaldiv').modal('show');
 };

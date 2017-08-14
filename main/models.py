@@ -95,6 +95,18 @@ class JournalStatus(TagModel):
 
 
 class EventsList(TagModel):
+    COLOR_CHOICES = (
+        ('#33СС00', 'Зеленый'),
+        ('#0000FF', 'Синий'),
+        ('#FF0000', 'Красный'),
+        ('#33ССFF', 'Голубой'),
+        ('#FF00FF', 'Розовый'),
+        ('#660033', 'Коричневый'),
+        ('#9900FF', 'Фиолетовый'),
+        ('#СС0000', 'Темно-красный'),
+    )
+    color = models.CharField(verbose_name=_(u'Цвет'), choices=COLOR_CHOICES,
+                             default='#33СС00', max_length=7)
     class Meta:
         verbose_name = 'Словарь событий'
         verbose_name_plural = 'Словарь событий'

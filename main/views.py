@@ -395,3 +395,16 @@ def journal_new(request):
                'flag': flag,
                }
     return render(request, 'journal_new.html', context)
+
+
+def synchrotron_calendar(request):
+    if request.method == "POST":
+        event = Event()
+        event.name = EventsList.objects.get(pk=request.POST['event'])
+        event.start = datetime.datetime.strptime(request.POST['start'], "%d.%m.%Y %H:%M")
+        event.end = datetime.datetime.strptime(request.POST['end'], "%d.%m.%Y %H:%M")
+        event.save()
+    context = {'events': Event.objects.all(),
+               'eventsList': EventsList.objects.all(),
+               }
+    return render(request, 'synchrotron_calendar.html', context)

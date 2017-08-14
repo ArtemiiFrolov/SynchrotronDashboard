@@ -1,0 +1,136 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="ui text container">
+    <h1 class="ui dividing header">Календарь ускорителя</h1>
+
+
+    <h3 class="ui header">{{text}}</h3>
+    <div id='calendar'></div>
+    <br>
+     <h3 class="ui header">Запланировать новое событие</h3>
+     <form action="" method="post" class="ui form">
+    {% csrf_token %}
+        <div class="field">
+            <label for="application">Событие</label>
+            <select name="event" class="ui dropdown">
+                <option disabled>Событие</option>
+                {% for ev in eventsList reversed%}
+                    <option  value="{{ev.pk}}">{{ev.name}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="field">
+            <label for="date_start">Дата начала</label>
+            <div class="ui input left icon datetime">
+                <i class="calendar icon"></i>
+                <input type="text" name="start">
+            </div>
+        </div>
+        <div class="field">
+            <label for="date_end">Дата окончания</label>
+            <div class="ui input left icon datetime">
+                <i class="calendar icon"></i>
+                <input type="text" name="end">
+            </div>
+        </div>
+         <div class="ui error message"></div>
+        <input type="submit" class="ui primary button" value="Запланировать">
+     </form>
+
+    <script type="text/javascript">
+
+$(document).ready(function() {
+        $('.dropdown').dropdown();
+        $('.datetime').calendar({ type: 'datetime', });
+
+var $form = $('.ui.form');
+$.fn.form.settings.rules.isPresent = function(value, dateCompare) {
+  if(moment(value, "DD-MM-YYYY H:mm").isBefore(moment(dateCompare,"x"))){
+        return false;
+    }else{
+        return true;
+    }
+  }
+$.fn.form.settings.rules.isEndToStart = function(value) {
+  if(moment(value, "DD-MM-YYYY H:mm").isBefore(moment($form.form('get value', 'start'), "DD-MM-YYYY H:mm"))){
+        return false;
+    }else{
+        return true;
+    }
+  }
+
+$.fn.form.settings.rules.isStartToEnd = function(value) {
+  if(moment(value, "DD-MM-YYYY H:mm").isAfter(moment($form.form('get value', 'end'), "DD-MM-YYYY H:mm"))){
+        return false;
+    }else{
+        return true;
+    }
+  }
+  $('.ui.form')
+  .form({
+    fields: {
+      event: {
+        identifier: 'event',
+        rules: [
+          {
+            type   : 'empty',
+            prompt : 'Пожалуйста, выберите событие'
+          }
+        ]
+      },
+     start: {
+      identifier: 'start',
+          rules: [{
+            type: 'empty',
+            prompt : 'Пожалуйста, введите дату начала'
+          },
+          {
+            type: 'isPresent['+moment()+']',
+            prompt : 'Пожалуйста, не вводите прошедшее время'
+          },
+          {
+            type: 'isStartToEnd[]',
+            prompt : 'Пожалуйста, не вводите дату позже даты конца'
+          }]
+    },
+     end: {
+      identifier: 'end',
+          rules: [{
+            type: 'empty',
+            prompt : 'Пожалуйста, введите дату окончания'
+          },
+          {
+            type: 'isPresent['+moment()+']',
+            prompt : 'Пожалуйста, не вводите прошедшее время'
+          },
+          {
+            type: 'isEndToStart[]',
+            prompt : 'Пожалуйста, не вводите дату раньше даты начала'
+          }]
+    },
+    },
+    inline: true,
+    on: 'blur'
+  })
+;
+
+ $('#calendar').fullCalendar({
+            events: [
+                {% for ev in events %}
+                {
+                    title: '{{ ev.name.name}} {{ev.start|date:"G:i"}} - {{ev.end|date:"G:i"}}',
+                    start: '{{ ev.start|date:"Y-m-d" }}',
+                    end: '{{ ev.end|date:"Y-m-d" }}',
+                    color: '{{ev.name.color}}'
+
+                },
+                {% endfor %}
+            ],
+
+        });
+
+});
+    </script>
+</div>
+{% endblock %}
+

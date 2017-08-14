@@ -33,6 +33,7 @@
                     </div>
                 </div>
                 <a href="{% url 'all_users' %}"class="item">Журнал</a>
+                <a href="{% url 'synchrotron_calendar' %}"class="item">Календарь ускорителя</a>
                 <div class="right menu">
                     {% if request.user.is_authenticated %}
                     <div class="ui simple dropdown item">

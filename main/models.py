@@ -60,6 +60,15 @@ class Station(TagModel):
     class Meta:
         verbose_name = 'Станция'
         verbose_name_plural = 'Станции'
+        permissions = (
+            ('view_station_application', 'Может смотреть заявки станции'),
+            ('edit_station_application', 'Может редактировать заявки станции'),
+            ('approve_station_application', 'Может принимать заявки станции'),
+            ('view_plan_station_experiment', 'Может просматривать запланированный эксперимент на станции'),
+            ('plan_station_experiment', 'Может планировать эксперимент на станции'),
+            ('conduct_station_experiment', 'Может проводить эксперимент на станции'),
+            ('view_station_experiment', 'Может просматривать эксперимент на станции'),
+        )
 
 
 class Approach(TagModel):
@@ -270,6 +279,10 @@ class Application(TimeStampedModel, SpecialPermissionsMixin):
         permissions = (
             ('view_application', 'Может смотреть заявку'),
             ('view_all_applications', 'Может смотреть все заявки'),
+            ('edit_applications', 'Может редактировать заявки'),
+            ('approve_applications', 'Может принимать заявки'),
+            ('decline_applications', 'Может отклонять заявки'),
+            ('return_applications', 'Может возвращать заявки'),
         )
 
 
@@ -292,6 +305,10 @@ class ExperimentPlan(TimeStampedModel):
     class Meta:
         verbose_name = 'Планируемый эксперимент'
         verbose_name_plural = 'Планируемые эксперименты'
+        permissions = (
+            ('view_plan_station_experiment', 'Может просматривать запланированный эксперимент'),
+            ('plan_station_experiment', 'Может планировать эксперимент'),
+        )
 
 
 class Experiment(TimeStampedModel, SpecialPermissionsMixin):
@@ -313,6 +330,10 @@ class Experiment(TimeStampedModel, SpecialPermissionsMixin):
     class Meta:
         verbose_name = 'Завершенный эксперимент'
         verbose_name_plural = 'Завершенные эксперименты'
+        permissions = (
+            ('conduct_station_experiment', 'Может проводить эксперимент'),
+            ('view_station_experiment', 'Может просматривать эксперимент'),
+        )
 
 
 class Event(models.Model):
@@ -326,6 +347,9 @@ class Event(models.Model):
     class Meta:
         verbose_name = 'Событие'
         verbose_name_plural = 'События'
+        permissions = (
+            ('add_event_to_calendar', 'Может добавлять события в календарь'),
+        )
 
 
 class Comment(TimeStampedModel):

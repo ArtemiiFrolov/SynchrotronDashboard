@@ -7,7 +7,7 @@
 <div class="ui items">
     <div id="context1">
      <div class="ui top attached tabular menu">
-        <a class="item active" data-tab="first">Пользоаватели</a>
+        <a class="item active" data-tab="first">Пользователи</a>
         <a class="item" data-tab="second">Станции</a>
         <a class="item" data-tab="third">Организации</a>
     </div>
@@ -44,7 +44,7 @@
                     {% for station in stations %}
                         <tr>
                             <td>
-                               <a href="{% url 'station' experiment.station.pk %}"> {{station.name}}</a>
+                               <a href="{% url 'station' station.pk %}"> {{station.name}}</a>
                             </td>
                         </tr>
                     {% endfor %}

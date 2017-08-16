@@ -161,12 +161,17 @@ $.fn.form.settings.rules.isStartToEnd = function(value) {
 ;
 
  $('#calendar').fullCalendar({
+            header: {
+				left: 'prev,next today',
+				center: 'title',
+				right: 'month,listWeek,listDay'
+			},
             events: [
                 {% for planned_experiment in planned_experiments %}
                 {
                     title: '{{ planned_experiment.application.serial}} {{planned_experiment.start|date:"G:i"}} - {{planned_experiment.end|date:"G:i"}}',
-                    start: '{{ planned_experiment.start|date:"Y-m-d" }}',
-                    end: '{{ planned_experiment.end|date:"Y-m-d" }}',
+                    start: '{{ planned_experiment.start|date:"Y-m-d G:i" }}',
+                    end: '{{ planned_experiment.end|date:"Y-m-d  G:i" }}',
 
                 },
                 {% endfor %}

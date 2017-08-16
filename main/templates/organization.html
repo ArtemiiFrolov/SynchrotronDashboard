@@ -25,7 +25,6 @@
                             <th>Заказчик</th>
                             <th>Название</th>
                             <th>Станция</th>
-                            <th>Комментарии</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -45,21 +44,6 @@
                             </td>
                             <td>
                                 <a href="{% url 'station' application.station.pk %}"> {{ application.station.name }}</a>
-                            </td>
-                            <td>
-                               <div class="ui comments">
-                                  {% for comment in application.comments.all %}
-                                     <div class="ui comment">
-                                        <div class="content">
-                                            <a class="author" href="{% url 'user' comment.author.pk %}">{{ comment.author.name }}</a>
-                                            <div class="metadata">
-                                                <span class="date">{{ comment.created }}</span>
-                                            </div>
-                                            <div class="text">{{ comment.text }}</div>
-                                        </div>
-                                     </div>
-                                  {% endfor %}
-                               </div>
                             </td>
                         </tr>
                     {% endfor %}

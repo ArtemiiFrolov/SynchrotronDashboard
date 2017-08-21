@@ -53,7 +53,7 @@ def logout_view(request):
 @login_required
 def applications_table(request):
     applications = Application.objects.all()
-    if not request.user.has_perm('main.view_all_applications'):
+    if not request.user.has_perm('main.view_application'):
         applications_selected = []
         for application in applications:
             if request.user.has_perm('main.view_application', application) or application.author == request.user or \

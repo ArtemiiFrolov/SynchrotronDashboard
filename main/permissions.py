@@ -4,8 +4,13 @@ from django.contrib.auth.backends import ModelBackend
 
 class ObjectPermissionsBackend(ModelBackend):
     def has_perm(self, user, perm, obj=None):
+        basic = ModelBackend.has_perm(self, user, perm)
+        if basic:
+            return True
+
+        # if basic perm checking fails
         if obj is None:
-            return ModelBackend.has_perm(self, user, perm)
+            return False
 
         if not isinstance(obj, SpecialPermissionsMixin):
             return False

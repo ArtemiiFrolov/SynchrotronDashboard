@@ -1,14 +1,11 @@
 from main.models import SpecialPermissionsMixin
-from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Permission
-
-UserModel = get_user_model()
+from django.contrib.auth.backends import ModelBackend
 
 
-class ObjectPermissionsBackend(object):
+class ObjectPermissionsBackend(ModelBackend):
     def has_perm(self, user, perm, obj=None):
         if obj is None:
-            return False
+            return ModelBackend.has_perm(self, user, perm)
 
         if not isinstance(obj, SpecialPermissionsMixin):
             return False
@@ -30,7 +27,7 @@ class ObjectPermissionsBackend(object):
 
         return False
 
-
     def has_module_perms(self, user, app_label):
-        #return True
-        return app_label == 'main'
+        if app_label == 'main':
+            return True
+        return ModelBackend.has_module_perms(self, user, app_label)

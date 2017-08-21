@@ -64,8 +64,6 @@ class Station(TagModel):
             ('view_station_application', 'Может смотреть заявки станции'),
             ('edit_station_application', 'Может редактировать заявки станции'),
             ('approve_station_application', 'Может принимать заявки станции'),
-            ('decline_station_application', 'Может отклонять заявки станции'),
-            ('return_station_application', 'Может возвращать заявки станции'),
             ('view_plan_station_experiment', 'Может просматривать запланированный эксперимент на станции'),
             ('plan_station_experiment', 'Может планировать эксперимент на станции'),
             ('conduct_station_experiment', 'Может проводить эксперимент на станции'),

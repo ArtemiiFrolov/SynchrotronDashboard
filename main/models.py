@@ -183,23 +183,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     def __unicode__(self):
         return self.__str__()
 
-    def has_perm(self, perm, obj=None):
-        has_basic_perm = PermissionsMixin.has_perm(self, perm, obj)
-        if not has_basic_perm:
-            if obj is not None and isinstance(obj, SpecialPermissionsMixin):
-                if obj.special_user_permissions.filter(user=self, permission=perm).exists():
-                    return True
-                # TODO:
-                #if obj.special_group_permissions.filter(group=self.groups...., permission__codename=perm).exists():
-                 #   return True
-
-        return has_basic_perm
-
-    def has_module_perms(self, app_label):
-        # "Does the user have permissions to view the app `app_label`?"
-        # Simplest possible answer: Yes, always
-        return True
-
     class Meta:
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'

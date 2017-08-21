@@ -164,8 +164,9 @@ $.fn.form.settings.rules.isStartToEnd = function(value) {
             header: {
 				left: 'prev,next today',
 				center: 'title',
-				right: 'month,listWeek,listDay'
+				right: 'month,listWeek'
 			},
+			timezone:'local',
             events: [
                 {% for planned_experiment in planned_experiments %}
                 {

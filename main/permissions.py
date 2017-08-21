@@ -9,7 +9,7 @@ class ObjectPermissionsBackend(object):
         if not isinstance(obj, SpecialPermissionsMixin):
             return False
 
-        if obj.special_user_permissions.filter(user=user, permission=perm).exists():
+        if obj.special_user_permissions.filter(user=user, permission__codename=perm).exists():
             return True
 
         return False

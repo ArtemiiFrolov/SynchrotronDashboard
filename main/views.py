@@ -53,18 +53,18 @@ def logout_view(request):
 @login_required
 def applications_table(request):
     applications = Application.objects.all()
-    if not request.user.has_perm('view_applications'):
-        query_sets = []
+    if not request.user.has_perm('main.view_all_applications'):
+        applications_selected = []
         for application in applications:
             if request.user.has_perm('view_application', application) or application.author == request.user or \
                             request.user in application.participants.all():
-                query_sets.append(applications.filter(pk=application.pk))
-        for station in Station.objects.all():
-            if request.user.has_perm('view_station_application', station) or station in request.user.station.all():
-                query_sets.append(application.filter(station=station))
-        applications = query_sets[0]
-        for query_set in query_sets[1:]:
-            applications = applications | query_set
+                if application.pk not in applications_selected:
+                    applications_selected.append(application.pk)
+            if request.user.has_perm('view_station_application', application.station) or application.station in request.user.station.all():
+                if application.pk not in applications_selected:
+                    applications_selected.append(application.pk)
+        applications = Application.objects.filter(pk__in=applications_selected)
+
     filtered = 'all'
     if request.GET.get('filter'):
         filtered = request.GET.get('filter')

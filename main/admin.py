@@ -105,7 +105,7 @@ class UserAdmin(admin.ModelAdmin):
     list_display = ('name', 'email', 'date_joined')
     list_filter = ['station', 'date_joined']
     search_fields = ['name', 'station__name']
-    inlines = [ExperimentPlanInline, ExperimentsInline, ApplicationInline]
+   # inlines = [ExperimentPlanInline, ExperimentsInline, ApplicationInline]
 
 
 @admin.register(ExperimentPlan)

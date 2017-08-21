@@ -56,11 +56,11 @@ def applications_table(request):
     if not request.user.has_perm('main.view_all_applications'):
         applications_selected = []
         for application in applications:
-            if request.user.has_perm('view_application', application) or application.author == request.user or \
+            if request.user.has_perm('main.view_application', application) or application.author == request.user or \
                             request.user in application.participants.all():
                 if application.pk not in applications_selected:
                     applications_selected.append(application.pk)
-            if request.user.has_perm('view_station_application', application.station) or application.station in request.user.station.all():
+            if request.user.has_perm('main.view_station_application', application.station) or application.station in request.user.station.all():
                 if application.pk not in applications_selected:
                     applications_selected.append(application.pk)
         applications = Application.objects.filter(pk__in=applications_selected)

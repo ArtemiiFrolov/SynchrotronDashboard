@@ -192,6 +192,10 @@ class SpecialUserPermission(models.Model):
     user = models.ForeignKey(User, blank=False, null=False, related_name='special_permissions', verbose_name='Пользователь')
     permission = models.ForeignKey(Permission, blank=False, null=False, verbose_name='Право')
 
+    @property
+    def permission_label(self):
+        return '%s.%s' % (self.permission.content_type.app_label, self.permission.codename)
+
     def __str__(self):  # __unicode__ on Python 2
         return '%s (%s)' % (self.user, self.permission)
 
@@ -206,6 +210,10 @@ class SpecialUserPermission(models.Model):
 class SpecialGroupPermission(models.Model):
     group = models.ForeignKey(Group, blank=False, null=False, related_name='special_permissions', verbose_name='Группа')
     permission = models.ForeignKey(Permission, blank=False, null=False, verbose_name='Право')
+
+    @property
+    def permission_label(self):
+        return '%s.%s' % (self.permission.content_type.app_label, self.permission.codename)
 
     def __str__(self):  # __unicode__ on Python 2
         return '%s (%s)' % (self.group, self.permission)

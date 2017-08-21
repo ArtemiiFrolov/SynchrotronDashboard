@@ -42,10 +42,18 @@
     {% if request.user.is_staff %}
     <td>
         <div align="center">
+            {% if can_approve %}
         <a href="javascript:;" onclick="approve({{application.id}});"><i class="green checkmark icon"></i></a>
+            {% endif %}
+             {% if can_edit %}
         <a href="{% url 'application_edit' application.serial %}" ><i class="yellow write icon"></i></a>
+             {% endif %}
+             {% if can_return %}
         <a href="javascript:;" onclick="showComment({{application.id}})"><i class="orange exchange icon"></i></a>
+             {% endif %}
+             {% if can_decline %}
         <a href="javascript:;" onclick="disapprove({{application.id}});"><i class="red remove icon"></i></a>
+             {% endif %}
 
         </div>
     </td>

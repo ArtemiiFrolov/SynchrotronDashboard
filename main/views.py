@@ -53,6 +53,18 @@ def logout_view(request):
 @login_required
 def applications_table(request):
     applications = Application.objects.all()
+    if not request.user.has_perm('view_applications'):
+        query_sets = []
+        for application in applications:
+            if request.user.has_perm('view_application', application) or application.author == request.user or \
+                            request.user in application.participants.all():
+                query_sets.append(applications.filter(pk=application.pk))
+        for station in Station.objects.all():
+            if request.user.has_perm('view_station_application', station) or station in request.user.station.all():
+                query_sets.append(application.filter(station=station))
+        applications = query_sets[0]
+        for query_set in query_sets[1:]:
+            applications = applications | query_set
     filtered = 'all'
     if request.GET.get('filter'):
         filtered = request.GET.get('filter')
@@ -75,14 +87,46 @@ def applications_table(request):
 
 def application_row(request, pk):
     app = Application.objects.get(pk=pk)
+    can_edit = False
+    can_return = False
+    can_approve = False
+    can_decline = False
+    if request.user.has_perm('edit_applications') or request.user.has_perm('edit_applications', app) or request.user == app.author:
+        can_edit = True
+    if request.user.has_perm('approve_applications') or request.user.has_perm('approve_applications', app):
+        can_approve = True
+    if request.user.has_perm('decline_applications') or request.user.has_perm('decline_applications', app):
+        can_decline = True
+    if request.user.has_perm('return_applications') or request.user.has_perm('return_applications', app):
+        can_return = True
+    for station in Station.objects.all():
+        if request.user.has_perm('edit_station_application') or request.user.has_perm('edit_station_application', station):
+            can_edit = True
+        if request.user.has_perm('approve_station_application') or request.user.has_perm('approve_station_application', station):
+            can_approve = True
+        if request.user.has_perm('decline_station_application') or request.user.has_perm('decline_station_application', station):
+            can_decline = True
+        if request.user.has_perm('return_station_application') or request.user.has_perm('return_station_application', station):
+            can_return = True
     app.stage_status = StageStatus.objects.get_or_create(name='Заявка принята')
     app.save()
-    return render(request, 'include/application_row.html', {'application': get_object_or_404(Application, pk=pk)})
+    return render(request, 'include/application_row.html', {'application': get_object_or_404(Application, pk=pk),
+                                                            'can_edit': can_edit,
+                                                            'can_return': can_return,
+                                                            'can_approve': can_approve,
+                                                            'can_decline': can_decline})
 
 
 def application_row_disapprove(request, pk):
     app = Application.objects.get(pk=pk)
-    app.stage_status = StageStatus.objects.get_or_create(name='Заявка отклонена')
+    can_decline = False
+    if request.user.has_perm('decline_applications') or request.user.has_perm('decline_applications', app):
+        can_decline = True
+    for station in Station.objects.all():
+        if request.user.has_perm('decline_station_application') or request.user.has_perm('decline_station_application', station):
+            can_decline = True
+    if can_decline:
+        app.stage_status = StageStatus.objects.get_or_create(name='Заявка отклонена')
     app.save()
     return render(request, 'include/application_row.html', {'application': get_object_or_404(Application, pk=pk)})
 

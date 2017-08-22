@@ -181,23 +181,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     def __unicode__(self):
         return self.__str__()
 
-    def has_perm(self, perm, obj=None):
-        has_basic_perm = PermissionsMixin.has_perm(self, perm, obj)
-        if not has_basic_perm:
-            if obj is not None and isinstance(obj, SpecialPermissionsMixin):
-                if obj.special_user_permissions.filter(user=self, permission=perm).exists():
-                    return True
-                # TODO:
-                #if obj.special_group_permissions.filter(group=self.groups...., permission__codename=perm).exists():
-                 #   return True
-
-        return has_basic_perm
-
-    def has_module_perms(self, app_label):
-        # "Does the user have permissions to view the app `app_label`?"
-        # Simplest possible answer: Yes, always
-        return True
-
     class Meta:
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
@@ -206,6 +189,10 @@ class User(AbstractBaseUser, PermissionsMixin):
 class SpecialUserPermission(models.Model):
     user = models.ForeignKey(User, blank=False, null=False, related_name='special_permissions', verbose_name='Пользователь')
     permission = models.ForeignKey(Permission, blank=False, null=False, verbose_name='Право')
+
+    @property
+    def permission_label(self):
+        return '%s.%s' % (self.permission.content_type.app_label, self.permission.codename)
 
     def __str__(self):  # __unicode__ on Python 2
         return '%s (%s)' % (self.user, self.permission)
@@ -221,6 +208,10 @@ class SpecialUserPermission(models.Model):
 class SpecialGroupPermission(models.Model):
     group = models.ForeignKey(Group, blank=False, null=False, related_name='special_permissions', verbose_name='Группа')
     permission = models.ForeignKey(Permission, blank=False, null=False, verbose_name='Право')
+
+    @property
+    def permission_label(self):
+        return '%s.%s' % (self.permission.content_type.app_label, self.permission.codename)
 
     def __str__(self):  # __unicode__ on Python 2
         return '%s (%s)' % (self.group, self.permission)

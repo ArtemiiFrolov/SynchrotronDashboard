@@ -65,12 +65,19 @@ class StationAdmin(admin.ModelAdmin):
         exclude = ('special_user_permissions',
                    'special_group_permissions',)
 
+    class MarksInline(admin.TabularInline):
+        model = StationMark
+        extra = 0
+        exclude = ('special_user_permissions',
+                   'special_group_permissions',)
+
     list_display = ('name', 'short_description')
     search_fields = ['name']
     inlines = [UserInline,
                ApplicationInline,
                ExperimentPlanInline,
-               ExperimentsInline]
+               ExperimentsInline,
+               MarksInline]
 
 
 @admin.register(Approach)
@@ -143,6 +150,7 @@ admin.site.register(JournalStatus)
 admin.site.register(EventsList)
 admin.site.register(SpecialGroupPermission)
 admin.site.register(SpecialUserPermission)
+admin.site.register(StationMark)
 admin.site.register(Permission)
 
 

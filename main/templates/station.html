@@ -1,13 +1,18 @@
 {% extends 'layout.html' %}
 {% block content %}
+{% load permission_tags %}
+{% can 'main.view_station_stats' station as can_view_stats %}
 <h1 class="ui header divided">{{ station.name }}</h1>
 
 <div class="ui items">
     <div class="ui top attached tabular menu">
-      <a class="item active" data-tab="first">Сотрудники</a>
-      <a class="item" data-tab="second">Заявки</a>
-      <a class="item" data-tab="third">Запланированные эксперименты</a>
-      <a class="item" data-tab="fourth">Завершенные эксперименты</a>
+        <a class="item active" data-tab="first">Сотрудники</a>
+        <a class="item" data-tab="second">Заявки</a>
+        <a class="item" data-tab="third">Запланированные эксперименты</a>
+        <a class="item" data-tab="fourth">Завершенные эксперименты</a>
+        {% if can_view_stats %}
+        <a class="item" data-tab="stats">Статистика</a>
+        {% endif %}
     </div>
     <div class="ui bottom attached tab segment active" data-tab="first">
         <div class="ui list">
@@ -94,8 +99,7 @@
         </tbody>
     </table>
     </div>
-     <div class="ui bottom attached tab segment" data-tab="fourth">
-
+    <div class="ui bottom attached tab segment" data-tab="fourth">
          <table class="ui celled striped table">
                 <thead>
                     <tr>
@@ -138,6 +142,25 @@
                 </tbody>
             </table>
      </div>
+    {% if can_view_stats %}
+    <div class="ui bottom attached tab segment" data-tab="stats">
+        <div class="ui grid divided">
+            <div class="four wide column ">
+                <div class="ui list">
+                {% for mark in station.marks.all %}
+                    <div class="item">
+                        <div class="header">{{ mark.name }}</div>
+                        <div class="description">{{ mark.description}}</div>
+                    </div>
+                {% endfor %}
+                </div>
+            </div>
+            <div class="twelve wide column">
+
+            </div>
+        </div>
+    </div>
+    {% endif %}
 </div>
 
 

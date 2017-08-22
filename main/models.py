@@ -54,8 +54,6 @@ class Organization(TagModel):
         verbose_name_plural = 'Организации'
 
 
-
-
 class Approach(TagModel):
     description = models.TextField('Описание', blank=False, null=False)
 
@@ -235,6 +233,7 @@ class Station(TagModel, SpecialPermissionsMixin):
             ('plan_station_experiment', 'Может планировать эксперимент на станции'),
             ('conduct_station_experiment', 'Может проводить эксперимент на станции'),
             ('view_station_experiment', 'Может просматривать эксперимент на станции'),
+            ('view_station_stats', 'Может просматривать статистику станции'),
         )
 
 
@@ -366,6 +365,42 @@ class Comment(TimeStampedModel):
         verbose_name = 'Комментарий'
         verbose_name_plural = 'Комментарии'
 
+
+class StationMark(models.Model):
+    key = models.SlugField(max_length=255, verbose_name=_('key'))
+    name = models.CharField(max_length=255, verbose_name=_('name'))
+    station = models.ForeignKey(Station, verbose_name='станция', related_name='marks')
+    format = models.CharField(max_length=255, verbose_name=_('format'), blank=True)
+    unit = models.CharField(max_length=255, verbose_name=_('unit'), blank=True)
+    description = models.TextField(verbose_name=_('description'), blank=True)
+    visible = models.BooleanField(verbose_name=_('visible'), default=True)
+
+    class Meta:
+        verbose_name = 'Показатель'
+        verbose_name_plural = 'Показатели'
+        unique_together = ('key', 'station')
+
+    def __str__(self):
+        return '%s (%s)' % (self.name, self.station)
+
+    def __unicode__(self):
+        return self.__str__()
+
+
+class StationMarkValue(models.Model):
+    mark = models.ForeignKey(StationMark, related_name='values')
+    value = models.FloatField(verbose_name=_('value'))
+    created = models.DateTimeField(auto_now_add=True, verbose_name=_('created'))
+
+    class Meta:
+        verbose_name = 'Значение'
+        verbose_name_plural = 'Значения'
+
+    def __str__(self):
+        return '%s (%s)' % (self.value, self.mark)
+
+    def __unicode__(self):
+        return self.__str__()
 
 
 class ApplicationCounter(models.Model):

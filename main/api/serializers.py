@@ -92,3 +92,15 @@ class ApplicationCounterSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.ApplicationCounter
         fields = '__all__'
+
+
+class StationMarkSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.StationMark
+        fields = '__all__'
+
+
+class StationMarkValueSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.StationMarkValue
+        fields = '__all__'

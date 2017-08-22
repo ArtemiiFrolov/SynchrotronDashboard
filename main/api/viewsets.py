@@ -109,3 +109,14 @@ class ApplicationCounterViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = serializers.ApplicationCounterSerializer
     permission_classes = [permissions.IsAuthenticated, ]
 
+
+class StationMarkViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = models.StationMark.objects.all()
+    serializer_class = serializers.StationMarkSerializer
+    permission_classes = [permissions.IsAuthenticated, ]
+
+
+class StationMarkValueViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = models.StationMarkValue.objects.all()
+    serializer_class = serializers.StationMarkValueSerializer
+    permission_classes = [permissions.IsAuthenticated, ]

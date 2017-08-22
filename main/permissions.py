@@ -36,3 +36,6 @@ class ObjectPermissionsBackend(ModelBackend):
         if app_label == 'main':
             return True
         return ModelBackend.has_module_perms(self, user, app_label)
+
+
+

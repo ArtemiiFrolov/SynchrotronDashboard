@@ -53,8 +53,6 @@ def logout_view(request):
 @login_required
 def applications_table(request):
     applications = Application.objects.all()
-<<<<<<< HEAD
-=======
     if not request.user.has_perm('main.view_application'):
         applications_selected = []
         for application in applications:
@@ -66,8 +64,6 @@ def applications_table(request):
                 if application.pk not in applications_selected:
                     applications_selected.append(application.pk)
         applications = Application.objects.filter(pk__in=applications_selected)
-
->>>>>>> origin/master
     filtered = 'all'
     if request.GET.get('filter'):
         filtered = request.GET.get('filter')
@@ -90,14 +86,23 @@ def applications_table(request):
 
 def application_row(request, pk):
     app = Application.objects.get(pk=pk)
-    app.stage_status = StageStatus.objects.get_or_create(name='Заявка принята')
+    if (request.user.has_perm('main.approve_applications') or request.user.has_perm('main.approve_applications', app) or \
+            request.user.has_perm('main.approve_station_application', app.station)) and \
+                    app.stage_status.name == 'Заявка принята научным советом':
+        app.stage_status = StageStatus.objects.get_or_create(name='Заявка принята')
+    elif (request.user.has_perm('main.approve_science_applications') or request.user.has_perm('main.approve_science_applications', app) or \
+            request.user.has_perm('main.approve_science_station_application', app.station)) and \
+                    app.stage_status.name != "Заявка принята":
+        app.stage_status = StageStatus.objects.get_or_create(name='Заявка принята научным советом')
     app.save()
     return render(request, 'include/application_row.html', {'application': get_object_or_404(Application, pk=pk)})
 
 
 def application_row_disapprove(request, pk):
     app = Application.objects.get(pk=pk)
-    app.stage_status = StageStatus.objects.get_or_create(name='Заявка отклонена')
+    if request.user.has_perm('main.decline_applications') or request.user.has_perm('main.decline_applications', app) or \
+            request.user.has_perm('main.decline_station_application', app.station):
+        app.stage_status = StageStatus.objects.get_or_create(name='Заявка отклонена')
     app.save()
     return render(request, 'include/application_row.html', {'application': get_object_or_404(Application, pk=pk)})
 
@@ -110,12 +115,17 @@ def comment_from_application(request, pk):
     app = get_object_or_404(Application, pk=pk)
     if request.method == "POST":
         if 'Return' in request.POST:
-            app.stage_status = StageStatus.objects.get_or_create(name='Возвращена с комментариями')
+            if request.user.has_perm('main.return_applications') or request.user.has_perm('main.return_applications',
+                                                                                           app) or \
+                    request.user.has_perm('main.return_station_application', app.station):
+                app.stage_status = StageStatus.objects.get_or_create(name='Возвращена с комментариями')
             app.save()
         comment = Comment()
-        comment.application = app
-        comment.author = User.objects.get(name=request.user.name)
-        comment.text = request.POST['description']
+        if request.user.has_perm('main.comment_applications') or request.user.has_perm('main.comment_applications', app) or \
+                request.user.has_perm('main.comment_station_application', app.station):
+            comment.application = app
+            comment.author = User.objects.get(name=request.user.name)
+            comment.text = request.POST['description']
         comment.save()
     return redirect(application_view, serial=app.serial)
 
@@ -124,12 +134,18 @@ def comment_from_modal(request, pk):
     app = get_object_or_404(Application, pk=pk)
     if request.method == "POST":
         if 'Return' in request.POST:
-            app.stage_status = StageStatus.objects.get_or_create(name='Возвращена с комментариями')
+            if request.user.has_perm('main.return_applications') or request.user.has_perm('main.return_applications',
+                                                                                          app) or \
+                    request.user.has_perm('main.return_station_application', app.station):
+                app.stage_status = StageStatus.objects.get_or_create(name='Возвращена с комментариями')
             app.save()
         comment = Comment()
-        comment.application = app
-        comment.author = User.objects.get(name=request.user.name)
-        comment.text = request.POST['description']
+        if request.user.has_perm('main.comment_applications') or request.user.has_perm('main.comment_applications',
+                                                                                       app) or \
+                request.user.has_perm('main.comment_station_application', app.station):
+            comment.application = app
+            comment.author = User.objects.get(name=request.user.name)
+            comment.text = request.POST['description']
         comment.save()
     return redirect(applications_view)
 

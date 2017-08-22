@@ -54,21 +54,6 @@ class Organization(TagModel):
         verbose_name_plural = 'Организации'
 
 
-class Station(TagModel):
-    short_description = models.CharField('Префикс', max_length=100, blank=True, null=False)
-
-    class Meta:
-        verbose_name = 'Станция'
-        verbose_name_plural = 'Станции'
-        permissions = (
-            ('view_station_application', 'Может смотреть заявки станции'),
-            ('edit_station_application', 'Может редактировать заявки станции'),
-            ('approve_station_application', 'Может принимать заявки станции'),
-            ('view_plan_station_experiment', 'Может просматривать запланированный эксперимент на станции'),
-            ('plan_station_experiment', 'Может планировать эксперимент на станции'),
-            ('conduct_station_experiment', 'Может проводить эксперимент на станции'),
-            ('view_station_experiment', 'Может просматривать эксперимент на станции'),
-        )
 
 
 class Approach(TagModel):
@@ -155,7 +140,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(_('Email address'), max_length=255, unique=True)
 
     name = models.CharField('Имя', max_length=100, blank=False)
-    station = models.ManyToManyField(Station, related_name='users', blank=True, verbose_name='Станции')
+    station = models.ManyToManyField("Station", related_name='users', blank=True, verbose_name='Станции')
     organization = models.ManyToManyField(Organization, related_name='users', blank=True, verbose_name='Организации')
 
     is_active = models.BooleanField("Активен", default=True)
@@ -232,6 +217,27 @@ class SpecialPermissionsMixin(models.Model):
         abstract = True
 
 
+class Station(TagModel, SpecialPermissionsMixin):
+    short_description = models.CharField('Префикс', max_length=100, blank=True, null=False)
+
+    class Meta:
+        verbose_name = 'Станция'
+        verbose_name_plural = 'Станции'
+        permissions = (
+            ('view_station_application', 'Может смотреть заявки станции'),
+            ('edit_station_application', 'Может редактировать заявки станции'),
+            ('return_station_application', 'Может возвращать заявки станции'),
+            ('decline_station_application', 'Может отклонять заявки станции'),
+            ('approve_station_application', 'Может принимать заявки станции'),
+            ('approve_science_station_application', 'Может принимать ученым советом заявки станции'),
+            ('comment_station_application', 'Может комментировать заявки станции'),
+            ('view_plan_station_experiment', 'Может просматривать запланированный эксперимент на станции'),
+            ('plan_station_experiment', 'Может планировать эксперимент на станции'),
+            ('conduct_station_experiment', 'Может проводить эксперимент на станции'),
+            ('view_station_experiment', 'Может просматривать эксперимент на станции'),
+        )
+
+
 class Application(TimeStampedModel, SpecialPermissionsMixin):
     # TODO: add files and articles
     name = models.CharField('Название', max_length=200, blank=False, null=False)
@@ -271,16 +277,18 @@ class Application(TimeStampedModel, SpecialPermissionsMixin):
             ('view_application', 'Может смотреть заявку'),
             ('view_all_applications', 'Может смотреть все заявки'),
             ('edit_applications', 'Может редактировать заявки'),
-            ('approve_applications', 'Может принимать заявки'),
+            ('approve_applications', 'Может принимать заявки на станцию'),
+            ('approve_science_applications', 'Может принимать заявки ученым советом'),
             ('decline_applications', 'Может отклонять заявки'),
             ('return_applications', 'Может возвращать заявки'),
+            ('comment_applications', 'Может комментировать заявки')
         )
 
 
 pre_save.connect(Application.pre_save, Application, dispatch_uid="main.models.Application")
 
 
-class ExperimentPlan(TimeStampedModel):
+class ExperimentPlan(TimeStampedModel, SpecialPermissionsMixin):
     author = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='planning_experiments', verbose_name='Автор')
     application = models.ForeignKey(Application, related_name='planning_experiments', verbose_name='Заявка')
     start = models.DateTimeField('Старт', auto_now_add=False)
@@ -327,7 +335,7 @@ class Experiment(TimeStampedModel, SpecialPermissionsMixin):
         )
 
 
-class Event(models.Model):
+class Event(TimeStampedModel, SpecialPermissionsMixin):
     name = models.ForeignKey(EventsList, related_name='events', verbose_name='Название')
     start = models.DateTimeField('Старт', auto_now_add=False)
     end = models.DateTimeField('Окончание', auto_now_add=False)
@@ -357,6 +365,7 @@ class Comment(TimeStampedModel):
     class Meta:
         verbose_name = 'Комментарий'
         verbose_name_plural = 'Комментарии'
+
 
 
 class ApplicationCounter(models.Model):

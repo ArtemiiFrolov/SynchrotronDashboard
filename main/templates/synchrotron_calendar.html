@@ -115,6 +115,7 @@ $.fn.form.settings.rules.isStartToEnd = function(value) {
 ;
 
  $('#calendar').fullCalendar({
+            timezone:'local',
             events: [
                 {% for ev in events %}
                 {

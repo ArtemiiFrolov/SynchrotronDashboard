@@ -156,6 +156,10 @@ def application_edit(request, serial=None):
     if serial is not None:
         # TODO: make station field unedit
         app = get_object_or_404(Application, serial=serial)
+        if not(request.user.has_perm('main.edit_applications') or request.user.has_perm('main.edit_applications', app) or \
+                request.user.has_perm('main.edit_station_application', app.station) or
+                   (app.author == request.user and app.stage_status.name == "На рассмотрении" )):
+            app = None
     else:
         app = None
 
@@ -237,7 +241,13 @@ def application_edit(request, serial=None):
 
 def application_view(request, serial):
     app = get_object_or_404(Application, serial=serial)
-    return render(request, 'application.html', {'application': app})
+    if request.user.has_perm('main.view_application', app) or app.author == request.user or \
+                    request.user in app.participants.all() or \
+        request.user.has_perm('main.view_station_application', app.station) or \
+        app.station in request.user.station.all():
+        return render(request, 'application.html', {'application': app})
+    else:
+        return redirect(applications_view)
 
 
 def applications_view(request):
@@ -270,22 +280,31 @@ def organization_view(request, pk):
 
 # TODO: make without refresh (multiple choices of station)
 def planning_experiments(request):
+    station_selected = []
+    for station in Station.objects.all():
+        if request.user.has_perm('main.view_plan_station_experiment',
+                                 station) or request.user.has_perm('main.view_plan_experiment'):
+            station_selected.append(station.pk)
+    stations = Station.objects.filter(pk__in=station_selected)
     if request.GET.get('station'):
         station = request.GET.get('station')
         if station == "All":
-            context = {'stations': Station.objects.all,
-                       'applications': Application.objects.all().filter(stage_status__name='Заявка принята'),
+            context = {'stations': stations,
+                       'applications': Application.objects.all().filter(stage_status__name='Заявка принята', station__in=stations),
                        'text': "Все станции"}
         else:
             station = Station.objects.get(name=station)
-            context = {'stations': Station.objects.all,
+            if station not in stations:
+                context = {'stations': stations, 'text': station.name}
+            else:
+                context = {'stations': stations,
                        'applications': Application.objects.all().filter(stage_status__name='Заявка принята',
                                                                         station=station),
                        'text': station.name
                        }
     else:
-        context = {'stations': Station.objects.all,
-                   'applications': Application.objects.all().filter(stage_status__name='Заявка принята'),
+        context = {'stations': stations,
+                   'applications': Application.objects.all().filter(stage_status__name='Заявка принята', station__in=stations),
                    'text': "Все станции"}
     return render(request, 'planning_experiments.html', context)
 
@@ -293,7 +312,12 @@ def planning_experiments(request):
 def planned_table(request):
     station = "Все"
     planned_experiments_chosen = ExperimentPlan.objects.all()
-
+    station_selected = []
+    for station in Station.objects.all():
+        if request.user.has_perm('main.view_plan_station_experiment',
+                                 station) or request.user.has_perm('main.view_plan_experiment'):
+            station_selected.append(station.pk)
+    stations = Station.objects.filter(pk__in=station_selected)
     filtered = 'all'
     if request.GET.get('filter'):
         filtered = request.GET.get('filter')
@@ -303,10 +327,15 @@ def planned_table(request):
         planned_experiments_chosen = planned_experiments_chosen.filter(status__name="Эксперимент не выполнен")
     if request.GET.get('station'):
         station = request.GET.get('station')
-    if station != "Все":
-        station = Station.objects.get(name=station)
+        if station != "Все":
+            station = Station.objects.get(name=station)
+        if station not in stations and station != "Все":
+            station = 0
+    if station != "Все" and station != 0:
         planned_experiments_chosen = planned_experiments_chosen.filter(station=station)
-    return render(request, 'include/planned_experiments_list.html', {'planned_experiments': planned_experiments_chosen})
+    if station == 0:
+        return render(request, 'include/planned_experiments_list.html', {})
+    return render(request, 'include/planned_experiments_list.html', {'planned_experiments': planned_experiments_chosen.filter(station__in=stations)})
 
 
 @login_required
@@ -331,29 +360,49 @@ def planned_experiments(request):
 
 
 def planning_calendar(request):
+    station_selected = []
+    for station in Station.objects.all():
+        if request.user.has_perm('main.view_plan_station_experiment',
+                                 station) or request.user.has_perm('main.view_plan_experiment'):
+            station_selected.append(station.pk)
+    stations = Station.objects.filter(pk__in=station_selected)
     if request.GET.get('station'):
         station = request.GET.get('station')
         station = Station.objects.get(name=station)
-
+        if station not in stations:
+            station = 0
     else:
-        station = Station.objects.first()
+        if len(stations)!= 0:
+            station = stations.first()
+        else:
+            station = 0
     if request.GET.get('application'):
         app = request.GET.get('application')
         app = Application.objects.get(serial=app)
         station = app.station
-
+        if station not in stations:
+            station = 0
     else:
-        app = Application.objects.first()
+        if len(Application.objects.all()) != 0:
+            app = Application.objects.first()
+        else:
+            station = 0
     if request.method == "POST":
-        explan = ExperimentPlan()
-        explan.author = User.objects.get(name=request.user.name)
-        explan.application = Application.objects.get(serial=request.POST['serial'])
-        explan.start = datetime.datetime.strptime(request.POST['start'], "%d.%m.%Y %H:%M")
-        explan.end = datetime.datetime.strptime(request.POST['end'], "%d.%m.%Y %H:%M")
-        explan.status = JournalStatus.objects.get_or_create(name='Эксперимент не выполнен')
-        explan.station = station
-        explan.save()
-    context = {'stations': Station.objects.all,
+        if request.user.has_perm('main.plan_station_experiment',
+                                 station) or request.user.has_perm('main.plan_experiment'):
+            explan = ExperimentPlan()
+            explan.author = User.objects.get(name=request.user.name)
+            explan.application = Application.objects.get(serial=request.POST['serial'])
+            explan.start = datetime.datetime.strptime(request.POST['start'], "%d.%m.%Y %H:%M")
+            explan.end = datetime.datetime.strptime(request.POST['end'], "%d.%m.%Y %H:%M")
+            explan.status = JournalStatus.objects.get_or_create(name='Эксперимент не выполнен')
+            explan.station = station
+            explan.save()
+    if station == 0:
+        context = {'stations': stations, 'selected_app': app
+                   }
+    else:
+        context = {'stations': stations,
                'applications': Application.objects.all().filter(stage_status__name='Заявка принята',
                                                                 station=station),
                'text': station.name,
@@ -364,21 +413,30 @@ def planning_calendar(request):
 
 
 def journal(request):
+    station_selected = []
+    for station in Station.objects.all():
+        if request.user.has_perm('main.view_station_experiment',
+                                 station) or request.user.has_perm('main.view_experiment'):
+            station_selected.append(station.pk)
+    stations = Station.objects.filter(pk__in=station_selected)
     if request.GET.get('station'):
         station = request.GET.get('station')
         if station == "All":
-            context = {'stations': Station.objects.all,
-                       'experiments': Experiment.objects.all(),
+            context = {'stations': stations,
+                       'experiments': Experiment.objects.all().filter(station__in=stations),
                        'text': "Все станции"}
         else:
             station = Station.objects.get(name=station)
-            context = {'stations': Station.objects.all,
-                       'experiments': Experiment.objects.all().filter(station=station),
-                       'text': station.name
-                       }
+            if station in stations:
+                context = {'stations': station,
+                        'experiments': Experiment.objects.all().filter(station=station),
+                         'text': station.name
+                         }
+            else:
+                context = {'stations': stations}
     else:
-        context = {'stations': Station.objects.all,
-                   'experiments': Experiment.objects.all(),
+        context = {'stations': stations,
+                   'experiments': Experiment.objects.all().filter(station__in=stations),
                    'text': "Все станции"}
     return render(request, 'journal.html', context)
 

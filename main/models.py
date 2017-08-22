@@ -304,8 +304,8 @@ class ExperimentPlan(TimeStampedModel, SpecialPermissionsMixin):
         verbose_name = 'Планируемый эксперимент'
         verbose_name_plural = 'Планируемые эксперименты'
         permissions = (
-            ('view_plan_station_experiment', 'Может просматривать запланированный эксперимент'),
-            ('plan_station_experiment', 'Может планировать эксперимент'),
+            ('view_plan_experiment', 'Может просматривать запланированный эксперимент'),
+            ('plan_experiment', 'Может планировать эксперимент'),
         )
 
 
@@ -329,8 +329,8 @@ class Experiment(TimeStampedModel, SpecialPermissionsMixin):
         verbose_name = 'Завершенный эксперимент'
         verbose_name_plural = 'Завершенные эксперименты'
         permissions = (
-            ('conduct_station_experiment', 'Может проводить эксперимент'),
-            ('view_station_experiment', 'Может просматривать эксперимент'),
+            ('conduct_experiment', 'Может проводить эксперимент'),
+            ('view_experiment', 'Может просматривать эксперимент'),
         )
 
 

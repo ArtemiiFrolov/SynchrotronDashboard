@@ -6,7 +6,6 @@
 <h1 class="ui dividing header">Заявки</h1>
 
 <div class="ui grid">
-    {% if request.user.is_staff %}
       <div class="ui two wide column">
         <h3 class="ui header">Фильтр</h3>
         <div class="ui list">
@@ -18,7 +17,6 @@
             <a href="{%url 'applications'%}?filter=finished" class="ui item {% if filtered == 'finished'%}selected{%endif%}">Завершенные</a>
         </div>
     </div>
-    {% endif %}
     <div class="ui fourteen wide column">
         <div class="ui tabular menu">
             <a class="item active" onclick="all_applications();">

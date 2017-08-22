@@ -18,7 +18,7 @@
                 <td>
                     <a href="{% url 'application' planned_experiment.application.serial %}"> {{ planned_experiment.application.serial }}</a>
                 </td>
-                <td>
+                <td data-order="{{ application.created|date:'U' }}">
                     {{planned_experiment.created}}
                 </td>
                 <td>

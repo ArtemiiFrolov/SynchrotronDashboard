@@ -171,7 +171,13 @@ def application_edit(request, serial=None):
         context['application'] = app
         # Split request creation in two parts
         # TODO: добавить проверку
-        app_counter = ApplicationCounter.objects.get(year=timezone.now().year)
+        try:
+            app_counter = ApplicationCounter.objects.get(year=timezone.now().year)
+        except BaseException:
+            app_counter = ApplicationCounter()
+            app_counter.year = timezone.now().year
+            app_counter.number = 1
+            app_counter.save()
         station_list = request.POST.getlist('station')
         for station_item in station_list:
             app.station = Station.objects.get(id=station_item)
@@ -442,13 +448,44 @@ def journal(request):
 
 
 def journal_new(request):
+    is_information = False
+    station_selected = []
+    for station in Station.objects.all():
+        if request.user.has_perm('main.conduct_station_experiment',
+                                 station) or request.user.has_perm('main.conduct_experiment'):
+            station_selected.append(station.pk)
+    stations = Station.objects.filter(pk__in=station_selected)
+    application_selected = []
+    for application in Application.objects.all():
+        if request.user.has_perm('main.view_station_application',
+                                 application.station) or request.user.has_perm('main.view_application') or \
+                request.user.has_perm('main.view_application', application):
+            application_selected.append(application.pk)
+    applications = Application.objects.filter(pk__in=application_selected)
     if request.GET.get('planned'):
         planned_ex = request.GET.get('planned')
         planned_ex = ExperimentPlan.objects.get(pk=planned_ex)
-        flag = True
+        if request.user.has_perm('main.view_plan_experiment',
+                                 planned_ex) or request.user.has_perm('main.view_plan_experiment') or \
+            request.user.has_perm('main.view_plan_station_experiment', planned_ex.station):
+            flag = True
+            is_information = True
+        else:
+            flag = False
     else:
-        planned_ex = ExperimentPlan.objects.first()
         flag = False
+
+    if not flag:
+            for planned_ex_temp in ExperimentPlan.objects.all():
+                if request.user.has_perm('main.view_plan_experiment',
+                                         planned_ex_temp) or request.user.has_perm('main.view_plan_experiment') or \
+                        request.user.has_perm('main.view_plan_station_experiment', planned_ex_temp.station):
+                    planned_ex=planned_ex_temp
+                    is_information = True
+                    break
+    if  not is_information or len(applications) == 0 or len(stations) == 0:
+        return render(request, 'journal_new.html')
+
     start_time = planned_ex.start.strftime("%H:%M")
     start_date = planned_ex.start.strftime("%Y-%m-%d")
     end_time = planned_ex.end.strftime("%H:%M")
@@ -464,6 +501,7 @@ def journal_new(request):
         experiment.methods = Approach.objects.get(name=request.POST['approach'])
         experiment.comment = request.POST['comment']
         experiment.station = Station.objects.get(name=request.POST['station'])
+
         experiment.save()
         explan = ExperimentPlan.objects.get(pk=request.POST['ex_plan'])
         if explan.application == experiment.application:
@@ -471,8 +509,8 @@ def journal_new(request):
             explan.save()
         return redirect(journal)
 
-    context = {'stations': Station.objects.all,
-               'applications': Application.objects.all().filter(stage_status__name='Заявка принята'),
+    context = {'stations': stations,
+               'applications': applications.filter(stage_status__name='Заявка принята'),
                'methods': Approach.objects.all,
                'users': User.objects.all,
                'planned_experiments': ExperimentPlan.objects.all,

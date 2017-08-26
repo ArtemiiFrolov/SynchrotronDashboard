@@ -144,21 +144,7 @@
      </div>
     {% if can_view_stats %}
     <div class="ui bottom attached tab segment" data-tab="stats">
-        <div class="ui grid divided">
-            <div class="four wide column ">
-                <div class="ui list">
-                {% for mark in station.marks.all %}
-                    <div class="item">
-                        <div class="header">{{ mark.name }}</div>
-                        <div class="description">{{ mark.description}}</div>
-                    </div>
-                {% endfor %}
-                </div>
-            </div>
-            <div class="twelve wide column">
-
-            </div>
-        </div>
+        {% include 'include/stats.html' %}
     </div>
     {% endif %}
 </div>

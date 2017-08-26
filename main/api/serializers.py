@@ -5,6 +5,8 @@ from rest_framework import serializers
 
 
 class StationSerializer(serializers.ModelSerializer):
+    marks = serializers.HyperlinkedIdentityField(view_name='api:station-marks', read_only=True)
+
     class Meta:
         model = models.Station
         fields = '__all__'
@@ -95,6 +97,10 @@ class ApplicationCounterSerializer(serializers.ModelSerializer):
 
 
 class StationMarkSerializer(serializers.ModelSerializer):
+    values = serializers.HyperlinkedIdentityField(view_name='api:mark_values-detail',
+                                                  lookup_field='pk', read_only=True)
+    stats = serializers.HyperlinkedIdentityField(view_name='api:station_mark-stats', read_only=True)
+
     class Meta:
         model = models.StationMark
         fields = '__all__'
@@ -103,4 +109,14 @@ class StationMarkSerializer(serializers.ModelSerializer):
 class StationMarkValueSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.StationMarkValue
-        fields = '__all__'
+        fields = ('time', 'value')
+
+    def create(self, validated_data):
+        if 'mark' not in validated_data:
+            validated_data['mark'] = self.context['mark']
+        return super(StationMarkValueSerializer, self).create(validated_data)
+
+
+
+
+

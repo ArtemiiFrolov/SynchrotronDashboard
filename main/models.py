@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import django.utils.timezone as tz
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
@@ -7,6 +8,7 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Permis
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.exceptions import ValidationError, NON_FIELD_ERRORS, FieldError
 from django.db.models.signals import post_save, post_delete, pre_save
+
 
 
 class TimeStampedModel(models.Model):
@@ -390,11 +392,12 @@ class StationMark(models.Model):
 class StationMarkValue(models.Model):
     mark = models.ForeignKey(StationMark, related_name='values')
     value = models.FloatField(verbose_name=_('value'))
-    created = models.DateTimeField(auto_now_add=True, verbose_name=_('created'))
+    time = models.DateTimeField(default=tz.now, verbose_name=_('created'))
 
     class Meta:
         verbose_name = 'Значение'
         verbose_name_plural = 'Значения'
+        ordering = ['time']
 
     def __str__(self):
         return '%s (%s)' % (self.value, self.mark)

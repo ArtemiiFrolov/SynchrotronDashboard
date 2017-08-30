@@ -1,6 +1,8 @@
+from django.conf.urls import url
 from rest_framework import routers
 
 from main.api import viewsets
+from main.api import views
 
 
 api_router = routers.DefaultRouter()
@@ -21,3 +23,10 @@ api_router.register(r'comment', viewsets.CommentViewSet, base_name='comment')
 api_router.register(r'application_counter', viewsets.ApplicationCounterViewSet, base_name='application_counter')
 api_router.register(r'station_marks', viewsets.StationMarkViewSet, base_name='station_mark')
 api_router.register(r'mark_values', viewsets.StationMarkValuesViewSet, base_name='mark_values')
+api_router.register(r'stats_old', viewsets.StationMarkValuesViewSet, base_name='mark_values')
+
+urls = api_router.urls
+
+urls += [
+    url(r'^stats/(?P<mark_pk>[0-9]+)/$', views.stats, name='stats'),
+]

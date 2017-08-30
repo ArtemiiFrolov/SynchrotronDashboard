@@ -1,5 +1,7 @@
 from __future__ import unicode_literals
 
+import django.utils.timezone as tz
+
 from main import models
 from rest_framework import serializers
 
@@ -117,6 +119,14 @@ class StationMarkValueSerializer(serializers.ModelSerializer):
         return super(StationMarkValueSerializer, self).create(validated_data)
 
 
+class StatsSerializer(serializers.Serializer):
+    time = serializers.DateTimeField(default=tz.now)
+    value = serializers.FloatField()
+
+    def create(self, validated_data):
+        if 'mark' not in validated_data:
+            validated_data['mark'] = self.context['mark']
+        return models.StationMarkValue.objects.create(**validated_data)
 
 
 

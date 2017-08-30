@@ -39,5 +39,5 @@ urlpatterns = [
 
     url(r'^synchrotron_calendar/$', views.synchrotron_calendar, name='synchrotron_calendar'),
 
-    url(r'^api/', include(api_urls.api_router.urls, namespace='api')),
+    url(r'^api/', include(api_urls.urls, namespace='api')),
 ]

@@ -25,7 +25,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'main',
     'django_filters',
-    'rest_framework'
+    'guardian',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -74,7 +75,7 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator', },
 ]
 AUTHENTICATION_BACKENDS = ('django.contrib.auth.backends.ModelBackend',
-                           'main.permissions.ObjectPermissionsBackend',)
+                           'guardian.backends.ObjectPermissionBackend',)
 AUTH_USER_MODEL = 'main.User'
 LOGIN_URL = 'login'
 

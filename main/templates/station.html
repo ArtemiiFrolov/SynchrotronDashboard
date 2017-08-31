@@ -1,7 +1,7 @@
 {% extends 'layout.html' %}
 {% block content %}
-{% load permission_tags %}
-{% can 'main.view_station_stats' station as can_view_stats %}
+{% load guardian_tags  %}
+{% get_obj_perms request.user for station as 'station_permissions' %}
 <h1 class="ui header divided">{{ station.name }}</h1>
 
 <div class="ui items">
@@ -10,7 +10,7 @@
         <a class="item" data-tab="second">Заявки</a>
         <a class="item" data-tab="third">Запланированные эксперименты</a>
         <a class="item" data-tab="fourth">Завершенные эксперименты</a>
-        {% if can_view_stats %}
+        {% if 'view_station_stats' in station_permissions %}
         <a class="item" data-tab="stats">Статистика</a>
         {% endif %}
     </div>
@@ -142,7 +142,7 @@
                 </tbody>
             </table>
      </div>
-    {% if can_view_stats %}
+    {% if 'view_station_stats' in station_permissions %}
     <div class="ui bottom attached tab segment" data-tab="stats">
         {% include 'include/stats.html' %}
     </div>

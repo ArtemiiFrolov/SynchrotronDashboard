@@ -1,23 +1,20 @@
 # -*- coding: utf-8 -*-
 
 from django.contrib import admin
-from django.contrib.auth.models import Permission
+from guardian.admin import GuardedModelAdmin
+
 from .models import *
 
 
 @admin.register(Application)
-class ApplicationAdmin(admin.ModelAdmin):
+class ApplicationAdmin(GuardedModelAdmin):
     class ExperimentsInline(admin.TabularInline):
         model = Experiment
         extra = 0
-        exclude = ('special_user_permissions',
-                   'special_group_permissions',)
 
     class ExperimentPlanInline(admin.TabularInline):
         model = ExperimentPlan
         extra = 0
-        exclude = ('special_user_permissions',
-                   'special_group_permissions',)
 
     list_display = ('name', 'author', 'station', 'start', 'end')
     list_filter = ('author', 'station', 'start', 'complete_status', 'stage_status')
@@ -42,7 +39,7 @@ class OrganizationAdmin(admin.ModelAdmin):
 
 
 @admin.register(Station)
-class StationAdmin(admin.ModelAdmin):
+class StationAdmin(GuardedModelAdmin):
     class UserInline(admin.TabularInline):
         model = User.station.through
         extra = 0
@@ -50,26 +47,18 @@ class StationAdmin(admin.ModelAdmin):
     class ApplicationInline(admin.TabularInline):
         model = Application
         extra = 0
-        exclude = ('special_user_permissions',
-                   'special_group_permissions',)
 
     class ExperimentPlanInline(admin.TabularInline):
         model = ExperimentPlan
         extra = 0
-        exclude = ('special_user_permissions',
-                   'special_group_permissions',)
 
     class ExperimentsInline(admin.TabularInline):
         model = Experiment
         extra = 0
-        exclude = ('special_user_permissions',
-                   'special_group_permissions',)
 
     class MarksInline(admin.TabularInline):
         model = StationMark
         extra = 0
-        exclude = ('special_user_permissions',
-                   'special_group_permissions',)
 
     list_display = ('name', 'short_description')
     search_fields = ['name']
@@ -92,22 +81,16 @@ class UserAdmin(admin.ModelAdmin):
         model = Experiment
         fk_name = 'author'
         extra = 0
-        exclude = ('special_user_permissions',
-                   'special_group_permissions',)
 
     class ExperimentPlanInline(admin.TabularInline):
         model = ExperimentPlan
         fk_name = 'author'
         extra = 0
-        exclude = ('special_user_permissions',
-                   'special_group_permissions',)
 
     class ApplicationInline(admin.TabularInline):
         model = Application
         fk_name = 'author'
         extra = 0
-        exclude = ('special_user_permissions',
-                   'special_group_permissions',)
 
     list_display = ('name', 'email', 'date_joined')
     list_filter = ['station', 'date_joined']
@@ -116,21 +99,21 @@ class UserAdmin(admin.ModelAdmin):
 
 
 @admin.register(ExperimentPlan)
-class ExperimentPlanAdmin(admin.ModelAdmin):
+class ExperimentPlanAdmin(GuardedModelAdmin):
     list_display = ('application', 'author', 'start', 'end', 'status', 'station')
     list_filter = ('station', 'status', 'author', 'application')
     search_fields = ['station__name', 'author__name', 'status__name']
 
 
 @admin.register(Experiment)
-class ExperimentAdmin(admin.ModelAdmin):
+class ExperimentAdmin(GuardedModelAdmin):
     list_display = ('application', 'author', 'start', 'end', 'operator', 'comment')
     list_filter = ('station', 'author', 'operator')
     search_fields = ['station__name', 'author__name']
 
 
 @admin.register(Event)
-class EventAdmin(admin.ModelAdmin):
+class EventAdmin(GuardedModelAdmin):
     list_display = ('name', 'start', 'end')
 
 
@@ -148,8 +131,6 @@ admin.site.register(CompleteStatus)
 admin.site.register(StageStatus)
 admin.site.register(JournalStatus)
 admin.site.register(EventsList)
-admin.site.register(SpecialGroupPermission)
-admin.site.register(SpecialUserPermission)
 admin.site.register(StationMark)
 admin.site.register(Permission)
 

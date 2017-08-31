@@ -1,5 +1,7 @@
 Django==1.11.2
 django-filter==1.0.4
+django-guardian==1.4.9
 djangorestframework==3.6.3
 numpy==1.13.1
 pytz==2017.2
+six==1.10.0

@@ -21,7 +21,7 @@ $(document).ready(function(){
         var pk = elem.data('mark');
         var name = elem.data('name');
 
-        $.getJSON('/api/mark_values/' + pk + '/', function (data) {
+        $.getJSON('/api/stats/' + pk + '/', function (data) {
             data = data.map(function(t) {
                 var time = new Date(t.time).getTime();
                 return [time, t.value];

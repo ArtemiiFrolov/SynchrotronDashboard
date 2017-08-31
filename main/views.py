@@ -12,9 +12,7 @@ from django.utils import timezone
 
 
 def context_processor(request):
-    return {
-        'foo': 'bar'
-    }
+    return {}
 
 
 @login_required
@@ -56,8 +54,7 @@ def applications_table(request):
     if not request.user.has_perm('main.view_application'):
         applications_selected = []
         for application in applications:
-            if request.user.has_perm('main.view_application', application) or application.author == request.user or \
-                            request.user in application.participants.all():
+            if request.user.has_perm('main.view_application', application):
                 if application.pk not in applications_selected:
                     applications_selected.append(application.pk)
             if request.user.has_perm('main.view_station_application', application.station) or application.station in request.user.station.all():
@@ -86,12 +83,10 @@ def applications_table(request):
 
 def application_row(request, pk):
     app = Application.objects.get(pk=pk)
-    if (request.user.has_perm('main.approve_applications') or request.user.has_perm('main.approve_applications', app) or \
-            request.user.has_perm('main.approve_station_application', app.station)) and \
+    if request.user.has_perm('main.approve_applications', app) or request.user.has_perm('main.approve_station_application', app.station) and \
                     app.stage_status.name == 'Заявка принята научным советом':
         app.stage_status = StageStatus.objects.get_or_create(name='Заявка принята')
-    elif (request.user.has_perm('main.approve_science_applications') or request.user.has_perm('main.approve_science_applications', app) or \
-            request.user.has_perm('main.approve_science_station_application', app.station)) and \
+    elif request.user.has_perm('main.approve_science_applications' or request.user.has_perm('main.approve_science_station_application', app.station)) and \
                     app.stage_status.name != "Заявка принята":
         app.stage_status = StageStatus.objects.get_or_create(name='Заявка принята научным советом')
     app.save()
@@ -238,18 +233,10 @@ def application_edit(request, serial=None):
             }
         return render(request, 'application_form.html', context)
 
-#
-# def application_approve(request, serial):
-#     if ...:
-#
-#     return redirect(application_view, serial=serial)
-
 
 def application_view(request, serial):
     app = get_object_or_404(Application, serial=serial)
-    if request.user.has_perm('main.view_application', app) or app.author == request.user or \
-                    request.user in app.participants.all() or \
-        request.user.has_perm('main.view_station_application', app.station) or \
+    if request.user.has_perm('main.view_application', app) or request.user.has_perm('main.view_station_application', app.station) or \
         app.station in request.user.station.all():
         return render(request, 'application.html', {'application': app})
     else:
@@ -483,7 +470,7 @@ def journal_new(request):
                     planned_ex=planned_ex_temp
                     is_information = True
                     break
-    if  not is_information or len(applications) == 0 or len(stations) == 0:
+    if not is_information or len(applications) == 0 or len(stations) == 0:
         return render(request, 'journal_new.html')
 
     start_time = planned_ex.start.strftime("%H:%M")

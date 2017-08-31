@@ -7,8 +7,10 @@ from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin, Group, Permission
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.exceptions import ValidationError, NON_FIELD_ERRORS, FieldError
+from django.dispatch import receiver
 from django.db.models.signals import post_save, post_delete, pre_save
 
+from guardian.shortcuts import get_perms, assign_perm
 
 
 class TimeStampedModel(models.Model):
@@ -171,53 +173,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         verbose_name_plural = 'Пользователи'
 
 
-class SpecialUserPermission(models.Model):
-    user = models.ForeignKey(User, blank=False, null=False, related_name='special_permissions', verbose_name='Пользователь')
-    permission = models.ForeignKey(Permission, blank=False, null=False, verbose_name='Право')
-
-    @property
-    def permission_label(self):
-        return '%s.%s' % (self.permission.content_type.app_label, self.permission.codename)
-
-    def __str__(self):  # __unicode__ on Python 2
-        return '%s (%s)' % (self.user, self.permission)
-
-    def __unicode__(self):
-        return self.__str__()
-
-    class Meta:
-        verbose_name = 'Особое право пользователя'
-        verbose_name_plural = 'Особые права пользователей'
-
-
-class SpecialGroupPermission(models.Model):
-    group = models.ForeignKey(Group, blank=False, null=False, related_name='special_permissions', verbose_name='Группа')
-    permission = models.ForeignKey(Permission, blank=False, null=False, verbose_name='Право')
-
-    @property
-    def permission_label(self):
-        return '%s.%s' % (self.permission.content_type.app_label, self.permission.codename)
-
-    def __str__(self):  # __unicode__ on Python 2
-        return '%s (%s)' % (self.group, self.permission)
-
-    def __unicode__(self):
-        return self.__str__()
-
-    class Meta:
-        verbose_name = 'Особое право группы'
-        verbose_name_plural = 'Особые права группы'
-
-
-class SpecialPermissionsMixin(models.Model):
-    special_user_permissions = models.ManyToManyField(SpecialUserPermission, blank=True, verbose_name='Особые права пользователей')
-    special_group_permissions = models.ManyToManyField(SpecialGroupPermission, blank=True, verbose_name='Особые права групп')
-
-    class Meta:
-        abstract = True
-
-
-class Station(TagModel, SpecialPermissionsMixin):
+class Station(TagModel):
     short_description = models.CharField('Префикс', max_length=100, blank=True, null=False)
 
     class Meta:
@@ -239,7 +195,7 @@ class Station(TagModel, SpecialPermissionsMixin):
         )
 
 
-class Application(TimeStampedModel, SpecialPermissionsMixin):
+class Application(TimeStampedModel):
     # TODO: add files and articles
     name = models.CharField('Название', max_length=200, blank=False, null=False)
     author = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='applications_as_author', verbose_name='Автор')
@@ -255,15 +211,6 @@ class Application(TimeStampedModel, SpecialPermissionsMixin):
     equipment = models.ManyToManyField(Equipment, related_name='applications', verbose_name='Обрудование')
     complete_status = models.ForeignKey(CompleteStatus, related_name='applications', verbose_name='Статус завершения')
     stage_status = models.ForeignKey(StageStatus, related_name='applications', verbose_name='Статус принятия в работу')
-
-    @staticmethod
-    def pre_save(sender, instance, **kwargs):
-        errors = {}
-        if not instance.end:
-            errors['end'] = 'Не указана дата окончания'
-
-        if errors:
-            raise ValidationError(errors)
 
     def __str__(self):
         return self.serial
@@ -286,10 +233,26 @@ class Application(TimeStampedModel, SpecialPermissionsMixin):
         )
 
 
-pre_save.connect(Application.pre_save, Application, dispatch_uid="main.models.Application")
+@receiver(post_save, sender=Application)
+def pre_application_save(sender, instance, **kwargs):
+    errors = {}
+    if not instance.end:
+        errors['end'] = 'Не указана дата окончания'
+    if errors:
+        raise ValidationError(errors)
 
 
-class ExperimentPlan(TimeStampedModel, SpecialPermissionsMixin):
+@receiver(post_save, sender=Application)
+def post_application_save(sender, application, **kwargs):
+    # grant author a permission
+    assign_perm('view_application', application.author, application)
+
+    # grant participant a permission to view
+    for user in application.participants:
+        assign_perm('view_application', user, application)
+
+
+class ExperimentPlan(TimeStampedModel):
     author = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='planning_experiments', verbose_name='Автор')
     application = models.ForeignKey(Application, related_name='planning_experiments', verbose_name='Заявка')
     start = models.DateTimeField('Старт', auto_now_add=False)
@@ -311,7 +274,7 @@ class ExperimentPlan(TimeStampedModel, SpecialPermissionsMixin):
         )
 
 
-class Experiment(TimeStampedModel, SpecialPermissionsMixin):
+class Experiment(TimeStampedModel):
     application = models.ForeignKey(Application, related_name='experiments', verbose_name='Заявка')
     author = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='experiments_as_author', verbose_name='Автор')  # TODO: automatically fill from request
     start = models.DateTimeField('Старт',auto_now_add=False)
@@ -336,7 +299,7 @@ class Experiment(TimeStampedModel, SpecialPermissionsMixin):
         )
 
 
-class Event(TimeStampedModel, SpecialPermissionsMixin):
+class Event(TimeStampedModel):
     name = models.ForeignKey(EventsList, related_name='events', verbose_name='Название')
     start = models.DateTimeField('Старт', auto_now_add=False)
     end = models.DateTimeField('Окончание', auto_now_add=False)
@@ -390,9 +353,16 @@ class StationMark(models.Model):
 
 
 class StationMarkValue(models.Model):
+    LIMIT_PER_MARK = 60 * 24 * 31  # 1 month of per-minute values
+
     mark = models.ForeignKey(StationMark, related_name='values')
     value = models.FloatField(verbose_name=_('value'))
     time = models.DateTimeField(default=tz.now, verbose_name=_('created'))
+
+    @staticmethod
+    def post_save(sender, instance, **kwargs):
+        # delete values that exceeds the limit
+        StationMarkValue.objects.filter(mark=instance.mark)[StationMarkValue.LIMIT_PER_MARK:].delete()
 
     class Meta:
         verbose_name = 'Значение'
@@ -404,6 +374,13 @@ class StationMarkValue(models.Model):
 
     def __unicode__(self):
         return self.__str__()
+
+
+@receiver(post_save, sender=StationMarkValue)
+def post_value_save(sender, instance, **kwargs):
+    # remove values that exceeds the limit
+    vals = list(StationMarkValue.objects.filter(mark=instance.mark)[StationMarkValue.LIMIT_PER_MARK:])
+    StationMarkValue.objects.filter(pk__in=vals).delete()
 
 
 class ApplicationCounter(models.Model):

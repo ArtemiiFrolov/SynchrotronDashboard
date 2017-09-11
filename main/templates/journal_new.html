@@ -88,6 +88,9 @@ $.fn.form.settings.rules.isPresent = function(value, dateCompare) {
         return true;
     }
   }
+$.fn.form.settings.rules.isPast = function(value, dateCompare) {
+    return !$.fn.form.settings.rules.isPresent(value, dateCompare);
+  }
 $.fn.form.settings.rules.isEndToStart = function(value) {
   if(moment(value, "DD-MM-YYYY H:mm").isBefore(moment($form.form('get value', 'start'), "DD-MM-YYYY H:mm"))){
         return false;
@@ -122,8 +125,8 @@ $.fn.form.settings.rules.isStartToEnd = function(value) {
             prompt : 'Пожалуйста, введите дату начала'
           },
           {
-            type: 'isPresent['+moment()+']',
-            prompt : 'Пожалуйста, не вводите прошедшее время'
+            type: 'isPast['+moment()+']',
+            prompt : 'Пожалуйста, не вводите будущее время'
           },
           {
             type: 'isStartToEnd[]',
@@ -137,8 +140,8 @@ $.fn.form.settings.rules.isStartToEnd = function(value) {
             prompt : 'Пожалуйста, введите дату окончания'
           },
           {
-            type: 'isPresent['+moment()+']',
-            prompt : 'Пожалуйста, не вводите прошедшее время'
+            type: 'isPast['+moment()+']',
+            prompt : 'Пожалуйста, не вводите будущее время'
           },
           {
             type: 'isEndToStart[]',

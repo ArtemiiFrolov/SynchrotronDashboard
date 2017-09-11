@@ -243,13 +243,13 @@ def pre_application_save(sender, instance, **kwargs):
 
 
 @receiver(post_save, sender=Application)
-def post_application_save(sender, application, **kwargs):
+def post_application_save(sender, instance, **kwargs):
     # grant author a permission
-    assign_perm('view_application', application.author, application)
+    assign_perm('view_application', instance.author, instance)
 
     # grant participant a permission to view
-    for user in application.participants:
-        assign_perm('view_application', user, application)
+    for user in instance.participants.all():
+        assign_perm('view_application', user, instance)
 
 
 class ExperimentPlan(TimeStampedModel):

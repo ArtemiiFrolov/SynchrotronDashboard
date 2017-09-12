@@ -115,6 +115,10 @@ $.fn.form.settings.rules.isStartToEnd = function(value) {
 ;
 
  $('#calendar').fullCalendar({
+            eventLimit: true,
+            eventRender: function(event, element) {
+                $(element).attr("title", event.title);
+            },
             timezone:'local',
             events: [
                 {% for ev in events %}

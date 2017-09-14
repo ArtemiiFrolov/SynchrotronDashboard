@@ -193,15 +193,21 @@ def application_edit(request, serial=None):
             else:
                 context['errors'] = errors
                 render(request, 'application_form.html', context)
+
             # TODO: need to check, is it ok, or it can be done better way
-            organizations_list = request.POST.getlist('organizations')
-            for organizations_item in organizations_list:
+            org_descriptors = request.POST.getlist('organizations')
+
+            organizations = []
+            for descriptor in org_descriptors:
                 try:
-                    Organization.objects.get(id=organizations_item)
+                    organization = Organization.objects.get(id=descriptor)
                 except Exception:
-                    app.organizations.add(Organization.objects.get_or_create(name=organizations_item))
-                else:
-                    app.organizations.add(Organization.objects.get(id=organizations_item))
+                    organization = Organization.objects.get_or_create(name=descriptor)
+                organizations.append(organization)
+                
+            if organizations:
+                app.organizations.set(organizations)
+
             approaches_list = request.POST.getlist('approaches')
             for approaches_item in approaches_list:
                 try:

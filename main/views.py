@@ -204,7 +204,7 @@ def application_edit(request, serial=None):
                 except Exception:
                     organization = Organization.objects.get_or_create(name=descriptor)
                 organizations.append(organization)
-                
+
             if organizations:
                 app.organizations.set(organizations)
 

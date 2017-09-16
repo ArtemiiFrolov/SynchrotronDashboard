@@ -38,6 +38,7 @@ urlpatterns = [
     url(r'^journal/new$', views.journal_new, name='journal_new'),
 
     url(r'^synchrotron_calendar/$', views.synchrotron_calendar, name='synchrotron_calendar'),
+    url(r'^log_deleted_event/$', views.log_deleted_event, name='log_deleted_event'),
 
     url(r'^api/', include(api_urls.urls, namespace='api')),
 ]

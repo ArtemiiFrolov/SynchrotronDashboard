@@ -10,6 +10,10 @@ from main.models import *
 import datetime
 from django.utils import timezone
 
+import logging
+logger = logging.getLogger(__name__)
+
+
 
 def context_processor(request):
     return {}
@@ -528,3 +532,14 @@ def synchrotron_calendar(request):
                'eventsList': EventsList.objects.all(),
                }
     return render(request, 'synchrotron_calendar.html', context)
+
+
+@login_required
+def log_deleted_event(request):
+    if not request.method == "POST":
+        return
+
+    # TODO: add time and date of event removing
+    log_message = request.user.name + ' deleted event ' + request.POST.get('event_title')
+    logger.info(log_message)
+    return HttpResponse()

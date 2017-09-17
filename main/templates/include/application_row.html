@@ -21,7 +21,7 @@
     <td>
         <a href="{% url 'station' application.station.pk %}"> {{ application.station.name }}</a>
     </td>
-    <td>
+    <td style="background-color:{{ application.stage_status.color }};">
          {{ application.stage_status.name }}
     </td>
    <!-- <td>

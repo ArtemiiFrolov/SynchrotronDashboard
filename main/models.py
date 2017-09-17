@@ -79,6 +79,13 @@ class CompleteStatus(TagModel):
 
 
 class StageStatus(TagModel):
+    COLOR_CHOICES = (
+        ('#8AFF8A', 'Зеленый'),
+        ('#FF0000', 'Красный'),
+        ('#FFFFA0', 'Желтый'),
+    )
+    color = models.CharField(verbose_name=_(u'Цвет'), choices=COLOR_CHOICES,
+                             default='#33СС00', max_length=7)
     class Meta:
         verbose_name = 'Статус принятия в работу'
         verbose_name_plural = 'Статусы принятия в работу'

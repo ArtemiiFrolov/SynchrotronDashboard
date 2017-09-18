@@ -5,14 +5,10 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.csrf import csrf_protect
-from django.views.decorators.http import require_GET, require_http_methods
+from django.views.decorators.http import require_GET, require_POST, require_http_methods
 from main.models import *
 import datetime
 from django.utils import timezone
-
-import logging
-logger = logging.getLogger(__name__)
-
 
 
 def context_processor(request):
@@ -534,12 +530,14 @@ def synchrotron_calendar(request):
     return render(request, 'synchrotron_calendar.html', context)
 
 
+@require_POST
 @login_required
-def log_deleted_event(request):
-    if not request.method == "POST":
-        return
+def delete_event(request):
 
-    # TODO: add time and date of event removing
-    log_message = request.user.name + ' deleted event ' + request.POST.get('event_title')
-    logger.info(log_message)
+    event_id = request.POST.get('event_id')
+    event = Event.objects.get(id=event_id)
+    # pass the name of user who deleted the event to pre_delete for logging
+    event.deleter_name = request.user.name
+    event.delete()
+
     return HttpResponse()

@@ -8,9 +8,12 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Permis
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.exceptions import ValidationError, NON_FIELD_ERRORS, FieldError
 from django.dispatch import receiver
-from django.db.models.signals import post_save, post_delete, pre_save
+from django.db.models.signals import post_save, post_delete, pre_save, pre_delete
 
 from guardian.shortcuts import get_perms, assign_perm
+
+import logging
+logger = logging.getLogger(__name__)
 
 
 class TimeStampedModel(models.Model):
@@ -320,6 +323,18 @@ class Event(TimeStampedModel):
         permissions = (
             ('add_event_to_calendar', 'Может добавлять события в календарь'),
         )
+
+
+@receiver(pre_delete, sender=Event)
+def pre_event_delete(sender, instance, **kwargs):
+    now = tz.localtime(tz.now())
+    user_name = getattr(instance, 'deleter_name', 'Неизвестный пользователь')
+    log_message = '{0}: {1} удалил(а) событие "{2} {3} - {4}"'.format(now.strftime('%d %b %Y, %H:%M'),
+                                                                   user_name,
+                                                                   instance.name.name,
+                                                                   instance.start.strftime('%d %b %Y %H:%M'),
+                                                                   instance.end.strftime('%d %b %Y %H:%M'))
+    logger.info(log_message)
 
 
 class Comment(TimeStampedModel):

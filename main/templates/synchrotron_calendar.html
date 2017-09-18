@@ -115,6 +115,7 @@ $.fn.form.settings.rules.isStartToEnd = function(value) {
 ;
 
 function getCookie(name) {
+    // this function is necessary for loggong the calendar event deleting
     var cookieValue = null;
     if (document.cookie && document.cookie !== '') {
         var cookies = document.cookie.split(';');
@@ -133,7 +134,7 @@ function getCookie(name) {
 var csrftoken = getCookie('csrftoken');
 
 function csrfSafeMethod(method) {
-    // these HTTP methods do not require CSRF protection
+    // these HTTP methods do not require CSRF protection ()
     return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
 }
 $.ajaxSetup({
@@ -147,18 +148,14 @@ $.ajaxSetup({
  $('#calendar').fullCalendar({
             eventLimit: true,
             eventRender: function(event, element) {
-                $(element).attr("title", event.title);
+                $(element).attr("title", event.title + '\nДля удаления кликните дважды');
 
-                element.append( "<span class='closeon'>X</span>" );
-                element.find(".closeon").click(function() {
-                    // FIXME: after re-loading event is still there!!
+                element.bind('dblclick', function() {
                     $('#calendar').fullCalendar('removeEvents',event._id);
-
                     $.post(
-                      '/log_deleted_event/',
+                      '/delete_event/',
                       {
-                        event_title: event.title,
-                        param2: 2
+                        event_id: event.id,
                       }
                     );
                 });
@@ -166,7 +163,7 @@ $.ajaxSetup({
             timezone:'local',
             events: [
                 {% for ev in events %}
-                {
+                {   id: '{{ ev.id }}',
                     title: '{{ ev.name.name}} {{ev.start|date:"G:i"}} - {{ev.end|date:"G:i"}}',
                     start: '{{ ev.start|date:"Y-m-d" }}',
                     end: '{{ ev.end|date:"Y-m-d" }}',

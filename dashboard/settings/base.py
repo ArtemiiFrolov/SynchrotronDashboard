@@ -104,21 +104,17 @@ LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'handlers': {
-        'file': {
+        'delete_events_file': {
             'level': 'INFO',
             'class': 'logging.FileHandler',
             'filename': 'deletedEvents.log',
         },
     },
     'loggers': {
-        'django.request': {
-            'handlers': ['file'],
+        'delete_events': {
+            'handlers': ['delete_events_file'],
             'level': 'INFO',
             'propagate': True,
         },
-    },
-    'root': {
-        'level': 'INFO',
-        'handlers': ['file']
-    },
+    }
 }

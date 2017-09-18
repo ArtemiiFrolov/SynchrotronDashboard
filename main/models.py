@@ -13,7 +13,7 @@ from django.db.models.signals import post_save, post_delete, pre_save, pre_delet
 from guardian.shortcuts import get_perms, assign_perm
 
 import logging
-logger = logging.getLogger(__name__)
+delete_events_logger = logging.getLogger('delete_events')
 
 
 class TimeStampedModel(models.Model):
@@ -330,11 +330,11 @@ def pre_event_delete(sender, instance, **kwargs):
     now = tz.localtime(tz.now())
     user_name = getattr(instance, 'deleter_name', 'Неизвестный пользователь')
     log_message = '{0}: {1} удалил(а) событие "{2} {3} - {4}"'.format(now.strftime('%d %b %Y, %H:%M'),
-                                                                   user_name,
-                                                                   instance.name.name,
-                                                                   instance.start.strftime('%d %b %Y %H:%M'),
-                                                                   instance.end.strftime('%d %b %Y %H:%M'))
-    logger.info(log_message)
+                                                                      user_name,
+                                                                      instance.name.name,
+                                                                      instance.start.strftime('%d %b %Y %H:%M'),
+                                                                      instance.end.strftime('%d %b %Y %H:%M'))
+    delete_events_logger.info(log_message)
 
 
 class Comment(TimeStampedModel):

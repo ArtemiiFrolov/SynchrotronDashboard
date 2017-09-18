@@ -537,7 +537,18 @@ def delete_event(request):
     event_id = request.POST.get('event_id')
     event = Event.objects.get(id=event_id)
     # pass the name of user who deleted the event to pre_delete for logging
-    event.deleter_name = request.user.name
+    event.deleted_by = request.user
     event.delete()
 
     return HttpResponse()
+
+
+def view_log(request):
+    content_type = ContentType.objects.get(app_label="main", model="event")
+    log_records = LogEntry.objects.filter(content_type_id=content_type.id, action_flag=DELETION)
+
+    context = {'deleted_event_log_records': []}
+    if log_records:
+        context['deleted_event_log_records'] = log_records
+
+    return render(request, 'log_viewer.html', context)

@@ -39,6 +39,7 @@ urlpatterns = [
 
     url(r'^synchrotron_calendar/$', views.synchrotron_calendar, name='synchrotron_calendar'),
     url(r'^delete_event/$', views.delete_event, name='delete_event'),
+    url(r'^view_log/$', views.view_log, name='view_log'),
 
     url(r'^api/', include(api_urls.urls, namespace='api')),
 ]

@@ -1,0 +1,64 @@
+{% extends 'layout.html' %}
+{% block content %}
+<h1 class="ui header divided">Логи</h1>
+
+
+
+<div class="ui items">
+    <div id="context1">
+     <div class="ui top attached tabular menu">
+        <a class="item active" data-tab="first">Удаленные с календаря события</a>
+    </div>
+    <div class="ui bottom attached tab segment active" data-tab="first">
+                <table class="ui celled striped table">
+                    <thead>
+                        <tr>
+                            <th class="single line">Время удаления</th>
+                            <th>Имя пользователя</th>
+                            <th>E-mail</th>
+                            <th>Удаленное событие</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for record in deleted_event_log_records %}
+                        <tr>
+                            <td>
+                                {{ record.action_time|date:"D d M Y" }}
+                            </td>
+                            <td>
+                                {{ record.user.name }}
+                            </td>
+                            <td>
+                                {{ record.user.email }}
+                            </td>
+                             <td>
+                                 {{ record.object_repr }}
+                             </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+    </div>
+
+    </div>
+</div>
+<script type="text/javascript">
+$('#context1 .menu .item')
+  .tab({
+    context: $('#context1')
+  })
+;
+$('#context2 .menu .item')
+  .tab({
+    // special keyword works same as above
+    context: 'parent'
+  })
+;
+$('table').DataTable({
+            language: dataTablesLanguage,
+        });
+</script>
+
+{% endblock %}
+
+

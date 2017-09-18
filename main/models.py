@@ -5,15 +5,14 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin, Group, Permission
+from django.contrib.admin.models import LogEntry, DELETION
+from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.exceptions import ValidationError, NON_FIELD_ERRORS, FieldError
 from django.dispatch import receiver
 from django.db.models.signals import post_save, post_delete, pre_save, pre_delete
 
 from guardian.shortcuts import get_perms, assign_perm
-
-import logging
-delete_events_logger = logging.getLogger('delete_events')
 
 
 class TimeStampedModel(models.Model):
@@ -325,16 +324,19 @@ class Event(TimeStampedModel):
         )
 
 
-@receiver(pre_delete, sender=Event)
-def pre_event_delete(sender, instance, **kwargs):
-    now = tz.localtime(tz.now())
-    user_name = getattr(instance, 'deleter_name', 'Неизвестный пользователь')
-    log_message = '{0}: {1} удалил(а) событие "{2} {3} - {4}"'.format(now.strftime('%d %b %Y, %H:%M'),
-                                                                      user_name,
-                                                                      instance.name.name,
-                                                                      instance.start.strftime('%d %b %Y %H:%M'),
-                                                                      instance.end.strftime('%d %b %Y %H:%M'))
-    delete_events_logger.info(log_message)
+@receiver(post_delete, sender=Event)
+def post_event_delete(sender, instance, **kwargs):
+
+    event_repr = '{0} {1} - {2}'.format(instance.name.name,
+                                        instance.start.strftime('%d %b %Y %H:%M'),
+                                        instance.end.strftime('%d %b %Y %H:%M'))
+    user = getattr(instance, 'deleted_by', 'Неизвестный пользователь')
+
+    LogEntry.objects.log_action(user_id=user.pk,
+                                content_type_id=ContentType.objects.get_for_model(instance).pk,
+                                object_id=instance.pk,
+                                object_repr=event_repr,
+                                action_flag=DELETION)
 
 
 class Comment(TimeStampedModel):

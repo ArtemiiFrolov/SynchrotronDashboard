@@ -152,13 +152,15 @@ $.ajaxSetup({
                 $(element).attr("title", event.title + '\nДля удаления кликните дважды');
 
                 element.bind('dblclick', function() {
-                    $('#calendar').fullCalendar('removeEvents',event._id);
-                    $.post(
-                      '/delete_event/',
-                      {
-                        event_id: event.id,
-                      }
-                    );
+                    if (confirm('хотите удалить событие?')) {
+                        $('#calendar').fullCalendar('removeEvents',event._id);
+                        $.post(
+                            '/delete_event/',
+                            {
+                                event_id: event.id,
+                            }
+                        );
+                    }
                 });
             },
             timezone:'local',

@@ -148,22 +148,30 @@ def comment_from_modal(request, pk):
 @login_required
 @require_http_methods(['GET', 'POST'])
 def application_edit(request, serial=None):
-    if serial is not None:
-        # TODO: make station field unedit
-        app = get_object_or_404(Application, serial=serial)
-        if not(request.user.has_perm('main.edit_applications') or request.user.has_perm('main.edit_applications', app) or \
-                request.user.has_perm('main.edit_station_application', app.station) or
-                   (app.author == request.user and app.stage_status.name == "На рассмотрении" )):
-            app = None
+    app = None
+    errors = []
+
+    # check permissions
+    if serial is None:
+        # user wants to create a new application
+        # TODO: FIX THIS!! it is only for debug
+        action_allowed = True
+        # action_allowed = request.user.has_perm('main.edit_applications')
     else:
-        app = None
+        # user wants to edit existing application
+        app = get_object_or_404(Application, serial=serial)
+        action_allowed = (request.user.has_perm('main.edit_applications') or
+                          request.user.has_perm('main.edit_applications', app) or
+                          request.user.has_perm('main.edit_station_application', app.station) or
+                          (app.author == request.user and app.stage_status.name == "На рассмотрении"))
+
+    if not action_allowed:
+        return render(request, 'application_form.html', {'app': None,
+                                                         'errors': ['Недостаточно прав для изменения заявки']})
 
     if request.method == "POST":
-        context = {}
-        errors = {}
         if not app:
             app = Application()
-        context['application'] = app
         # Split request creation in two parts
         # TODO: добавить проверку
         try:
@@ -191,8 +199,7 @@ def application_edit(request, serial=None):
             if not errors:
                 app.save()
             else:
-                context['errors'] = errors
-                render(request, 'application_form.html', context)
+                return render(request, 'application_form.html', {'errors': errors})
 
             # TODO: need to check, is it ok, or it can be done better way
             org_descriptors = request.POST.getlist('organizations')
@@ -229,15 +236,16 @@ def application_edit(request, serial=None):
             for equipment_item in equipment_list:
                 app.equipment.add(Equipment.objects.get(id=equipment_item))
             app = Application()
-        app_counter.number = app_counter.number + 1
-        app_counter.save()
 
+        app_counter.number += 1
+        app_counter.save()
         return redirect(applications_view)
-    else:
-        context = {
-            'application': app,
-            }
-        return render(request, 'application_form.html', context)
+
+    context = {
+        'application': app,
+        'errors': errors
+    }
+    return render(request, 'application_form.html', context)
 
 
 def application_view(request, serial):

@@ -167,7 +167,7 @@ def application_edit(request, serial=None):
 
     if not action_allowed:
         return render(request, 'application_form.html', {'app': None,
-                                                         'errors': ['Недостаточно прав для изменения заявки']})
+                                                         'errors': ['Недостаточно прав для редактирования заявки']})
 
     if request.method == "POST":
         if not app:
@@ -287,32 +287,38 @@ def organization_view(request, pk):
 
 # TODO: make without refresh (multiple choices of station)
 def planning_experiments(request):
+    errors = []
     station_selected = []
     for station in Station.objects.all():
         if request.user.has_perm('main.view_plan_station_experiment',
                                  station) or request.user.has_perm('main.view_plan_experiment'):
             station_selected.append(station.pk)
     stations = Station.objects.filter(pk__in=station_selected)
-    if request.GET.get('station'):
-        station = request.GET.get('station')
-        if station == "All":
-            context = {'stations': stations,
-                       'applications': Application.objects.all().filter(stage_status__name='Заявка принята', station__in=stations),
-                       'text': "Все станции"}
-        else:
-            station = Station.objects.get(name=station)
-            if station not in stations:
-                context = {'stations': stations, 'text': station.name}
-            else:
-                context = {'stations': stations,
-                       'applications': Application.objects.all().filter(stage_status__name='Заявка принята',
-                                                                        station=station),
-                       'text': station.name
-                       }
+
+    if stations.count() == 0:
+        errors.append('Недостаточно прав для просмотра эксперимента ни одной из станций')
+
+    station = request.GET.get('station', 'All')
+    if station == "All":
+        text = "Все станции"
+        apps = Application.objects.all().filter(stage_status__name='Заявка принята', station__in=stations)
+
     else:
-        context = {'stations': stations,
-                   'applications': Application.objects.all().filter(stage_status__name='Заявка принята', station__in=stations),
-                   'text': "Все станции"}
+        station = Station.objects.get(name=station)
+        if station not in stations:
+            text = station.name
+            apps = None
+        else:
+            text = station.name
+            apps = Application.objects.all().filter(stage_status__name='Заявка принята', station=station)
+
+    if apps.count() == 0 and Application.objects.all().count != 0:
+        errors.append('Недостаточно прав для просмотра ни одного эксперимента')
+
+    context = {'stations': stations,
+               'applications': apps,
+               'text': text,
+               'errors': errors}
     return render(request, 'planning_experiments.html', context)
 
 

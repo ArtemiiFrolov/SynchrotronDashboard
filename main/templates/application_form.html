@@ -1,6 +1,7 @@
 {% extends 'layout.html' %}
 {% block content %}
 <div class="ui text container">
+    {% if not errors %}
     <form action="" method="post" class="ui form">
         {% csrf_token %}
         <h4 class="ui dividing header">{% if application %}Редактирование заявки{% else %}Новая заявка{% endif %}</h4>
@@ -92,6 +93,7 @@
          <div class="ui error message"></div>
         <input type="submit" class="ui primary button" value="Сохранить">
     </form>
+    {% endif %}
 </div>
 <script>
 $(document).ready(function() {
